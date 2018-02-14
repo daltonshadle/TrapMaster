@@ -9,8 +9,10 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 
 public class DBHandler extends SQLiteOpenHelper {
+    //Database Variables & Constants
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "trapMaster.db";
+    SQLiteDatabase dbWhole;
 
     //Profile Table Stuff
     private static final String TABLE_PROFILES = "profiles";
@@ -80,6 +82,84 @@ public class DBHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        dbWhole = db;
+
+        //Profile Table
+        String CREATE_PROFILE_TABLE = "CREATE TABLE " + TABLE_PROFILES + "("
+                + KEY_PROFILE_USERNAME + " TEXT PRIMARY KEY,"
+                + KEY_PROFILE_ID + " INTEGER,"
+                + KEY_PROFILE_PASSWORD + " TEXT" +
+                ")";
+        db.execSQL(CREATE_PROFILE_TABLE);
+
+        //Gun Table
+        String CREATE_GUN_TABLE = "CREATE TABLE " + TABLE_GUNS + "("
+                + KEY_GUN_PROFILE_NAME + " TEXT PRIMARY KEY,"
+                + KEY_GUN_ID + " INTEGER,"
+                + KEY_GUN_NICKNAME + " TEXT"
+                + KEY_GUN_MODEL + " TEXT"
+                + KEY_GUN_GAUGE + " TEXT"
+                + KEY_GUN_NOTES + " TEXT"
+                + ")";
+        db.execSQL(CREATE_GUN_TABLE);
+
+
+        //Load Table
+        String CREATE_LOAD_TABLE = "CREATE TABLE " + TABLE_LOADS + "("
+                + KEY_LOAD_PROFILE_NAME + " TEXT PRIMARY KEY,"
+                + KEY_LOAD_ID + " INTEGER,"
+                + KEY_LOAD_NICKNAME + " TEXT"
+                + KEY_LOAD_BRAND + " TEXT"
+                + KEY_LOAD_GAUGE + " TEXT"
+                + KEY_LOAD_LENGTH + " TEXT"
+                + KEY_LOAD_GRAIN + " TEXT"
+                + KEY_LOAD_NOTES + " TEXT"
+                + ")";
+        db.execSQL(CREATE_LOAD_TABLE);
+
+        //Event Table Stuff
+        String CREATE_EVENT_TABLE = "CREATE TABLE " + TABLE_EVENTS + "("
+                + KEY_EVENT_PROFILE_NAME + " TEXT PRIMARY KEY,"
+                + KEY_EVENT_ID + " INTEGER,"
+                + KEY_EVENT_TEAM_NAME + " TEXT"
+                + KEY_EVENT_NAME + " TEXT"
+                + KEY_EVENT_LOCATION + " TEXT"
+                + KEY_EVENT_GUN + " TEXT"
+                + KEY_EVENT_LOAD + " TEXT"
+                + KEY_EVENT_DATE + " TEXT"
+                + KEY_EVENT_SCORE + " INTEGER"
+                + KEY_EVENT_WEATHER + " TEXT"
+                + KEY_EVENT_NOTES + " TEXT"
+                + ")";
+        db.execSQL(CREATE_EVENT_TABLE);
+
+
+        //Location Table
+        String CREATE_LOCATION_TABLE = "CREATE TABLE " + TABLE_LOCATION + "("
+                + KEY_LOCATION_PROFILE_NAME + " TEXT PRIMARY KEY,"
+                + KEY_LOCATION_ID + " INTEGER,"
+                + KEY_LOCATION_NAME + " TEXT"
+                + ")";
+        db.execSQL(CREATE_LOCATION_TABLE);
+
+        //Shot Table
+        String CREATE_SHOT_TABLE = "CREATE TABLE " + TABLE_SHOT + "("
+                + KEY_SHOT_PROFILE_NAME + " TEXT PRIMARY KEY,"
+                + KEY_SHOT_ID + " INTEGER,"
+                + KEY_SHOT_EVENT_NAME + " TEXT"
+                + KEY_SHOT_NUMBER + " TEXT"
+                + KEY_SHOT_HIT_MISS + " TEXT"
+                + KEY_SHOT_NOTES + " TEXT"
+                + ")";
+        db.execSQL(CREATE_SHOT_TABLE);
+
+        //Team Table
+        String CREATE_TEAM_TABLE = "CREATE TABLE " + TABLE_TEAM + "("
+                + KEY_TEAM_NAME + " TEXT PRIMARY KEY,"
+                + KEY_TEAM_ID + " INTEGER,"
+                + KEY_TEAM_LIST + " TEXT"
+                + ")";
+        db.execSQL(CREATE_TEAM_TABLE);
 
     }
 

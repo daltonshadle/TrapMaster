@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="HomeButtonSideAlign">30dp</dimen>
+    <dimen name="HomeButtonTopAlign">80dp</dimen>
+    <dimen name="HomeButtonWidth">150dp</dimen>
+    <dimen name="HomeButtonHeight">55dp</dimen>
+</resources>

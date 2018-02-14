@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/lnrHomeEventButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnHomeNewEvent"
+            android:layout_width="@dimen/HomeButtonWidth"
+            android:layout_height="@dimen/HomeButtonHeight"
+            android:text="New Event"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btnHomeQuickEvent"
+            android:layout_width="@dimen/HomeButtonWidth"
+            android:layout_height="@dimen/HomeButtonHeight"
+            android:text="Quick Event"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/btnHomeEventHistory"
+            android:layout_width="@dimen/HomeButtonWidth"
+            android:layout_height="@dimen/HomeButtonHeight"
+            android:text="Event History"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lnrHomeTeamProfileButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:id="@+id/btnHomeTeams"
+            android:layout_width="@dimen/HomeButtonWidth"
+            android:layout_height="@dimen/HomeButtonHeight"
+            android:text="Teams"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btnHomeProfiles"
+            android:layout_width="@dimen/HomeButtonWidth"
+            android:layout_height="@dimen/HomeButtonHeight"
+            android:text="Profiles"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnHomeTeams" />
+
+        <Button
+            android:id="@+id/btnHomeArmory"
+            android:layout_width="@dimen/HomeButtonWidth"
+            android:layout_height="@dimen/HomeButtonHeight"
+            android:text="Armory"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnHomeProfiles" />
+
+    </LinearLayout>
+</RelativeLayout>
