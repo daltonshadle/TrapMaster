@@ -4,4 +4,7 @@
     <dimen name="HomeButtonTopAlign">80dp</dimen>
     <dimen name="HomeButtonWidth">150dp</dimen>
     <dimen name="HomeButtonHeight">55dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
 </resources>
