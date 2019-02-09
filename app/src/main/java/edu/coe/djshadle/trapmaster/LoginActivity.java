@@ -33,6 +33,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -41,24 +42,34 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class LoginActivity extends AppCompatActivity {
 
-    //*************************************** UI references ****************************************
-    private EditText mEmailView;
-    private EditText mPasswordView;
+    //********************************* Variables and Constants ************************************
+    //General Constants
+    final int MIN_PASS_LENGTH = 7;
+
+    //General Variables
+    private String mEmail_Str = "SAVED_EMAIL", mPassword_Str = "SAVED_PASS";
+    DBHandler db;
+
+    // UI References
+    private EditText mEmail_View, mPassword_View;
 
     //********************************** Login Activity Functions **********************************
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        db = new DBHandler(this);
+
         // Set up the login form.
         setUpViews();
     }
 
     private void setUpViews() {
-        mEmailView = (EditText) findViewById(R.id.email);
-        mPasswordView = (EditText) findViewById(R.id.password);
+        mEmail_View = (EditText) findViewById(R.id.email);
+        mPassword_View = (EditText) findViewById(R.id.password);
 
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mPassword_View.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
@@ -69,8 +80,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+        Button mEmailSignIn_Button = (Button) findViewById(R.id.email_sign_in_button);
+        mEmailSignIn_Button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
@@ -87,15 +98,37 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        savedInstanceState.putString(mEmail_Str, mEmail_View.getText().toString());
+        savedInstanceState.putString(mPassword_Str, mPassword_View.getText().toString());
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+        String tempEmail_Str = savedInstanceState.getString(mEmail_Str);
+        String tempPass_Str = savedInstanceState.getString(mPassword_Str);
+
+        mEmail_View.setText(tempEmail_Str);
+        mPassword_View.setText(tempPass_Str);
+    }
+
     //************************************** Login Functions ***************************************
     private void attemptLogin() {
         // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
+        mEmail_View.setError(null);
+        mPassword_View.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        String email = mEmail_View.getText().toString();
+        String password = mPassword_View.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -103,25 +136,25 @@ public class LoginActivity extends AppCompatActivity {
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+            mEmail_View.setError(getString(R.string.error_field_required));
+            focusView = mEmail_View;
             cancel = true;
         } else if (!isEmailInDB(email)) {
             //TODO: give notification that email is not in DB
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
+            mEmail_View.setError(getString(R.string.error_invalid_email));
+            focusView = mEmail_View;
             cancel = true;
         }
 
         // Check for a valid password.
         if (TextUtils.isEmpty(password)) {
-            mPasswordView.setError(getString(R.string.error_field_required));
-            focusView = mPasswordView;
+            mPassword_View.setError(getString(R.string.error_field_required));
+            focusView = mPassword_View;
             cancel = true;
         } else if (!isPasswordWithEmail(email, password)) {
             //TODO: give notification that password does not match email
-            mPasswordView.setError(getString(R.string.error_incorrect_password));
-            focusView = mPasswordView;
+            mPassword_View.setError(getString(R.string.error_incorrect_password));
+            focusView = mPassword_View;
             cancel = true;
         }
 
@@ -140,24 +173,22 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean isEmailInDB(String email) {
-        //TODO: Replace this with your own logic, search for email in database
-        return email.contains("@");
+        return db.isEmailInDB(email);
     }
 
     private boolean isPasswordWithEmail(String email, String password) {
-        //TODO: Replace this with your own logic, search for email in database
-        return password.length() > 4;
+        return db.doesPassMatchInDB(email, password);
     }
 
     //************************************ Register Functions **************************************
     private void register() {
         // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
+        mEmail_View.setError(null);
+        mPassword_View.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        String email = mEmail_View.getText().toString();
+        String password = mPassword_View.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -165,25 +196,25 @@ public class LoginActivity extends AppCompatActivity {
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+            mEmail_View.setError(getString(R.string.error_field_required));
+            focusView = mEmail_View;
             cancel = true;
         } else if (!isEmailValid(email)) {
             //TODO: give notification that email is not valid
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
+            mEmail_View.setError(getString(R.string.error_invalid_email_format));
+            focusView = mEmail_View;
             cancel = true;
         }
 
         // Check for a valid password.
         if (TextUtils.isEmpty(password)) {
-            mPasswordView.setError(getString(R.string.error_field_required));
-            focusView = mPasswordView;
+            mPassword_View.setError(getString(R.string.error_field_required));
+            focusView = mPassword_View;
             cancel = true;
         } else if (!isPasswordValid(password)) {
             //TODO: give notification that password is not valid
-            mPasswordView.setError(getString(R.string.error_incorrect_password));
-            focusView = mPasswordView;
+            mPassword_View.setError(getString(R.string.error_incorrect_password_length));
+            focusView = mPassword_View;
             cancel = true;
         }
 
@@ -193,19 +224,30 @@ public class LoginActivity extends AppCompatActivity {
             focusView.requestFocus();
         } else {
             //Login was successful; continue to next activity as new user
-            //TODO: add a new user to database with email and password
-            return;
+            ProfileClass p = new ProfileClass(email, password);
+            db.insertProfileInDB(p);
+
+            Intent homeActivity_Intent = new Intent(LoginActivity.this, homeActivity.class);
+            startActivity(homeActivity_Intent);
+            finish();
         }
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+
+        return pat.matcher(email).matches();
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() >= MIN_PASS_LENGTH;
     }
 
 }
