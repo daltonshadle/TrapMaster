@@ -37,9 +37,6 @@ import java.util.regex.Pattern;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
-/**
- * A login screen that offers login via email/password.
- */
 public class LoginActivity extends AppCompatActivity {
 
     //********************************* Variables and Constants ************************************
@@ -47,11 +44,13 @@ public class LoginActivity extends AppCompatActivity {
     final int MIN_PASS_LENGTH = 7;
 
     //General Variables
-    private String mEmail_Str = "SAVED_EMAIL", mPassword_Str = "SAVED_PASS";
+    private String mEmail_Str = "SAVED_EMAIL";
+    private String mPassword_Str = "SAVED_PASS";
     DBHandler db;
 
     // UI References
-    private EditText mEmail_View, mPassword_View;
+    private EditText mEmail_View;
+    private EditText mPassword_View;
 
     //********************************** Login Activity Functions **********************************
     @Override
@@ -161,12 +160,11 @@ public class LoginActivity extends AppCompatActivity {
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
-            Log.i("DJS-messages", "Login cancelled.");
             focusView.requestFocus();
         } else {
             //Login was successful; continue to next activity
-            Log.i("DJS-messages", "Login successful.");
             Intent homeActivity_Intent = new Intent(LoginActivity.this, homeActivity.class);
+            homeActivity_Intent.putExtra(getString(R.string.current_user_email), email);
             startActivity(homeActivity_Intent);
             finish();
         }
@@ -228,6 +226,7 @@ public class LoginActivity extends AppCompatActivity {
             db.insertProfileInDB(p);
 
             Intent homeActivity_Intent = new Intent(LoginActivity.this, homeActivity.class);
+            homeActivity_Intent.putExtra(getString(R.string.current_user_email), email);
             startActivity(homeActivity_Intent);
             finish();
         }

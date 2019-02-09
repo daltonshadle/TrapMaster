@@ -6,11 +6,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class homeActivity extends AppCompatActivity implements View.OnClickListener {
+    //********************************* Variables and Constants ************************************
+    //General Constants
+    final String CURRENT_USER_KEY = "USER_KEY";
 
+    //General Variables
+    private String mCurrentUserEmail_Str = "tempEmail";
+
+    // UI References
     private Button mBtnNewEvent, mBtnArmory, mBtnEventHistory, mBtnProfiles, mBtnQuickEvent, mBtnTeams;
+    private TextView mTxtUserEmail;
 
+
+    //*********************************** Home Activity Functions **********************************
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,9 +33,30 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
             setContentView(R.layout.activity_home_portrait);
         }
 
+        mCurrentUserEmail_Str = getIntent().getStringExtra(getString(R.string.current_user_email));
         initViews();
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        savedInstanceState.putString(CURRENT_USER_KEY, mTxtUserEmail.getText().toString());
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+        String temp_Str = savedInstanceState.getString(CURRENT_USER_KEY);
+
+        mTxtUserEmail.setText(mCurrentUserEmail_Str);
+    }
+
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
@@ -34,6 +66,45 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
             setContentView(R.layout.activity_home_landscape);
         }
 
+        mTxtUserEmail.setText(mCurrentUserEmail_Str);
+    }
+
+    @Override
+    public void onClick(View view) {
+        Intent i;
+        switch (view.getId()) {
+            case R.id.btnHomeNewEvent:
+                i = new Intent(this, NewEventActivity.class);
+                i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+                startActivity(i);
+                break;
+            case R.id.btnHomeArmory:
+                i = new Intent(this, ArmoryActivity.class);
+                i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+                startActivity(i);
+                break;
+            case R.id.btnHomeEventHistory:
+                i = new Intent(this, EventHistoryActivity.class);
+                i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+                startActivity(i);
+                break;
+            case R.id.btnHomeProfiles:
+                i = new Intent(this, ProfilesActivity.class);
+                i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+                startActivity(i);
+                break;
+            case R.id.btnHomeQuickEvent:
+                i = new Intent(this, QuickEventActivity.class);
+                i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+                startActivity(i);
+                break;
+            case R.id.btnHomeTeams:
+                i = new Intent(this, TeamsActivity.class);
+                i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+                startActivity(i);
+                break;
+
+        }
     }
 
     private void initViews(){
@@ -50,37 +121,11 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         mBtnProfiles.setOnClickListener(this);
         mBtnQuickEvent.setOnClickListener(this);
         mBtnTeams.setOnClickListener(this);
+
+        mTxtUserEmail = (TextView) findViewById(R.id.txtHomeUserEmail);
+        mTxtUserEmail.setText(mCurrentUserEmail_Str);
     }
 
-    @Override
-    public void onClick(View view) {
-        Intent i;
-        switch (view.getId()) {
-            case R.id.btnHomeNewEvent:
-                i = new Intent(this, NewEventActivity.class);
-                startActivity(i);
-                break;
-            case R.id.btnHomeArmory:
-                i = new Intent(this, ArmoryActivity.class);
-                startActivity(i);
-                break;
-            case R.id.btnHomeEventHistory:
-                i = new Intent(this, EventHistoryActivity.class);
-                startActivity(i);
-                break;
-            case R.id.btnHomeProfiles:
-                i = new Intent(this, ProfilesActivity.class);
-                startActivity(i);
-                break;
-            case R.id.btnHomeQuickEvent:
-                i = new Intent(this, QuickEventActivity.class);
-                startActivity(i);
-                break;
-            case R.id.btnHomeTeams:
-                i = new Intent(this, TeamsActivity.class);
-                startActivity(i);
-                break;
+    //************************************** Other Functions ***************************************
 
-        }
-    }
 }

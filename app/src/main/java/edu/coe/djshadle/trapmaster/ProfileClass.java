@@ -8,6 +8,7 @@ public class ProfileClass {
     private String profilePassword_Str;
 
     //************************************* Public Functions ***************************************
+    // Constructors
     public ProfileClass() {
         this.profileID_Str = "tempID";
         this.profileEmail_Str = "tempEmail";
@@ -26,6 +27,7 @@ public class ProfileClass {
         this.profilePassword_Str = profilePassword_Str;
     }
 
+    // Getters and Setters
     public String getProfileID_Str() {
         return profileID_Str;
     }

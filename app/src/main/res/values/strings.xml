@@ -1,16 +1,14 @@
 <resources>
+    <!--********************************** General App Strings **********************************-->
     <string name="app_name">Trap Master</string>
     <string name="title_activity_login">Sign in</string>
+    <string name="current_user_email">current_user_email</string>
 
-
-
-    <!--******************************** Strings related to login *******************************-->
+    <!--************************************* Login Strings *************************************-->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_register">Register</string>
-
-    <!--Error-->
     <!--Register-->
     <string name="error_invalid_email_format">This email address format is invalid</string>
     <string name="error_incorrect_password_length">This password is too short</string>
