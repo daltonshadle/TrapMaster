@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -17,9 +18,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
     private String mCurrentUserEmail_Str = "tempEmail";
 
     // UI References
-    private Button mBtnNewEvent, mBtnArmory, mBtnEventHistory, mBtnProfiles, mBtnQuickEvent, mBtnTeams;
-    private TextView mTxtUserEmail;
-
+    private TextView mTxtUserEmail_View;
 
     //*********************************** Home Activity Functions **********************************
     @Override
@@ -33,8 +32,14 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
             setContentView(R.layout.activity_home_portrait);
         }
 
-        mCurrentUserEmail_Str = getIntent().getStringExtra(getString(R.string.current_user_email));
+        if (savedInstanceState != null) {
+            mCurrentUserEmail_Str = savedInstanceState.getString(CURRENT_USER_KEY);
+        } else {
+            mCurrentUserEmail_Str = getIntent().getStringExtra(getString(R.string.current_user_email));
+        }
+        
         initViews();
+        mTxtUserEmail_View.setText(mCurrentUserEmail_Str);
     }
 
     @Override
@@ -43,7 +48,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         // Save UI state changes to the savedInstanceState.
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
-        savedInstanceState.putString(CURRENT_USER_KEY, mTxtUserEmail.getText().toString());
+        savedInstanceState.putString(CURRENT_USER_KEY, mTxtUserEmail_View.getText().toString());
     }
 
     @Override
@@ -51,9 +56,8 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         super.onRestoreInstanceState(savedInstanceState);
         // Restore UI state from the savedInstanceState.
         // This bundle has also been passed to onCreate.
-        String temp_Str = savedInstanceState.getString(CURRENT_USER_KEY);
-
-        mTxtUserEmail.setText(mCurrentUserEmail_Str);
+        mCurrentUserEmail_Str = savedInstanceState.getString(CURRENT_USER_KEY);
+        mTxtUserEmail_View.setText(mCurrentUserEmail_Str);
     }
 
     @Override
@@ -66,7 +70,8 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
             setContentView(R.layout.activity_home_landscape);
         }
 
-        mTxtUserEmail.setText(mCurrentUserEmail_Str);
+        mTxtUserEmail_View = (TextView) findViewById(R.id.txtHomeUserEmail);
+        mTxtUserEmail_View.setText(mCurrentUserEmail_Str);
     }
 
     @Override
@@ -108,6 +113,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initViews(){
+        Button mBtnNewEvent, mBtnArmory, mBtnEventHistory, mBtnProfiles, mBtnQuickEvent, mBtnTeams;
         mBtnNewEvent = (Button) findViewById(R.id.btnHomeNewEvent);
         mBtnArmory = (Button) findViewById(R.id.btnHomeArmory);
         mBtnEventHistory = (Button) findViewById(R.id.btnHomeEventHistory);
@@ -122,8 +128,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         mBtnQuickEvent.setOnClickListener(this);
         mBtnTeams.setOnClickListener(this);
 
-        mTxtUserEmail = (TextView) findViewById(R.id.txtHomeUserEmail);
-        mTxtUserEmail.setText(mCurrentUserEmail_Str);
+        mTxtUserEmail_View = (TextView) findViewById(R.id.txtHomeUserEmail);
     }
 
     //************************************** Other Functions ***************************************
