@@ -13,4 +13,13 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:text="New Event Portrait" />
+
+    <edu.coe.djshadle.trapmaster.TenaryButtonClass
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/trap1"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="34dp" />
 </RelativeLayout>
