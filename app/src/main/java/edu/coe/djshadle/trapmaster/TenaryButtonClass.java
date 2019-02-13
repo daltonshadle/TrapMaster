@@ -41,6 +41,7 @@ public class TenaryButtonClass extends LinearLayout implements View.OnClickListe
     // Other Functions
     private void initializeViews(Context context){
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        assert inflater != null;
         inflater.inflate(R.layout.view_ternary_button, this);
         btnStage_Int = NEUTRAL;
     }
@@ -52,6 +53,16 @@ public class TenaryButtonClass extends LinearLayout implements View.OnClickListe
         mButton_View.setOnClickListener(this);
 
         setButtonColor(btnStage_Int);
+    }
+
+    @Override
+    public void onClick(View v) {
+        setStage();
+        stageChangeListener.OnStageChange();
+    }
+
+    public void setStageChangeListener(OnStageChangeListener eventListener){
+        stageChangeListener = eventListener;
     }
 
     private void setStage(){
@@ -92,16 +103,6 @@ public class TenaryButtonClass extends LinearLayout implements View.OnClickListe
 
     public boolean isMiss() {
         return (btnStage_Int == MISS);
-    }
-
-    @Override
-    public void onClick(View v) {
-        setStage();
-        stageChangeListener.OnStageChange();
-    }
-
-    public void setStageChangeListener(OnStageChangeListener eventListener){
-        stageChangeListener = eventListener;
     }
 
     public void resetTernary(){

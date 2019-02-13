@@ -14,12 +14,18 @@
         android:layout_centerVertical="true"
         android:text="New Event Portrait" />
 
-    <edu.coe.djshadle.trapmaster.TenaryButtonClass
+    <edu.coe.djshadle.trapmaster.TrapCounterButtonsClass
+        android:id="@+id/tcbTempCounter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/trap1"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="34dp" />
+        android:layout_centerHorizontal="true" />
+
+    <edu.coe.djshadle.trapmaster.TenaryButtonClass
+        android:id="@+id/tbTempTer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+
 </RelativeLayout>
