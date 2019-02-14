@@ -28,12 +28,12 @@ public class TenaryButtonClass extends LinearLayout implements View.OnClickListe
         initializeViews(context);
     }
 
-    public TenaryButtonClass(Context context, @Nullable AttributeSet attrs) {
+    public TenaryButtonClass(Context context, AttributeSet attrs) {
         super(context, attrs);
         initializeViews(context);
     }
 
-    public TenaryButtonClass(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public TenaryButtonClass(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initializeViews(context);
     }

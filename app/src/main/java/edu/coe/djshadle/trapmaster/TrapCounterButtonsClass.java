@@ -15,6 +15,7 @@ public class TrapCounterButtonsClass extends LinearLayout implements OnStageChan
     // General Variables
 
     // UI References
+	TenaryButtonClass shot1_View, shot2_View, shot3_View, shot4_View, shot5_View;
     private LinearLayout trapCounterLayout;
     private TextView totalHitText;
     private OnTotalHitChange totalHitChange;
@@ -40,8 +41,6 @@ public class TrapCounterButtonsClass extends LinearLayout implements OnStageChan
     private void initializeViews(Context context){
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.view_trap_score_buttons, this);
-
-        TenaryButtonClass shot1_View, shot2_View, shot3_View, shot4_View, shot5_View;
 
         shot1_View = (TenaryButtonClass) findViewById(R.id.terShot1);
         shot2_View = (TenaryButtonClass) findViewById(R.id.terShot2);
@@ -117,7 +116,7 @@ public class TrapCounterButtonsClass extends LinearLayout implements OnStageChan
         // Function iterates through all ternary buttons and checks stage
         // Function returns true if all ternary buttons are HIT
         boolean checked = true;
-        for(int i=0; i<trapCounterLayout.getChildCount() - 1; i++) {
+        for(int i = 0; i < trapCounterLayout.getChildCount() - 1; i++) {
             TenaryButtonClass child = (TenaryButtonClass) trapCounterLayout.getChildAt(i);
             if(child.getStage() != HIT){
                 checked = false;

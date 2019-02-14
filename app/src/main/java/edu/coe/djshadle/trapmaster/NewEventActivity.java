@@ -4,8 +4,7 @@ import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class NewEventActivity extends AppCompatActivity {
-
+public class NewEventActivity extends AppCompatActivity implements OnTotalHitChange, OnStageChangeListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +17,7 @@ public class NewEventActivity extends AppCompatActivity {
             setContentView(R.layout.activity_new_event_portrait);
         }
 
-        TenaryButtonClass tempBtn = (TenaryButtonClass) findViewById(R.id.tbTempTer);
+        initViews();
     }
 
     public void onConfigurationChanged(Configuration newConfig) {
@@ -29,6 +28,24 @@ public class NewEventActivity extends AppCompatActivity {
         } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             setContentView(R.layout.activity_new_event_landscape);
         }
+
+    }
+
+    private void initViews() {
+        TenaryButtonClass tempBtn = (TenaryButtonClass) findViewById(R.id.tbTempTer);
+        tempBtn.setStageChangeListener(this);
+
+        TrapCounterButtonsClass tempCount= (TrapCounterButtonsClass) findViewById(R.id.tcbTempCounter);
+        tempCount.setTotalHitChange(this);
+    }
+
+    @Override
+    public void OnTotalHitChange() {
+
+    }
+
+    @Override
+    public void OnStageChange() {
 
     }
 }
