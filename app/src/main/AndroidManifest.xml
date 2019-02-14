@@ -27,7 +27,8 @@
         </activity>
         <activity
             android:name=".NewEventActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden" />
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="landscape"/> <!-- screen orientation is temporary -->
         <activity
             android:name=".QuickEventActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
