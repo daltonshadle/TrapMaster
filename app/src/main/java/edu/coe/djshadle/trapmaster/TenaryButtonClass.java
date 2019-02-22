@@ -1,6 +1,7 @@
 package edu.coe.djshadle.trapmaster;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -49,7 +50,7 @@ public class TenaryButtonClass extends LinearLayout implements View.OnClickListe
     protected void onFinishInflate(){
         super.onFinishInflate();
 
-        mButton_View = (Button) findViewById(R.id.btnTernaryButton);
+        mButton_View = findViewById(R.id.btnTernaryButton);
         mButton_View.setOnClickListener(this);
 
         setButtonColor(btnStage_Int);
@@ -57,7 +58,7 @@ public class TenaryButtonClass extends LinearLayout implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        setStage();
+        incrementStage();
         stageChangeListener.OnStageChange();
     }
 
@@ -65,24 +66,32 @@ public class TenaryButtonClass extends LinearLayout implements View.OnClickListe
         stageChangeListener = eventListener;
     }
 
-    private void setStage(){
+    public void incrementStage(){
         btnStage_Int = (btnStage_Int + 1) % 3;
         setButtonColor(btnStage_Int);
         invalidate();
     }
 
+    public void setStage(int status){
+        if(status >= HIT && status <= NEUTRAL) {
+            btnStage_Int = status;
+            setButtonColor(btnStage_Int);
+            invalidate();
+        }
+    }
+
     private void setButtonColor(int stage1){
         switch (stage1) {
             case HIT:
-                mButton_View.setText("HIT");
+                mButton_View.setText(getContext().getResources().getString(R.string.hit_string));
                 btnColor_Int = getContext().getResources().getColor(R.color.hit);
                 break;
             case MISS:
-                mButton_View.setText("MISS");
+                mButton_View.setText(getContext().getResources().getString(R.string.miss_string));
                 btnColor_Int = getContext().getResources().getColor(R.color.miss);
                 break;
             case NEUTRAL:
-                mButton_View.setText("SHOT");
+                mButton_View.setText(getContext().getResources().getString(R.string.shot_string));
                 btnColor_Int = getContext().getResources().getColor(R.color.neutral);
                 break;
             default:
@@ -90,7 +99,7 @@ public class TenaryButtonClass extends LinearLayout implements View.OnClickListe
                 break;
         }
 
-        mButton_View.setBackgroundColor(btnColor_Int);
+        mButton_View.setBackgroundTintList(ColorStateList.valueOf(btnColor_Int));
     }
 
     public int getStage(){
@@ -103,6 +112,10 @@ public class TenaryButtonClass extends LinearLayout implements View.OnClickListe
 
     public boolean isMiss() {
         return (btnStage_Int == MISS);
+    }
+
+    public boolean isNeutral() {
+        return (btnStage_Int == NEUTRAL);
     }
 
     public void resetTernary(){

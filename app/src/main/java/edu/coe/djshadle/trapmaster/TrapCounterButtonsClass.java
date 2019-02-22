@@ -13,6 +13,7 @@ public class TrapCounterButtonsClass extends LinearLayout implements OnStageChan
     private final static int HIT = 0, MISS = 1, NEUTRAL = 2;
 
     // General Variables
+    private int trapCounterChildCount_Int = 0;
 
     // UI References
 	TenaryButtonClass shot1_View, shot2_View, shot3_View, shot4_View, shot5_View;
@@ -42,11 +43,11 @@ public class TrapCounterButtonsClass extends LinearLayout implements OnStageChan
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.view_trap_score_buttons, this);
 
-        shot1_View = (TenaryButtonClass) findViewById(R.id.terShot1);
-        shot2_View = (TenaryButtonClass) findViewById(R.id.terShot2);
-        shot3_View = (TenaryButtonClass) findViewById(R.id.terShot3);
-        shot4_View = (TenaryButtonClass) findViewById(R.id.terShot4);
-        shot5_View = (TenaryButtonClass) findViewById(R.id.terShot5);
+        shot1_View = findViewById(R.id.terShot1);
+        shot2_View = findViewById(R.id.terShot2);
+        shot3_View = findViewById(R.id.terShot3);
+        shot4_View = findViewById(R.id.terShot4);
+        shot5_View = findViewById(R.id.terShot5);
 
         shot1_View.setStageChangeListener(this);
         shot2_View.setStageChangeListener(this);
@@ -54,8 +55,12 @@ public class TrapCounterButtonsClass extends LinearLayout implements OnStageChan
         shot4_View.setStageChangeListener(this);
         shot5_View.setStageChangeListener(this);
 
-        trapCounterLayout = (LinearLayout) findViewById(R.id.lnrTrapScoreBtns);
-        totalHitText = (TextView) findViewById(R.id.txtHits);
+        trapCounterLayout = findViewById(R.id.lnrTrapScoreBtns);
+        totalHitText = findViewById(R.id.txtHits);
+
+        // the minus one is for the textview at the end of this layout
+        trapCounterChildCount_Int = trapCounterLayout.getChildCount() - 1;
+
     }
 
     protected void onFinishInflate(){
@@ -78,10 +83,10 @@ public class TrapCounterButtonsClass extends LinearLayout implements OnStageChan
         // Function returns the number of ternary buttons with stage HIT
         int total = 0;
 
-        for(int i = 0; i < trapCounterLayout.getChildCount() - 1; i++) {
+        for (int i = 0; i < trapCounterChildCount_Int; i++) {
             TenaryButtonClass child = (TenaryButtonClass) trapCounterLayout.getChildAt(i);
             if(child.isHit()){
-                total+=1;
+                total += 1;
             }
         }
 
@@ -90,7 +95,7 @@ public class TrapCounterButtonsClass extends LinearLayout implements OnStageChan
 
     public void resetTrapCounter(){
         // Function iterates through all ternary buttons and resets their stage to NEUTRAL
-        for(int i = 0; i < trapCounterLayout.getChildCount() - 1; i++) {
+        for (int i = 0; i < trapCounterChildCount_Int; i++) {
             TenaryButtonClass child = (TenaryButtonClass) trapCounterLayout.getChildAt(i);
             child.resetTernary();
         }
@@ -103,9 +108,9 @@ public class TrapCounterButtonsClass extends LinearLayout implements OnStageChan
         // Function iterates through all ternary buttons and checks stage
         // Function returns true if all ternary buttons are HIT or MISS (not NEUTRAL)
         boolean checked = true;
-        for(int i = 0; i < trapCounterLayout.getChildCount() - 1; i++) {
+        for (int i = 0; i < trapCounterChildCount_Int; i++) {
             TenaryButtonClass child = (TenaryButtonClass) trapCounterLayout.getChildAt(i);
-            if(child.getStage() == NEUTRAL){
+            if(child.isNeutral()){
                 checked = false;
             }
         }
@@ -116,12 +121,41 @@ public class TrapCounterButtonsClass extends LinearLayout implements OnStageChan
         // Function iterates through all ternary buttons and checks stage
         // Function returns true if all ternary buttons are HIT
         boolean checked = true;
-        for(int i = 0; i < trapCounterLayout.getChildCount() - 1; i++) {
+        for (int i = 0; i < trapCounterChildCount_Int; i++) {
             TenaryButtonClass child = (TenaryButtonClass) trapCounterLayout.getChildAt(i);
-            if(child.getStage() != HIT){
+            if(child.isMiss()){
                 checked = false;
             }
         }
         return checked;
+    }
+
+    public int getNextUncheckedButton() {
+        // Function iterates through all ternary buttons and checks stage
+        // Function returns the first child that is unchecked. If all checked, returns -1
+
+        int nextUnchecked = -1;
+
+        for (int i = 0; i < trapCounterChildCount_Int; i++) {
+            TenaryButtonClass child = (TenaryButtonClass) trapCounterLayout.getChildAt(i);
+            if(child.isNeutral()){
+                nextUnchecked = i;
+                break;
+            }
+        }
+
+        return nextUnchecked;
+    }
+
+    public void setNextChild(int status) {
+        int nextChildIndex = getNextUncheckedButton();
+        if (nextChildIndex >= 0) {
+            TenaryButtonClass child = (TenaryButtonClass) trapCounterLayout.getChildAt(nextChildIndex);
+            child.setStage(status);
+
+            int totalHits = getTotalNumberHit();
+            totalHitText.setText(String.valueOf(totalHits));
+            totalHitChange.OnTotalHitChange();
+        }
     }
 }

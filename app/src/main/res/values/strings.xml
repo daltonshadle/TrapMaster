@@ -18,4 +18,11 @@
     <!--Both-->
     <string name="error_field_required">This field is required</string>
 
+
+
+
+    <string name="hit_string">HIT</string>
+    <string name="miss_string">MISS</string>
+    <string name="shot_string">SHOT</string>
+
 </resources>

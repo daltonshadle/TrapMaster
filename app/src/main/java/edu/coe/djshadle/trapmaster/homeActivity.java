@@ -113,13 +113,13 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initViews(){
-        Button mBtnNewEvent, mBtnArmory, mBtnEventHistory, mBtnProfiles, mBtnQuickEvent, mBtnTeams;
-        mBtnNewEvent = (Button) findViewById(R.id.btnHomeNewEvent);
-        mBtnArmory = (Button) findViewById(R.id.btnHomeArmory);
-        mBtnEventHistory = (Button) findViewById(R.id.btnHomeEventHistory);
-        mBtnProfiles = (Button) findViewById(R.id.btnHomeProfiles);
-        mBtnQuickEvent = (Button) findViewById(R.id.btnHomeQuickEvent);
-        mBtnTeams = (Button) findViewById(R.id.btnHomeTeams);
+        // Initializing all buttons
+        Button mBtnNewEvent = findViewById(R.id.btnHomeNewEvent);
+        Button mBtnArmory = findViewById(R.id.btnHomeArmory);
+        Button mBtnEventHistory = findViewById(R.id.btnHomeEventHistory);
+        Button mBtnProfiles = findViewById(R.id.btnHomeProfiles);
+        Button mBtnQuickEvent = findViewById(R.id.btnHomeQuickEvent);
+        Button mBtnTeams = findViewById(R.id.btnHomeTeams);
 
         mBtnNewEvent.setOnClickListener(this);
         mBtnArmory.setOnClickListener(this);
@@ -128,7 +128,8 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         mBtnQuickEvent.setOnClickListener(this);
         mBtnTeams.setOnClickListener(this);
 
-        mTxtUserEmail_View = (TextView) findViewById(R.id.txtHomeUserEmail);
+        // Initializing all textviews
+        mTxtUserEmail_View = findViewById(R.id.txtHomeUserEmail);
     }
 
     //************************************** Other Functions ***************************************
