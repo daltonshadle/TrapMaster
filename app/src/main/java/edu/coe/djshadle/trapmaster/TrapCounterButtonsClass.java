@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class TrapCounterButtonsClass extends LinearLayout implements OnStageChangeListener {
 
     //********************************** Variables and Constants ***********************************
@@ -148,6 +150,8 @@ public class TrapCounterButtonsClass extends LinearLayout implements OnStageChan
     }
 
     public void setNextChild(int status) {
+        // Function iterates through all ternary buttons and checks stage for next neutral child
+        // Function sets next child to the status provided as parameter
         int nextChildIndex = getNextUncheckedButton();
         if (nextChildIndex >= 0) {
             TenaryButtonClass child = (TenaryButtonClass) trapCounterLayout.getChildAt(nextChildIndex);
@@ -157,5 +161,19 @@ public class TrapCounterButtonsClass extends LinearLayout implements OnStageChan
             totalHitText.setText(String.valueOf(totalHits));
             totalHitChange.OnTotalHitChange();
         }
+    }
+
+    public ArrayList<Integer> getChildStates() {
+        // Function iterates through all ternary buttons and gathers stage
+        // Function returns the five stages of the trap counter buttons
+
+        ArrayList<Integer> childStates = new ArrayList<Integer>(trapCounterChildCount_Int);
+
+        for (int i = 0; i < trapCounterChildCount_Int; i++) {
+            TenaryButtonClass child = (TenaryButtonClass) trapCounterLayout.getChildAt(i);
+            childStates.add(child.getStage());
+        }
+
+        return childStates;
     }
 }

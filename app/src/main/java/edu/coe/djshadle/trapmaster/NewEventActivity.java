@@ -9,21 +9,27 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class NewEventActivity extends AppCompatActivity implements OnTotalHitChange, View.OnClickListener {
 
     //********************************** Variables and Constants ***********************************
     // General Constants
     private final boolean PORTRAIT_ORIENTATION = false; // Allow portrait orientation, landscape
                                                         // is the default TODO: Support Portrait
-    private final static int HIT = 0, MISS = 1, NEUTRAL = 2;
+    private final int HIT = 0, MISS = 1, NEUTRAL = 2;
+    private final int NUM_COUNTER_BUTTON = 5;
+    private final String TRAP_STATE_KEY = "TRAP_STATE_KEY";
 
     // General Variables
     private int trapCounterChildCount_Int = 0;
+    private ArrayList<Integer> trapCounterState_Array;
 
     // UI References
     private TextView mTxtTotalScore_View;
     private LinearLayout mTrapCounter_SubLnrLay;
 
+    //************************************* Activity Functions *************************************
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +43,11 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         }
 
         initViews();
+
+        if (savedInstanceState != null) {
+            trapCounterState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
+            setTrapCounterStates(trapCounterState_Array);
+        }
     }
 
     public void onConfigurationChanged(Configuration newConfig) {
@@ -52,6 +63,29 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+
+        getTrapCounterStates();
+        savedInstanceState.putIntegerArrayList(TRAP_STATE_KEY, trapCounterState_Array);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+
+        trapCounterState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
+        setTrapCounterStates(trapCounterState_Array);
+
+    }
+
+    //************************************* UI View Functions **************************************
     private void initViews() {
         // Initializing all trap counters
         TrapCounterButtonsClass trapCount_1 = findViewById(R.id.tcbCounter1);
@@ -86,6 +120,9 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         // Initializing integer to layout child count
         trapCounterChildCount_Int = mTrapCounter_SubLnrLay.getChildCount();
+
+        // Initializing integer array for trap counter states (5 buttons per counter)
+        trapCounterState_Array = new ArrayList<Integer>(trapCounterChildCount_Int);
 
     }
 
@@ -127,6 +164,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         }
     }
 
+    //********************************** Trap Counter Functions ************************************
     private int getNextUncheckedTrapCounter() {
         int nextChild = -1;
 
@@ -150,6 +188,31 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                     (TrapCounterButtonsClass) mTrapCounter_SubLnrLay.getChildAt(nextUnchecked);
 
             tempTrapCounter.setNextChild(status);
+        }
+    }
+
+    private void getTrapCounterStates() {
+        for (int i = 0; i < trapCounterChildCount_Int; i++) {
+            TrapCounterButtonsClass tempTrapCounter =
+                    (TrapCounterButtonsClass) mTrapCounter_SubLnrLay.getChildAt(i);
+
+            ArrayList<Integer> tempTrapCounterStates = tempTrapCounter.getChildStates();
+            for (int j = 0; j < NUM_COUNTER_BUTTON; j++) {
+                trapCounterState_Array.add(tempTrapCounterStates.get(j));
+            }
+        }
+    }
+
+    private void setTrapCounterStates(ArrayList<Integer> stateList) {
+        for (int i = 0; i < trapCounterChildCount_Int; i++) {
+            TrapCounterButtonsClass tempTrapCounter =
+                    (TrapCounterButtonsClass) mTrapCounter_SubLnrLay.getChildAt(i);
+            tempTrapCounter.resetTrapCounter();
+
+            for (int j = 0; j < NUM_COUNTER_BUTTON; j++) {
+                int index = (i * NUM_COUNTER_BUTTON) + j;
+                tempTrapCounter.setNextChild(stateList.get(index));
+            }
         }
     }
 }
