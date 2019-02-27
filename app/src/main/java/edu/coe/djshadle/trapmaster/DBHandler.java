@@ -1,5 +1,6 @@
 package edu.coe.djshadle.trapmaster;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -176,7 +177,7 @@ public class DBHandler extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    //************************************** Profile Functions ***************************************
+    //************************************* Profile Functions **************************************
     public void insertProfileInDB (ProfileClass p){
         dbWhole = this.getWritableDatabase();
 
@@ -193,15 +194,16 @@ public class DBHandler extends SQLiteOpenHelper {
 
         dbWhole = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_PROFILES + " WHERE " + KEY_PROFILE_USERNAME + " = '" + email + "'";
-        Cursor cursor = dbWhole.rawQuery(query, null);
+        @SuppressLint("Recycle") Cursor cursor = dbWhole.rawQuery(query, null);
 
-        if (cursor != null)
+        if (cursor != null) {
             cursor.moveToFirst();
 
-        tempProfile.setProfileID_Str(cursor.getString(cursor.getColumnIndex(KEY_PROFILE_ID)));
-        tempProfile.setProfileEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_PROFILE_USERNAME)));
-        tempProfile.setProfilePassword_Str((cursor.getString(cursor.getColumnIndex(KEY_PROFILE_PASSWORD))));
-
+            tempProfile.setProfileID_Str(cursor.getString(cursor.getColumnIndex(KEY_PROFILE_ID)));
+            tempProfile.setProfileEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_PROFILE_USERNAME)));
+            tempProfile.setProfilePassword_Str((cursor.getString(cursor.getColumnIndex(KEY_PROFILE_PASSWORD))));
+        }
+        
         dbWhole.close();
         return tempProfile;
     }
@@ -252,6 +254,42 @@ public class DBHandler extends SQLiteOpenHelper {
 
         dbWhole.close();
         return doesEmailExist;
+    }
+
+    //************************************* Profile Functions **************************************
+    public void insertShotInDB (ShotClass s) {
+        dbWhole = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_SHOT_PROFILE_NAME, s.getShotEmail_Str());
+        values.put(KEY_SHOT_EVENT_NAME, s.getShotEventName_Str());
+        values.put(KEY_SHOT_NUMBER, s.getShotTotalNum_Str());
+        values.put(KEY_SHOT_HIT_MISS, s.getShotHitNum_Str());
+        values.put(KEY_SHOT_NOTES, s.getShotNotes_Str());
+
+        dbWhole.insert(TABLE_SHOT, null, values);
+        dbWhole.close();
+    }
+
+    public ShotClass getShotFromDB (String email) {
+        ShotClass tempShot = new ShotClass();
+
+        dbWhole = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_SHOT + " WHERE " + KEY_SHOT_PROFILE_NAME +
+                " = '" + email + "'";
+        @SuppressLint("Recycle") Cursor cursor = dbWhole.rawQuery(query, null);
+
+        if (cursor != null) {
+            cursor.moveToLast();
+
+            tempShot.setShotEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_PROFILE_NAME)));
+            tempShot.setShotEventName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_EVENT_NAME)));
+            tempShot.setShotTotalNum_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_NUMBER)));
+            tempShot.setShotHitNum_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_HIT_MISS)));
+            tempShot.setShotNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_NOTES)));
+        }
+        dbWhole.close();
+        return tempShot;
     }
 
 }

@@ -22,6 +22,16 @@ public class ShotClass {
         this.shotNotes_Str = shotNotes_Str;
     }
 
+    public ShotClass(String shotEmail_Str, String shotEventName_Str,
+                     String shotTotalNum_Str, String shotHitNum_Str, String shotNotes_Str) {
+        this.shotID_Str = "tempID";
+        this.shotEmail_Str = shotEmail_Str;
+        this.shotEventName_Str = shotEventName_Str;
+        this.shotTotalNum_Str = shotTotalNum_Str;
+        this.shotHitNum_Str = shotHitNum_Str;
+        this.shotNotes_Str = shotNotes_Str;
+    }
+
     public ShotClass() {
         this.shotID_Str = "tempID";
         this.shotEmail_Str = "tempEmail";
@@ -32,6 +42,14 @@ public class ShotClass {
     }
 
     // Setters and Getters
+    public String getShotID_Str() {
+        return shotID_Str;
+    }
+
+    public void setShotID_Str(String shotID_Str) {
+        this.shotID_Str = shotID_Str;
+    }
+
     public String getShotEmail_Str() {
         return shotEmail_Str;
     }

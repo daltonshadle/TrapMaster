@@ -19,11 +19,16 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                                                         // is the default TODO: Support Portrait
     private final int HIT = 0, MISS = 1, NEUTRAL = 2;
     private final int NUM_COUNTER_BUTTON = 5;
+    private final int TOTAL_NUM_SHOTS = 25;
     private final String TRAP_STATE_KEY = "TRAP_STATE_KEY";
 
     // General Variables
     private int trapCounterChildCount_Int = 0;
+    private int totalHits_Int = 0;
     private ArrayList<Integer> trapCounterState_Array;
+    private String mCurrentUserEmail_Str = "tempEmail";
+    private String mEventName_Str = "tempEventName";
+    private String mShotNotes_Str = "tempNotes";
 
     // UI References
     private TextView mTxtTotalScore_View;
@@ -47,6 +52,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         if (savedInstanceState != null) {
             trapCounterState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
             setTrapCounterStates(trapCounterState_Array);
+        } else {
+            mCurrentUserEmail_Str = getIntent().getStringExtra(getString(R.string.current_user_email));
         }
     }
 
@@ -87,6 +94,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     //************************************* UI View Functions **************************************
     private void initViews() {
+        // Function initializes all views and variables needed for this activity
+
         // Initializing all trap counters
         TrapCounterButtonsClass trapCount_1 = findViewById(R.id.tcbCounter1);
         TrapCounterButtonsClass trapCount_2 = findViewById(R.id.tcbCounter2);
@@ -114,7 +123,6 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         // Initializing all textviews
         mTxtTotalScore_View = findViewById(R.id.totalScore_Txt);
 
-
         // Initializing all layouts
         mTrapCounter_SubLnrLay = findViewById(R.id.newEventTrapCounter_SubLnrLay);
 
@@ -128,20 +136,18 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     @Override
     public void OnTotalHitChange() {
-        int total = 0;
+        totalHits_Int = 0;
         for(int i = 0; i < trapCounterChildCount_Int; i++){
             TrapCounterButtonsClass tempTrapCounter =
                     (TrapCounterButtonsClass) mTrapCounter_SubLnrLay.getChildAt(i);
-            total += tempTrapCounter.getTotalNumberHit();
+            totalHits_Int += tempTrapCounter.getTotalNumberHit();
         }
 
-        mTxtTotalScore_View.setText(String.valueOf(total));
+        mTxtTotalScore_View.setText(String.valueOf(totalHits_Int));
     }
 
     @Override
     public void onClick(View view) {
-        // TODO: Call the getNextUncheckedChildFunction and set a variable to that index
-
         switch (view.getId()) {
             case R.id.hit_Btn:
                 setNextUncheckedTrapCounter(HIT);
@@ -150,15 +156,18 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                 setNextUncheckedTrapCounter(MISS);
                 break;
             case R.id.clear_Btn:
-                //get all the trapCounter controls and reset their totals and buttons
-                for (int i = 0; i < (mTrapCounter_SubLnrLay.getChildCount()); i++) {
-                    TrapCounterButtonsClass tempTrapCounter =
-                            (TrapCounterButtonsClass) mTrapCounter_SubLnrLay.getChildAt(i);
-                    tempTrapCounter.resetTrapCounter();
-                }
+                resetAllTrapCounter();
                 break;
             case R.id.save_Btn:
+                if(isAllTrapCounterChecked()) {
+                    saveScoreToDB(mCurrentUserEmail_Str, mEventName_Str, TOTAL_NUM_SHOTS,
+                            totalHits_Int, mShotNotes_Str);
 
+                    // TODO: remove this temp code from testing
+                    Intent i = new Intent(this, ProfilesActivity.class);
+                    i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+                    startActivity(i);
+                }
                 break;
 
         }
@@ -166,6 +175,9 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     //********************************** Trap Counter Functions ************************************
     private int getNextUncheckedTrapCounter() {
+        // Function iterates through all trap counters to find the next neutral child
+        // Function returns the index of the next neutral child
+
         int nextChild = -1;
 
         for (int i = 0; i < trapCounterChildCount_Int; i++) {
@@ -181,6 +193,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     }
 
     private void setNextUncheckedTrapCounter(int status) {
+        // Function sets next unchecked child to the status provided as parameter
+
         int nextUnchecked = getNextUncheckedTrapCounter();
 
         if (nextUnchecked != -1) {
@@ -192,6 +206,9 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     }
 
     private void getTrapCounterStates() {
+        // Function iterates through all trap counters collecting states
+        // Function sets an ArrayList to states for use of saved instances
+
         for (int i = 0; i < trapCounterChildCount_Int; i++) {
             TrapCounterButtonsClass tempTrapCounter =
                     (TrapCounterButtonsClass) mTrapCounter_SubLnrLay.getChildAt(i);
@@ -204,6 +221,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     }
 
     private void setTrapCounterStates(ArrayList<Integer> stateList) {
+        // Function iterates through all trap counters setting states determined by stateList
+
         for (int i = 0; i < trapCounterChildCount_Int; i++) {
             TrapCounterButtonsClass tempTrapCounter =
                     (TrapCounterButtonsClass) mTrapCounter_SubLnrLay.getChildAt(i);
@@ -215,4 +234,47 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             }
         }
     }
+
+    private boolean isAllTrapCounterChecked() {
+        // Function iterates through all trap counters checking states
+        // Function returns true if all buttons are checked
+
+        boolean allChecked = true;
+
+        for (int i = 0; i < trapCounterChildCount_Int; i++) {
+            TrapCounterButtonsClass tempTrapCounter =
+                    (TrapCounterButtonsClass) mTrapCounter_SubLnrLay.getChildAt(i);
+
+            if(!tempTrapCounter.allChecked()) {
+                allChecked = false;
+                break;
+            }
+        }
+
+        return allChecked;
+    }
+
+    private void resetAllTrapCounter() {
+        // Function iterates through all trap counters reseting states to neutral
+        for (int i = 0; i < (mTrapCounter_SubLnrLay.getChildCount()); i++) {
+            TrapCounterButtonsClass tempTrapCounter =
+                    (TrapCounterButtonsClass) mTrapCounter_SubLnrLay.getChildAt(i);
+            tempTrapCounter.resetTrapCounter();
+        }
+    }
+
+    //************************************ Database Functions **************************************
+    private void saveScoreToDB(String email_Str, String eventName_Str, int totalShot_Int,
+                           int totalHit_Int, String notes_Str) {
+        // Function takes info necessary to save score to database
+
+        DBHandler db = new DBHandler(this);
+
+        ShotClass temp_Shot = new ShotClass(email_Str, eventName_Str, Integer.toString(totalShot_Int),
+                Integer.toString(totalHit_Int), notes_Str);
+
+        db.insertShotInDB(temp_Shot);
+    }
+
+
 }
