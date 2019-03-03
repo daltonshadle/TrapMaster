@@ -203,7 +203,7 @@ public class DBHandler extends SQLiteOpenHelper {
             tempProfile.setProfileEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_PROFILE_USERNAME)));
             tempProfile.setProfilePassword_Str((cursor.getString(cursor.getColumnIndex(KEY_PROFILE_PASSWORD))));
         }
-        
+
         dbWhole.close();
         return tempProfile;
     }

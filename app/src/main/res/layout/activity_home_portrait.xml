@@ -10,75 +10,67 @@
         android:id="@+id/lnrHomeEventButtons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
         android:orientation="vertical">
 
         <Button
             android:id="@+id/btnHomeNewEvent"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="@dimen/HomeButtonWidth"
             android:layout_height="@dimen/HomeButtonHeight"
+            android:drawableTop="@drawable/event_icon"
             android:text="New Event"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/btnHomeQuickEvent"
-            android:layout_width="@dimen/HomeButtonWidth"
-            android:layout_height="@dimen/HomeButtonHeight"
-            android:text="Quick Event"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <Button
             android:id="@+id/btnHomeEventHistory"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="@dimen/HomeButtonWidth"
             android:layout_height="@dimen/HomeButtonHeight"
             android:text="Event History"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            android:drawableTop="@drawable/history_icon"/>
 
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/lnrHomeTeamProfileButtons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="false"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent">
+        <Button
+            android:id="@+id/btnHomeArmory"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="@dimen/HomeButtonWidth"
+            android:layout_height="@dimen/HomeButtonHeight"
+            android:drawableTop="@drawable/armory_icon"
+            android:text="Armory"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnHomeProfiles" />
 
         <Button
             android:id="@+id/btnHomeTeams"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="@dimen/HomeButtonWidth"
             android:layout_height="@dimen/HomeButtonHeight"
+            android:drawableTop="@drawable/team_icon"
             android:text="Teams"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btnHomeProfiles"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="@dimen/HomeButtonWidth"
             android:layout_height="@dimen/HomeButtonHeight"
+            android:drawableTop="@drawable/profile_icon"
             android:text="Profiles"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnHomeTeams" />
 
-        <Button
-            android:id="@+id/btnHomeArmory"
-            android:layout_width="@dimen/HomeButtonWidth"
-            android:layout_height="@dimen/HomeButtonHeight"
-            android:text="Armory"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnHomeProfiles" />
-
     </LinearLayout>
+
 
     <TextView
         android:id="@+id/txtHomeUserEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
 
 </RelativeLayout>

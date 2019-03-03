@@ -98,11 +98,6 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
                 i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
                 startActivity(i);
                 break;
-            case R.id.btnHomeQuickEvent:
-                i = new Intent(this, QuickEventActivity.class);
-                i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
-                startActivity(i);
-                break;
             case R.id.btnHomeTeams:
                 i = new Intent(this, TeamsActivity.class);
                 i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
@@ -118,14 +113,12 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         Button mBtnArmory = findViewById(R.id.btnHomeArmory);
         Button mBtnEventHistory = findViewById(R.id.btnHomeEventHistory);
         Button mBtnProfiles = findViewById(R.id.btnHomeProfiles);
-        Button mBtnQuickEvent = findViewById(R.id.btnHomeQuickEvent);
         Button mBtnTeams = findViewById(R.id.btnHomeTeams);
 
         mBtnNewEvent.setOnClickListener(this);
         mBtnArmory.setOnClickListener(this);
         mBtnEventHistory.setOnClickListener(this);
         mBtnProfiles.setOnClickListener(this);
-        mBtnQuickEvent.setOnClickListener(this);
         mBtnTeams.setOnClickListener(this);
 
         // Initializing all textviews
