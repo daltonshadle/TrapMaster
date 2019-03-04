@@ -65,8 +65,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setUpViews() {
-        mEmail_View = (EditText) findViewById(R.id.email);
-        mPassword_View = (EditText) findViewById(R.id.password);
+        mEmail_View = findViewById(R.id.email);
+        mPassword_View = findViewById(R.id.password);
 
         mPassword_View.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -79,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        Button mEmailSignIn_Button = (Button) findViewById(R.id.email_sign_in_button);
+        Button mEmailSignIn_Button = findViewById(R.id.email_sign_in_button);
         mEmailSignIn_Button.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,11 +87,21 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        Button mEmailRegisterButton = (Button) findViewById(R.id.email_register_button);
+        Button mEmailRegisterButton = findViewById(R.id.email_register_button);
         mEmailRegisterButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 register();
+            }
+        });
+
+        Button mQuickEventButton = findViewById(R.id.btnLoginQuickEvent);
+        mQuickEventButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent newEventActivity_Intent = new Intent(LoginActivity.this, NewEventActivity.class);
+                newEventActivity_Intent.putExtra(getString(R.string.quick_event_flag_key), true);
+                startActivity(newEventActivity_Intent);
             }
         });
 

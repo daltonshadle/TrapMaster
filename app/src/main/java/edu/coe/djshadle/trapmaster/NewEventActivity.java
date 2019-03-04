@@ -25,6 +25,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     // General Variables
     private int trapCounterChildCount_Int = 0;
     private int totalHits_Int = 0;
+    private boolean quickEventFlag_Bool = false;
     private ArrayList<Integer> trapCounterState_Array;
     private String mCurrentUserEmail_Str = "tempEmail";
     private String mEventName_Str = "tempEventName";
@@ -52,6 +53,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         if (savedInstanceState != null) {
             trapCounterState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
             setTrapCounterStates(trapCounterState_Array);
+
+            quickEventFlag_Bool = savedInstanceState.getBoolean(getString(R.string.quick_event_flag_key));
         } else {
             mCurrentUserEmail_Str = getIntent().getStringExtra(getString(R.string.current_user_email));
         }
@@ -159,14 +162,19 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                 resetAllTrapCounter();
                 break;
             case R.id.save_Btn:
-                if(isAllTrapCounterChecked()) {
+                if (isAllTrapCounterChecked()) {
                     saveScoreToDB(mCurrentUserEmail_Str, mEventName_Str, TOTAL_NUM_SHOTS,
                             totalHits_Int, mShotNotes_Str);
 
                     // TODO: remove this temp code from testing
-                    Intent i = new Intent(this, ProfilesActivity.class);
-                    i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
-                    startActivity(i);
+
+                    if (!quickEventFlag_Bool) {
+                        Intent i = new Intent(this, ProfilesActivity.class);
+                        i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+                        startActivity(i);
+                    } else {
+                        // TODO: fill in code to handle quick events, basically need them to sign in
+                    }
                 }
                 break;
 

@@ -3,12 +3,14 @@
     <string name="app_name">Trap Master</string>
     <string name="title_activity_login">Sign in</string>
     <string name="current_user_email">current_user_email</string>
+    <string name="quick_event_flag_key">new_event_flag</string>
 
     <!--************************************* Login Strings *************************************-->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_register">Register</string>
+    <string name="quick_event_text">Want to score an event before signing in? Try launching a Quick Event!</string>
     <!--Register-->
     <string name="error_invalid_email_format">This email address format is invalid</string>
     <string name="error_incorrect_password_length">This password is too short</string>
