@@ -1,10 +1,23 @@
+/***************************************************************************************************
+ * FILENAME : homeActivity.java
+ *
+ * AUTHOR : Dalton Shadle
+ *
+ * DESCRIPTION : Holds functions for the home activity of this application
+ *
+ * NOTES : N/A
+ *
+ * Copyright Dalton Shadle 2019.  All rights reserved.
+ *
+ **************************************************************************************************/
+
 package edu.coe.djshadle.trapmaster;
 
+//******************************************** Imports *********************************************
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;

@@ -1,3 +1,16 @@
+/***************************************************************************************************
+ * FILENAME : EventClass.java
+ *
+ * AUTHOR : Dalton Shadle
+ *
+ * DESCRIPTION : Holds variables and functions for EventClass object
+ *
+ * NOTES : N/A
+ *
+ * Copyright Dalton Shadle 2019.  All rights reserved.
+ *
+ **************************************************************************************************/
+
 package edu.coe.djshadle.trapmaster;
 
 public class EventClass {
@@ -17,6 +30,17 @@ public class EventClass {
     //************************************* Public Functions ***************************************
     // Constructors
     public EventClass() {
+        /*******************************************************************************************
+         * Function: EventClass
+         *
+         * Purpose: Constructor for this class, no parameters so all values are initialized to temp
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         this.eventID_Str = "tempID";
         this.eventEmail_Str = "tempEmail";
         this.eventTeam_Str = "tempTeam";
@@ -34,6 +58,26 @@ public class EventClass {
                       String eventName_Str, String eventLocation_Str, String eventGun_Str,
                       String eventLoad_Str, String eventDate_Str, String eventScore_Str,
                       String eventWeather_Str, String eventNotes_Str) {
+        /*******************************************************************************************
+         * Function: EventClass
+         *
+         * Purpose: Constructor for this class with parameters
+         *
+         * Parameters: eventEmail_Str (IN) - email tagged with this event
+         *             eventTeam_Str (IN) - team tagged with the event
+         *             eventName_Str (IN) - name of the event
+         *             eventLocation_Str (IN) - location tagged with the event
+         *             eventGun_Str (IN) - gun tagged with the event
+         *             eventLoad_Str (IN) - load tagged with the event
+         *             eventDate_Str (IN) - date tagged with the event
+         *             eventScore_Str (IN) - score tagged with the event
+         *             eventWeather_Str (IN) - weather tagged with the event
+         *             eventNotes_Str (IN) - notes tagged with the event
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         this.eventID_Str = "tempID";
         this.eventEmail_Str = eventEmail_Str;
         this.eventTeam_Str = eventTeam_Str;
@@ -47,7 +91,17 @@ public class EventClass {
         this.eventNotes_Str = eventNotes_Str;
     }
 
-    // Setters and Getters
+    // Getters and Setters
+    /*******************************************************************************************
+     * Function: get*(), set*()
+     *
+     * Purpose: Getter and setter functions for this class, I would list them all, but I'm lazy
+     *
+     * Parameters: None
+     *
+     * Returns: None
+     *
+     ******************************************************************************************/
     public String getEventEmail_Str() {
         return eventEmail_Str;
     }

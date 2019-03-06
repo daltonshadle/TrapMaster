@@ -1,5 +1,19 @@
+/***************************************************************************************************
+ * FILENAME : NewEventActivity.java
+ *
+ * AUTHOR : Dalton Shadle
+ *
+ * DESCRIPTION : Holds functions for the New Event activity of this application
+ *
+ * NOTES : N/A
+ *
+ * Copyright Dalton Shadle 2019.  All rights reserved.
+ *
+ **************************************************************************************************/
+
 package edu.coe.djshadle.trapmaster;
 
+//******************************************** Imports *********************************************
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
@@ -38,6 +52,18 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     //************************************* Activity Functions *************************************
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        /*******************************************************************************************
+         * Function: onCreate
+         *
+         * Purpose: When activity is started, function initializes the activity with any
+         *          saved instances
+         *
+         * Parameters: savedInstanceState (IN) - provides the saved instances from previous state
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         super.onCreate(savedInstanceState);
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT && PORTRAIT_ORIENTATION) {
@@ -48,7 +74,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             setContentView(R.layout.activity_new_event_landscape);
         }
 
-        initViews();
+        initializeViews();
 
         if (savedInstanceState != null) {
             trapCounterState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
@@ -61,6 +87,17 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     }
 
     public void onConfigurationChanged(Configuration newConfig) {
+        /*******************************************************************************************
+         * Function: onConfigurationChanged
+         *
+         * Purpose: Function called when configuration is changed (denoted by manifest file)
+         *
+         * Parameters: newConfig (IN) - contains information on configuration
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         super.onConfigurationChanged(newConfig);
 
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT && PORTRAIT_ORIENTATION) {
@@ -75,6 +112,17 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
+        /*******************************************************************************************
+         * Function: onSaveInstanceState
+         *
+         * Purpose: Function saves instances when activity is paused
+         *
+         * Parameters: savedInstanceState (OUT) - provides the saved instances from current state
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+        
         super.onSaveInstanceState(savedInstanceState);
         // Save UI state changes to the savedInstanceState.
         // This bundle will be passed to onCreate if the process is
@@ -86,6 +134,17 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
+        /*******************************************************************************************
+         * Function: onRestoreInstanceState
+         *
+         * Purpose: Function restores instances when activity resumes
+         *
+         * Parameters: savedInstanceState (IN) - provides the saved instances from previous state
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+        
         super.onRestoreInstanceState(savedInstanceState);
         // Restore UI state from the savedInstanceState.
         // This bundle has also been passed to onCreate.
@@ -96,8 +155,17 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     }
 
     //************************************* UI View Functions **************************************
-    private void initViews() {
-        // Function initializes all views and variables needed for this activity
+    private void initializeViews() {
+        /*******************************************************************************************
+         * Function: initializeViews
+         *
+         * Purpose: Function initializes all variables and all UI views to a resource id
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
 
         // Initializing all trap counters
         TrapCounterButtonsClass trapCount_1 = findViewById(R.id.tcbCounter1);
@@ -139,8 +207,21 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     @Override
     public void OnTotalHitChange() {
+        /*******************************************************************************************
+         * Function: OnTotalHitChange
+         *
+         * Purpose: Function listener for UI trap counters to provide functionality when total hit
+         *          counter is updated
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         totalHits_Int = 0;
-        for(int i = 0; i < trapCounterChildCount_Int; i++){
+
+        for (int i = 0; i < trapCounterChildCount_Int; i++){
             TrapCounterButtonsClass tempTrapCounter =
                     (TrapCounterButtonsClass) mTrapCounter_SubLnrLay.getChildAt(i);
             totalHits_Int += tempTrapCounter.getTotalNumberHit();
@@ -151,6 +232,17 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     @Override
     public void onClick(View view) {
+        /*******************************************************************************************
+         * Function: OnClick
+         *
+         * Purpose: Function listener for buttons that provides functionality when clicked
+         *
+         * Parameters: view (IN) - is the clicked view that enacted listener
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         switch (view.getId()) {
             case R.id.hit_Btn:
                 setNextUncheckedTrapCounter(HIT);
@@ -183,8 +275,16 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     //********************************** Trap Counter Functions ************************************
     private int getNextUncheckedTrapCounter() {
-        // Function iterates through all trap counters to find the next neutral child
-        // Function returns the index of the next neutral child
+        /*******************************************************************************************
+         * Function: getNextUncheckedTrapCounter
+         *
+         * Purpose: Function iterates through all trap counters to find the next neutral child
+         *
+         * Parameters: None
+         *
+         * Returns: nextChild - index of the next neutral child
+         *
+         ******************************************************************************************/
 
         int nextChild = -1;
 
@@ -201,7 +301,16 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     }
 
     private void setNextUncheckedTrapCounter(int status) {
-        // Function sets next unchecked child to the status provided as parameter
+        /*******************************************************************************************
+         * Function: setNextUncheckedTrapCounter
+         *
+         * Purpose: Function sets next unchecked child to the status provided as parameter
+         *
+         * Parameters: status - provides the status for what the next neutral child should be set to
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
 
         int nextUnchecked = getNextUncheckedTrapCounter();
 
@@ -214,8 +323,17 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     }
 
     private void getTrapCounterStates() {
-        // Function iterates through all trap counters collecting states
-        // Function sets an ArrayList to states for use of saved instances
+        /*******************************************************************************************
+         * Function: getTrapCounterStates
+         *
+         * Purpose: Function iterates through all trap counters collecting states and sets ArrayList
+         *          to states of trap counters (used for saved instances)
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
 
         for (int i = 0; i < trapCounterChildCount_Int; i++) {
             TrapCounterButtonsClass tempTrapCounter =
@@ -229,7 +347,17 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     }
 
     private void setTrapCounterStates(ArrayList<Integer> stateList) {
-        // Function iterates through all trap counters setting states determined by stateList
+        /*******************************************************************************************
+         * Function: setTrapCounterStates
+         *
+         * Purpose: Function iterates through all trap counters setting states determined
+         *          by stateList
+         *
+         * Parameters: stateList (IN) - provides previous states for all trap counters
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
 
         for (int i = 0; i < trapCounterChildCount_Int; i++) {
             TrapCounterButtonsClass tempTrapCounter =
@@ -244,8 +372,16 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     }
 
     private boolean isAllTrapCounterChecked() {
-        // Function iterates through all trap counters checking states
-        // Function returns true if all buttons are checked
+        /*******************************************************************************************
+         * Function: isAllTrapCounterChecked
+         *
+         * Purpose: Function iterates through all trap counters checking states
+         *
+         * Parameters: None
+         *
+         * Returns: allChecked - returns true if all buttons are checked
+         *
+         ******************************************************************************************/
 
         boolean allChecked = true;
 
@@ -263,7 +399,18 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     }
 
     private void resetAllTrapCounter() {
-        // Function iterates through all trap counters reseting states to neutral
+        /*******************************************************************************************
+         * Function: resetAllTrapCounter
+         *
+         * Purpose: Function iterates through all trap counters resetting states to neutral and
+         *          clearing the score
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         for (int i = 0; i < (mTrapCounter_SubLnrLay.getChildCount()); i++) {
             TrapCounterButtonsClass tempTrapCounter =
                     (TrapCounterButtonsClass) mTrapCounter_SubLnrLay.getChildAt(i);
@@ -274,7 +421,20 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     //************************************ Database Functions **************************************
     private void saveScoreToDB(String email_Str, String eventName_Str, int totalShot_Int,
                            int totalHit_Int, String notes_Str) {
-        // Function takes info necessary to save score to database
+        /*******************************************************************************************
+         * Function: saveScoreToDB
+         *
+         * Purpose: Function takes info necessary to save score to database
+         *
+         * Parameters: email_Str (IN) - email of the user
+         *             eventName_Str (IN) - name of the event
+         *             totalShot_Int (IN) - number of total possible shots taken
+         *             totalHit_Int (IN) - number of total hits
+         *             notes_Str (IN) - notes from the shoot
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
 
         DBHandler db = new DBHandler(this);
 

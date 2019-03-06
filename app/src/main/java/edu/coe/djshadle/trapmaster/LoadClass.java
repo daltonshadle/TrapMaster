@@ -1,3 +1,17 @@
+/***************************************************************************************************
+ * FILENAME : LoadClass.java
+ *
+ * AUTHOR : Dalton Shadle
+ *
+ * DESCRIPTION : Holds variables and functions for LoadClass object
+ *
+ * NOTES : N/A
+ *
+ * Copyright Dalton Shadle 2019.  All rights reserved.
+ *
+ **************************************************************************************************/
+
+
 package edu.coe.djshadle.trapmaster;
 
 public class LoadClass {
@@ -14,6 +28,17 @@ public class LoadClass {
     //************************************* Public Functions ***************************************
     // Constructors
     public LoadClass() {
+        /*******************************************************************************************
+         * Function: LoadClass
+         *
+         * Purpose: Constructor for this class, no parameters so all values are initialized to temp
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         this.loadID_Str = "tempID";
         this.loadEmail_Str = "tempEmail";
         this.loadNickname_Str = "tempNickname";
@@ -27,6 +52,23 @@ public class LoadClass {
     public LoadClass(String loadEmail_Str, String loadNickname_Str,
                      String loadBrand_Str, String loadGauge_Str, String loadLength_Str,
                      String loadGrain_Str, String loadNotes_Str) {
+        /*******************************************************************************************
+         * Function: LoadClass
+         *
+         * Purpose: Constructor for this class with parameters
+         *
+         * Parameters: loadEmail_Str (IN) - email tagged with this load
+         *             loadNickname_Str (IN) - name of the load
+         *             loadBrand_Str (IN) - brand tagged with the load
+         *             loadGauge_Str (IN) - gauge tagged with the load
+         *             loadLength_Str (IN) - length tagged with the load
+         *             loadGrain_Str (IN) - grain tagged with the load
+         *             loadNotes_Str (IN) - notes tagged with the load
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         this.loadID_Str = "tempID";
         this.loadEmail_Str = loadEmail_Str;
         this.loadNickname_Str = loadNickname_Str;
@@ -38,6 +80,16 @@ public class LoadClass {
     }
 
     // Getters and Setters
+    /*******************************************************************************************
+     * Function: get*(), set*()
+     *
+     * Purpose: Getter and setter functions for this class, I would list them all, but I'm lazy
+     *
+     * Parameters: None
+     *
+     * Returns: None
+     *
+     ******************************************************************************************/
     public String getLoadEmail_Str() {
         return loadEmail_Str;
     }

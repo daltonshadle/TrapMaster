@@ -1,15 +1,32 @@
+/***************************************************************************************************
+ * FILENAME : DBHandler.java
+ *
+ * AUTHOR : Dalton Shadle
+ *
+ * DESCRIPTION : Holds functions for handling database operations
+ *
+ * NOTES : Tables include: (A better description of these can be found on the draw.io schematic)
+ *          - Profile
+ *          - Gun
+ *          - Load
+ *          - Event
+ *          - Location
+ *          - Shot (Score)
+ *          - Team
+ *
+ * Copyright Dalton Shadle 2019.  All rights reserved.
+ *
+ **************************************************************************************************/
+
 package edu.coe.djshadle.trapmaster;
 
+//******************************************** Imports *********************************************
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-/**
- * Created by Shadle on 6/23/2017.
- */
 
 public class DBHandler extends SQLiteOpenHelper {
     //********************************** Variables and Constants ***********************************
@@ -81,15 +98,51 @@ public class DBHandler extends SQLiteOpenHelper {
 
     //************************************ General DB Functions ************************************
     public DBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+        /*******************************************************************************************
+         * Function: DBHandler
+         *
+         * Purpose: Constructor for this class
+         *
+         * Parameters: context (IN) - FILL_IN
+         *             name (IN) - FILL_IN
+         *             factory (IN) - FILL_IN
+         *             version (IN) - FILL_IN
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         super(context, name, factory, version);
     }
 
     public DBHandler(Context context) {
+        /*******************************************************************************************
+         * Function: DBHandler
+         *
+         * Purpose: Constructor for this class
+         *
+         * Parameters: context (IN) - FILL_IN
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        /*******************************************************************************************
+         * Function: onCreate
+         *
+         * Purpose: Initializes all the tables for the database
+         *
+         * Parameters: db (IN) - Provides the SQLite database variable for initializing
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         dbWhole = db;
 
         //Profile Table
@@ -168,17 +221,40 @@ public class DBHandler extends SQLiteOpenHelper {
                 + KEY_TEAM_LIST + " TEXT"
                 + ")";
         db.execSQL(CREATE_TEAM_TABLE);
-
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        /*******************************************************************************************
+         * Function: onUpgrade
+         *
+         * Purpose: Function upgrades the database and version number
+         *
+         * Parameters: db (IN) - SQLite database variable for upgrading
+         *             oldVersion (IN) - old version number
+         *             newVersion (IN) - new version number
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROFILES);
         onCreate(db);
     }
 
     //************************************* Profile Functions **************************************
     public void insertProfileInDB (ProfileClass p){
+        /*******************************************************************************************
+         * Function: insertProfileInDB
+         *
+         * Purpose: Function inserts a profile into the database based on the info provided in p
+         *
+         * Parameters: p (IN) - ProfileClass object to insert into database
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         dbWhole = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -190,6 +266,18 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public ProfileClass getProfileFromDB (String email){
+        /*******************************************************************************************
+         * Function: getProfileFromDB
+         *
+         * Purpose: Function gets a profile based on the email provided
+         *
+         * Parameters: email (IN) - key string for finding profile
+         *
+         * Returns: tempProfile - variable that contains all info from database for this email
+         *          TODO: make this return false or -1 or indicate if profile not found
+         *
+         ******************************************************************************************/
+
         ProfileClass tempProfile = new ProfileClass();
 
         dbWhole = this.getReadableDatabase();
@@ -209,6 +297,18 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public boolean doesPassMatchInDB(String email, String pass){
+        /*******************************************************************************************
+         * Function: doesPassMatchInDB
+         *
+         * Purpose: Function compares password to profile based on the email provided
+         *
+         * Parameters: email (IN) - key string for finding profile
+         *             pass (IN) - password attempt
+         *
+         * Returns: doesPassMatch - returns true if the pass parameter matches password listed in db
+         *
+         ******************************************************************************************/
+
         String dbPass;
         boolean doesPassMatch = false;
         String query = "SELECT " + KEY_PROFILE_PASSWORD + " FROM " + TABLE_PROFILES + " WHERE " + KEY_PROFILE_USERNAME + " = '" + email + "'";
@@ -233,6 +333,17 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public boolean isEmailInDB(String email) {
+        /*******************************************************************************************
+         * Function: isEmailInDB
+         *
+         * Purpose: Function decides whether email provided is stored in db
+         *
+         * Parameters: email (IN) - key string for finding profile
+         *
+         * Returns: doesEmailExist - returns true if the email parameter is in the db
+         *
+         ******************************************************************************************/
+
         String dbName;
         boolean doesEmailExist = false;
         String query = "SELECT " + KEY_PROFILE_USERNAME + " FROM " + TABLE_PROFILES;
@@ -258,6 +369,17 @@ public class DBHandler extends SQLiteOpenHelper {
 
     //************************************* Profile Functions **************************************
     public void insertShotInDB (ShotClass s) {
+        /*******************************************************************************************
+         * Function: insertShotInDB
+         *
+         * Purpose: Function inserts information from ShotClass object into database
+         *
+         * Parameters: s (IN) - shot class object that holds information to put in database
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         dbWhole = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -272,6 +394,17 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public ShotClass getShotFromDB (String email) {
+        /*******************************************************************************************
+         * Function: getShotFromDB
+         *
+         * Purpose: Function gathers shot information based on email provided
+         *
+         * Parameters: email (IN) - key string for receiving shot information
+         *
+         * Returns: tempShot - returns ShotClass object with database information stored
+         *
+         ******************************************************************************************/
+
         ShotClass tempShot = new ShotClass();
 
         dbWhole = this.getReadableDatabase();

@@ -1,3 +1,16 @@
+/***************************************************************************************************
+ * FILENAME : GunClass.java
+ *
+ * AUTHOR : Dalton Shadle
+ *
+ * DESCRIPTION : Holds variables and functions for GunClass object
+ *
+ * NOTES : N/A
+ *
+ * Copyright Dalton Shadle 2019.  All rights reserved.
+ *
+ **************************************************************************************************/
+
 package edu.coe.djshadle.trapmaster;
 
 public class GunClass {
@@ -12,6 +25,17 @@ public class GunClass {
     //************************************* Public Functions ***************************************
     // Constructors
     public GunClass() {
+        /*******************************************************************************************
+         * Function: GunClass
+         *
+         * Purpose: Constructor for this class, no parameters so all values are initialized to temp
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         this.gunID_Str = "tempID";
         this.gunEmail_Str = "tempEmail";
         this.gunNickname_Str = "tempNickname";
@@ -22,6 +46,21 @@ public class GunClass {
 
     public GunClass(String gunEmail_Str, String gunNickname_Str,
                     String gunModel_Str, String gunGauge_Str, String gunNotes_Str) {
+        /*******************************************************************************************
+         * Function: GunClass
+         *
+         * Purpose: Constructor for this class with parameters
+         *
+         * Parameters: gunEmail_Str (IN) - email tagged with this gun
+         *             gunNickname_Str (IN) - name of the gun
+         *             gunModel_Str (IN) - model of the gun
+         *             gunGauge_Str (IN) - gauge of the gun
+         *             gunNotes_Str (IN) - notes tagged with the gun
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         this.gunID_Str = "tempID";
         this.gunEmail_Str = gunEmail_Str;
         this.gunNickname_Str = gunNickname_Str;
@@ -31,6 +70,16 @@ public class GunClass {
     }
 
     // Getters and Setters
+    /*******************************************************************************************
+     * Function: get*(), set*()
+     *
+     * Purpose: Getter and setter functions for this class, I would list them all, but I'm lazy
+     *
+     * Parameters: None
+     *
+     * Returns: None
+     *
+     ******************************************************************************************/
     public String getGunEmail_Str() {
         return gunEmail_Str;
     }
