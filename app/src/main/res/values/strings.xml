@@ -27,4 +27,9 @@
     <string name="miss_string">MISS</string>
     <string name="shot_string">SHOT</string>
 
+
+    <string name="quick_event_login">Login</string>
+    <string name="quick_event_cancel">Cancel</string>
+
+
 </resources>

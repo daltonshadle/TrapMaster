@@ -27,6 +27,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DBHandler extends SQLiteOpenHelper {
     //********************************** Variables and Constants ***********************************
@@ -147,16 +148,16 @@ public class DBHandler extends SQLiteOpenHelper {
 
         //Profile Table
         String CREATE_PROFILE_TABLE = "CREATE TABLE " + TABLE_PROFILES + "("
-                + KEY_PROFILE_USERNAME + " TEXT PRIMARY KEY,"
-                + KEY_PROFILE_ID + " INTEGER,"
+                + KEY_PROFILE_ID + " INTEGER PRIMARY KEY,"
+                + KEY_PROFILE_USERNAME + " TEXT,"
                 + KEY_PROFILE_PASSWORD + " TEXT" +
                 ")";
         db.execSQL(CREATE_PROFILE_TABLE);
 
         //Gun Table
         String CREATE_GUN_TABLE = "CREATE TABLE " + TABLE_GUNS + "("
-                + KEY_GUN_PROFILE_NAME + " TEXT PRIMARY KEY,"
-                + KEY_GUN_ID + " INTEGER,"
+                + KEY_GUN_ID + " INTEGER PRIMARY KEY,"
+                + KEY_GUN_PROFILE_NAME + " TEXT,"
                 + KEY_GUN_NICKNAME + " TEXT,"
                 + KEY_GUN_MODEL + " TEXT,"
                 + KEY_GUN_GAUGE + " TEXT,"
@@ -167,8 +168,8 @@ public class DBHandler extends SQLiteOpenHelper {
 
         //Load Table
         String CREATE_LOAD_TABLE = "CREATE TABLE " + TABLE_LOADS + "("
-                + KEY_LOAD_PROFILE_NAME + " TEXT PRIMARY KEY,"
-                + KEY_LOAD_ID + " INTEGER,"
+                + KEY_LOAD_ID + " INTEGER PRIMARY KEY,"
+                + KEY_LOAD_PROFILE_NAME + " TEXT,"
                 + KEY_LOAD_NICKNAME + " TEXT,"
                 + KEY_LOAD_BRAND + " TEXT,"
                 + KEY_LOAD_GAUGE + " TEXT,"
@@ -180,8 +181,8 @@ public class DBHandler extends SQLiteOpenHelper {
 
         //Event Table Stuff
         String CREATE_EVENT_TABLE = "CREATE TABLE " + TABLE_EVENTS + "("
-                + KEY_EVENT_PROFILE_NAME + " TEXT PRIMARY KEY,"
-                + KEY_EVENT_ID + " INTEGER,"
+                + KEY_EVENT_ID + " INTEGER PRIMARY KEY,"
+                + KEY_EVENT_PROFILE_NAME + " TEXT,"
                 + KEY_EVENT_TEAM_NAME + " TEXT,"
                 + KEY_EVENT_NAME + " TEXT,"
                 + KEY_EVENT_LOCATION + " TEXT,"
@@ -197,16 +198,16 @@ public class DBHandler extends SQLiteOpenHelper {
 
         //Location Table
         String CREATE_LOCATION_TABLE = "CREATE TABLE " + TABLE_LOCATION + "("
-                + KEY_LOCATION_PROFILE_NAME + " TEXT PRIMARY KEY,"
-                + KEY_LOCATION_ID + " INTEGER,"
+                + KEY_LOCATION_ID + " INTEGER PRIMARY KEY,"
+                + KEY_LOCATION_PROFILE_NAME + " TEXT,"
                 + KEY_LOCATION_NAME + " TEXT"
                 + ")";
         db.execSQL(CREATE_LOCATION_TABLE);
 
         //Shot Table
         String CREATE_SHOT_TABLE = "CREATE TABLE " + TABLE_SHOT + "("
-                + KEY_SHOT_PROFILE_NAME + " TEXT PRIMARY KEY,"
-                + KEY_SHOT_ID + " INTEGER,"
+                + KEY_SHOT_ID + " INTEGER PRIMARY KEY,"
+                + KEY_SHOT_PROFILE_NAME + " TEXT,"
                 + KEY_SHOT_EVENT_NAME + " TEXT,"
                 + KEY_SHOT_NUMBER + " TEXT,"
                 + KEY_SHOT_HIT_MISS + " TEXT,"
@@ -216,8 +217,8 @@ public class DBHandler extends SQLiteOpenHelper {
 
         //Team Table
         String CREATE_TEAM_TABLE = "CREATE TABLE " + TABLE_TEAM + "("
-                + KEY_TEAM_NAME + " TEXT PRIMARY KEY,"
-                + KEY_TEAM_ID + " INTEGER,"
+                + KEY_TEAM_ID + " INTEGER PRIMARY KEY,"
+                + KEY_TEAM_NAME + " TEXT,"
                 + KEY_TEAM_LIST + " TEXT"
                 + ")";
         db.execSQL(CREATE_TEAM_TABLE);
@@ -282,7 +283,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         dbWhole = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_PROFILES + " WHERE " + KEY_PROFILE_USERNAME + " = '" + email + "'";
-        @SuppressLint("Recycle") Cursor cursor = dbWhole.rawQuery(query, null);
+        Cursor cursor = dbWhole.rawQuery(query, null);
 
         if (cursor != null) {
             cursor.moveToFirst();
@@ -408,18 +409,24 @@ public class DBHandler extends SQLiteOpenHelper {
         ShotClass tempShot = new ShotClass();
 
         dbWhole = this.getReadableDatabase();
-        String query = "SELECT * FROM " + TABLE_SHOT + " WHERE " + KEY_SHOT_PROFILE_NAME +
-                " = '" + email + "'";
-        @SuppressLint("Recycle") Cursor cursor = dbWhole.rawQuery(query, null);
+        //String query = "SELECT * FROM " + TABLE_SHOT + " WHERE " + KEY_SHOT_PROFILE_NAME +
+        //        " = '" + email + "'";
+        String query = "SELECT * FROM " + TABLE_SHOT;
+        Cursor cursor = dbWhole.rawQuery(query, null);
 
         if (cursor != null) {
-            cursor.moveToLast();
+            cursor.moveToFirst();
 
             tempShot.setShotEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_PROFILE_NAME)));
             tempShot.setShotEventName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_EVENT_NAME)));
             tempShot.setShotTotalNum_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_NUMBER)));
             tempShot.setShotHitNum_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_HIT_MISS)));
             tempShot.setShotNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_NOTES)));
+
+            while (!cursor.isLast()) {
+                Log.d("JRW", cursor.getString(cursor.getColumnIndex(KEY_SHOT_PROFILE_NAME)));
+                cursor.moveToNext();
+            }
         }
         dbWhole.close();
         return tempShot;

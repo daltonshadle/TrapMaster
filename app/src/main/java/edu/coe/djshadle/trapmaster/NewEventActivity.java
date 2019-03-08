@@ -16,10 +16,14 @@ package edu.coe.djshadle.trapmaster;
 //******************************************** Imports *********************************************
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -39,11 +43,12 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     // General Variables
     private int trapCounterChildCount_Int = 0;
     private int totalHits_Int = 0;
-    private boolean quickEventFlag_Bool = false;
+    private boolean quickEventFlag_Bool;
     private ArrayList<Integer> trapCounterState_Array;
     private String mCurrentUserEmail_Str = "tempEmail";
     private String mEventName_Str = "tempEventName";
     private String mShotNotes_Str = "tempNotes";
+    DBHandler db;
 
     // UI References
     private TextView mTxtTotalScore_View;
@@ -80,9 +85,9 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             trapCounterState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
             setTrapCounterStates(trapCounterState_Array);
 
-            quickEventFlag_Bool = savedInstanceState.getBoolean(getString(R.string.quick_event_flag_key));
         } else {
             mCurrentUserEmail_Str = getIntent().getStringExtra(getString(R.string.current_user_email));
+            quickEventFlag_Bool = getIntent().getBooleanExtra(getString(R.string.quick_event_flag_key), false);
         }
     }
 
@@ -203,6 +208,9 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         // Initializing integer array for trap counter states (5 buttons per counter)
         trapCounterState_Array = new ArrayList<Integer>(trapCounterChildCount_Int);
 
+        // Initializing database variable
+        db = new DBHandler(this);
+
     }
 
     @Override
@@ -255,21 +263,22 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                 break;
             case R.id.save_Btn:
                 if (isAllTrapCounterChecked()) {
-                    saveScoreToDB(mCurrentUserEmail_Str, mEventName_Str, TOTAL_NUM_SHOTS,
-                            totalHits_Int, mShotNotes_Str);
-
-                    // TODO: remove this temp code from testing
-
-                    if (!quickEventFlag_Bool) {
-                        Intent i = new Intent(this, ProfilesActivity.class);
-                        i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
-                        startActivity(i);
+                    // TODO: fill in temp code from testing (mEventName, mShotNotes, etc)
+                    Log.d("JRW", "Save button quick event: " + Boolean.toString(quickEventFlag_Bool));
+                    if (quickEventFlag_Bool) {
+                        // Quick Event, must have them log in
+                        quickEventLogin();
                     } else {
-                        // TODO: fill in code to handle quick events, basically need them to sign in
+                        // Not a quick event
+                        saveScoreToDB(mCurrentUserEmail_Str, mEventName_Str, TOTAL_NUM_SHOTS,
+                                totalHits_Int, mShotNotes_Str);
+
+                        Intent homeActivity_Intent = new Intent(this, homeActivity.class);
+                        homeActivity_Intent.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+                        startActivity(homeActivity_Intent);
                     }
                 }
                 break;
-
         }
     }
 
@@ -444,5 +453,74 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         db.insertShotInDB(temp_Shot);
     }
 
+    //************************************** Other Functions ***************************************
+    private void quickEventLogin() {
+        /*******************************************************************************************
+         * Function: quickEventLogin
+         *
+         * Purpose: Function creates a alert dialog to sign user in, used in a Quick Event situation
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        Log.d("JRW", "Inside the quick event login");
+
+        LayoutInflater temp_LI = LayoutInflater.from(NewEventActivity.this);
+        View quickEventLogin_View = temp_LI.inflate(R.layout.view_quick_event_login, null);
+
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(NewEventActivity.this);
+        alertDialogBuilder.setView(quickEventLogin_View);
+
+        final AlertDialog alertDialogLogin = alertDialogBuilder.create();
+        alertDialogLogin.show();
+        alertDialogLogin.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+
+        final EditText mQuickEventEmail_Txt = quickEventLogin_View.findViewById(R.id.quickEventEmail_Txt);
+        final EditText mQuickEventPass_Txt = quickEventLogin_View.findViewById(R.id.quickEventPassword_Txt);
+        Button mQuickEventLogin_Btn = quickEventLogin_View.findViewById(R.id.quickEventLogin_Button);
+        Button mQuickEventCancel_Btn = quickEventLogin_View.findViewById(R.id.quickEventCancel_Button);
+
+
+        mQuickEventLogin_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO: your click listener
+                String tempEmail_Str = mQuickEventEmail_Txt.getText().toString();
+                String tempPass_Str = mQuickEventPass_Txt.getText().toString();
+
+                if (db.isEmailInDB(tempEmail_Str)) {
+                    // Email is in the database and user is registered
+                    if (db.doesPassMatchInDB(tempEmail_Str, tempPass_Str)) {
+                        // Save score with name, start home activity with email passed in intent
+                        mCurrentUserEmail_Str = tempEmail_Str;
+
+                        saveScoreToDB(mCurrentUserEmail_Str, mEventName_Str, TOTAL_NUM_SHOTS,
+                                totalHits_Int, mShotNotes_Str);
+
+                        Intent homeActivity_Intent = new Intent(NewEventActivity.this, homeActivity.class);
+                        homeActivity_Intent.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+                        startActivity(homeActivity_Intent);
+                    } else {
+                        // Password doesn't match email, alert user
+                        // TODO: alert user
+                    }
+                } else {
+                    // Email is not in database, user is not registered
+                    // TODO: prompt user to register
+                }
+
+            }
+        });
+
+        mQuickEventCancel_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialogLogin.cancel();
+            }
+        });
+    }
 
 }
