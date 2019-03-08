@@ -1,15 +1,27 @@
+/***************************************************************************************************
+ * FILENAME : TrapCounterButtonsClass.java
+ *
+ * AUTHOR : Dalton Shadle
+ *
+ * DESCRIPTION : Holds variables and functions for TrapCounterButtonsClass object
+ *
+ * NOTES : N/A
+ *
+ * Copyright Dalton Shadle 2019.  All rights reserved.
+ *
+ **************************************************************************************************/
+
 package edu.coe.djshadle.trapmaster;
 
+//******************************************** Imports *********************************************
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 
 public class TrapCounterButtonsClass extends LinearLayout implements OnStageChangeListener {
-
     //********************************** Variables and Constants ***********************************
     // General Constants
     private final static int HIT = 0, MISS = 1, NEUTRAL = 2;
@@ -40,7 +52,7 @@ public class TrapCounterButtonsClass extends LinearLayout implements OnStageChan
         initializeViews(context);
     }
 
-    // Other Functions
+    //************************************* UI View Functions **************************************
     private void initializeViews(Context context){
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.view_trap_score_buttons, this);
@@ -80,6 +92,7 @@ public class TrapCounterButtonsClass extends LinearLayout implements OnStageChan
         totalHitChange = eventListener;
     }
 
+    //************************************** Other Functions ***************************************
     public int getTotalNumberHit(){
         // Function iterates through all ternary buttons and checks stage
         // Function returns the number of ternary buttons with stage HIT

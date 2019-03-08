@@ -1,8 +1,21 @@
+/***************************************************************************************************
+ * FILENAME : TernaryButtonClass.java
+ *
+ * AUTHOR : Dalton Shadle
+ *
+ * DESCRIPTION : Holds variables and functions for TernaryButtonClass object
+ *
+ * NOTES : N/A
+ *
+ * Copyright Dalton Shadle 2019.  All rights reserved.
+ *
+ **************************************************************************************************/
+
 package edu.coe.djshadle.trapmaster;
 
+//******************************************** Imports *********************************************
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,21 +38,57 @@ public class TenaryButtonClass extends LinearLayout implements View.OnClickListe
     //************************************* Public Functions ***************************************
     // Constructors
     public TenaryButtonClass(Context context) {
+        /*******************************************************************************************
+         * Function: TernaryButtonClass
+         *
+         * Purpose: Constructor for this class
+         *
+         * Parameters: context (IN) - fill_in
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         super(context);
         initializeViews(context);
     }
 
     public TenaryButtonClass(Context context, AttributeSet attrs) {
+        /*******************************************************************************************
+         * Function: TernaryButtonClass
+         *
+         * Purpose: Constructor for this class
+         *
+         * Parameters: context (IN) - fill_in
+         *             attrs (IN) - fill_in
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         super(context, attrs);
         initializeViews(context);
     }
 
     public TenaryButtonClass(Context context, AttributeSet attrs, int defStyleAttr) {
+        /*******************************************************************************************
+         * Function: TernaryButtonClass
+         *
+         * Purpose: Constructor for this class
+         *
+         * Parameters: context (IN) - fill_in
+         *             attrs (IN) - fill_in
+         *             defStyleAttr (IN) - fill_in
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         super(context, attrs, defStyleAttr);
         initializeViews(context);
     }
 
-    // Other Functions
+    //************************************* UI View Functions **************************************
     private void initializeViews(Context context){
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         assert inflater != null;
@@ -66,6 +115,7 @@ public class TenaryButtonClass extends LinearLayout implements View.OnClickListe
         stageChangeListener = eventListener;
     }
 
+    //************************************** Other Functions ***************************************
     public void incrementStage(){
         btnStage_Int = (btnStage_Int + 1) % 3;
         setButtonColor(btnStage_Int);

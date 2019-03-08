@@ -1,5 +1,19 @@
+/***************************************************************************************************
+ * FILENAME : ProfilesActivity.java
+ *
+ * AUTHOR : Dalton Shadle
+ *
+ * DESCRIPTION : Holds functions for the Profiles activity of this application
+ *
+ * NOTES : N/A
+ *
+ * Copyright Dalton Shadle 2019.  All rights reserved.
+ *
+ **************************************************************************************************/
+
 package edu.coe.djshadle.trapmaster;
 
+//******************************************** Imports *********************************************
 import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,8 +35,21 @@ public class ProfilesActivity extends AppCompatActivity {
     // UI References
     private TextView mTxtTotalScore_View;
 
+    //************************************* Activity Functions *************************************
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        /*******************************************************************************************
+         * Function: onCreate
+         *
+         * Purpose: When activity is started, function initializes the activity with any
+         *          saved instances
+         *
+         * Parameters: savedInstanceState (IN) - provides the saved instances from previous state
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         super.onCreate(savedInstanceState);
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             setContentView(R.layout.activity_profiles_landscape);
@@ -37,10 +64,21 @@ public class ProfilesActivity extends AppCompatActivity {
             mCurrentUserEmail_Str = getIntent().getStringExtra(getString(R.string.current_user_email));
         }
 
-        initViews();
+        initializeViews();
     }
 
     public void onConfigurationChanged(Configuration newConfig) {
+        /*******************************************************************************************
+         * Function: onConfigurationChanged
+         *
+         * Purpose: Function called when configuration is changed (denoted by manifest file)
+         *
+         * Parameters: newConfig (IN) - contains information on configuration
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         super.onConfigurationChanged(newConfig);
 
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -51,8 +89,17 @@ public class ProfilesActivity extends AppCompatActivity {
 
     }
 
-    private void initViews() {
-        // Function initializes all views and variables needed for this activity
+    private void initializeViews() {
+        /*******************************************************************************************
+         * Function: initializeViews
+         *
+         * Purpose: Function initializes all variables and all UI views to a resource id
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
 
         // Initializing all textviews
         mTxtTotalScore_View = findViewById(R.id.tempProfile_Txt);

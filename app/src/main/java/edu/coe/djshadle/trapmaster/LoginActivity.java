@@ -1,41 +1,31 @@
+/***************************************************************************************************
+ * FILENAME : LoginActivity.java
+ *
+ * AUTHOR : Dalton Shadle
+ *
+ * DESCRIPTION : Holds functions for the Login activity of this application
+ *
+ * NOTES : N/A
+ *
+ * Copyright Dalton Shadle 2019.  All rights reserved.
+ *
+ **************************************************************************************************/
+
 package edu.coe.djshadle.trapmaster;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
+//******************************************** Imports *********************************************
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -52,19 +42,87 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mEmail_View;
     private EditText mPassword_View;
 
-    //********************************** Login Activity Functions **********************************
+    //************************************* Activity Functions *************************************
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        /*******************************************************************************************
+         * Function: onCreate
+         *
+         * Purpose: When activity is started, function initializes the activity with any
+         *          saved instances
+         *
+         * Parameters: savedInstanceState (IN) - provides the saved instances from previous state
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
         db = new DBHandler(this);
 
         // Set up the login form.
-        setUpViews();
+        initializeViews();
     }
 
-    private void setUpViews() {
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        /*******************************************************************************************
+         * Function: onSaveInstanceState
+         *
+         * Purpose: Function saves instances when activity is paused
+         *
+         * Parameters: savedInstanceState (OUT) - provides the saved instances from current state
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        super.onSaveInstanceState(savedInstanceState);
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        savedInstanceState.putString(mEmail_Str, mEmail_View.getText().toString());
+        savedInstanceState.putString(mPassword_Str, mPassword_View.getText().toString());
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        /*******************************************************************************************
+         * Function: onRestoreInstanceState
+         *
+         * Purpose: Function restores instances when activity resumes
+         *
+         * Parameters: savedInstanceState (IN) - provides the saved instances from previous state
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+        String tempEmail_Str = savedInstanceState.getString(mEmail_Str);
+        String tempPass_Str = savedInstanceState.getString(mPassword_Str);
+
+        mEmail_View.setText(tempEmail_Str);
+        mPassword_View.setText(tempPass_Str);
+    }
+
+    //************************************* UI View Functions **************************************
+    private void initializeViews() {
+        /*******************************************************************************************
+         * Function: initializeViews
+         *
+         * Purpose: Function initializes all variables and all UI views to a resource id
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         mEmail_View = findViewById(R.id.email);
         mPassword_View = findViewById(R.id.password);
 
@@ -107,30 +165,20 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        // Save UI state changes to the savedInstanceState.
-        // This bundle will be passed to onCreate if the process is
-        // killed and restarted.
-        savedInstanceState.putString(mEmail_Str, mEmail_View.getText().toString());
-        savedInstanceState.putString(mPassword_Str, mPassword_View.getText().toString());
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        // Restore UI state from the savedInstanceState.
-        // This bundle has also been passed to onCreate.
-        String tempEmail_Str = savedInstanceState.getString(mEmail_Str);
-        String tempPass_Str = savedInstanceState.getString(mPassword_Str);
-
-        mEmail_View.setText(tempEmail_Str);
-        mPassword_View.setText(tempPass_Str);
-    }
-
     //************************************** Login Functions ***************************************
     private void attemptLogin() {
+        /*******************************************************************************************
+         * Function: attemptLogin
+         *
+         * Purpose: Function processes login information and compares with database, goes to home
+         *          if criteria is met
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         // Reset errors.
         mEmail_View.setError(null);
         mPassword_View.setError(null);
@@ -181,15 +229,50 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean isEmailInDB(String email) {
+        /*******************************************************************************************
+         * Function: isEmailInDB
+         *
+         * Purpose: Function checks if email is in the database
+         *
+         * Parameters: email (IN) - email to check for in database
+         *
+         * Returns: True if the email is in the database
+         *
+         ******************************************************************************************/
+
         return db.isEmailInDB(email);
     }
 
     private boolean isPasswordWithEmail(String email, String password) {
+        /*******************************************************************************************
+         * Function: isPasswordWithEmail
+         *
+         * Purpose: Function checks if email and password match in database
+         *
+         * Parameters: email (IN) - email to reference in database
+         *             password (IN) - password to check in database
+         *
+         * Returns: True if the password matches the email in the database
+         *
+         ******************************************************************************************/
+
         return db.doesPassMatchInDB(email, password);
     }
 
     //************************************ Register Functions **************************************
     private void register() {
+        /*******************************************************************************************
+         * Function: register
+         *
+         * Purpose: Function processes register information and puts into database, goes to home
+         *          if criteria is met
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         // Reset errors.
         mEmail_View.setError(null);
         mPassword_View.setError(null);
@@ -243,6 +326,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean isEmailValid(String email) {
+        /*******************************************************************************************
+         * Function: isEmailValid
+         *
+         * Purpose: Function checks if email is of a valid format
+         *
+         * Parameters: email (IN) - email to check format
+         *
+         * Returns: True if the email is the correct format
+         *
+         ******************************************************************************************/
+
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
                 "[a-zA-Z0-9_+&*-]+)*@" +
                 "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
@@ -256,6 +350,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean isPasswordValid(String password) {
+        /*******************************************************************************************
+         * Function: isPasswordValid
+         *
+         * Purpose: Function checks if password is of a valid format
+         *
+         * Parameters: password (IN) - password to check for valid format
+         *
+         * Returns: True if the password is the correct format
+         *
+         ******************************************************************************************/
+
         return password.length() >= MIN_PASS_LENGTH;
     }
 
