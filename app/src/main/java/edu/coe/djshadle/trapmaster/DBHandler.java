@@ -29,6 +29,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 public class DBHandler extends SQLiteOpenHelper {
     //********************************** Variables and Constants ***********************************
     //Database Variables & Constants
@@ -400,7 +402,7 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole.close();
     }
 
-    public ShotClass getShotFromDB (String email) {
+    public ArrayList<ShotClass> getAllShotFromDB (String email) {
         /*******************************************************************************************
          * Function: getShotFromDB
          *
@@ -412,29 +414,29 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          ******************************************************************************************/
 
-        ShotClass tempShot = new ShotClass();
-
         dbWhole = this.getReadableDatabase();
+
+        ArrayList<ShotClass> tempShot_List = new ArrayList<>();
         String query = "SELECT * FROM " + TABLE_SHOT + " WHERE " + KEY_SHOT_PROFILE_NAME +
                 " = '" + email + "'";
+
+
         Cursor cursor = dbWhole.rawQuery(query, null);
+        cursor.moveToFirst();
 
-        if (cursor != null) {
-            cursor.moveToFirst();
-
+        while (cursor.moveToNext()) {
+            ShotClass tempShot = new ShotClass();
             tempShot.setShotEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_PROFILE_NAME)));
             tempShot.setShotEventName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_EVENT_NAME)));
             tempShot.setShotTotalNum_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_NUMBER)));
             tempShot.setShotHitNum_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_HIT_MISS)));
             tempShot.setShotNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_NOTES)));
 
-            while (!cursor.isLast()) {
-                cursor.moveToNext();
-                Log.d("JRW", cursor.getString(cursor.getColumnIndex(KEY_SHOT_HIT_MISS)));
-            }
+            tempShot_List.add(tempShot);
         }
+
         dbWhole.close();
-        return tempShot;
+        return tempShot_List;
     }
 
 }

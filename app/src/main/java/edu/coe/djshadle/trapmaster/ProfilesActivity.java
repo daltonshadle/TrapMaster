@@ -18,7 +18,13 @@ import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class ProfilesActivity extends AppCompatActivity {
 
@@ -26,15 +32,11 @@ public class ProfilesActivity extends AppCompatActivity {
     // General Constants
 
     // General Variables
-    private int mTotalHits_Int = 999;
-    private int mTotalShots_Int = 999;
     private String mCurrentUserEmail_Str = "********";
-    private String mEventName_Str = "********";
-    private String mShotNotes_Str = "********";
     private DBHandler db;
 
     // UI References
-    private TextView mTxtTotalScore_View;
+    private TextView mProfileTxt_View;
 
     //************************************* Activity Functions *************************************
     @Override
@@ -103,26 +105,7 @@ public class ProfilesActivity extends AppCompatActivity {
          ******************************************************************************************/
 
         // Initializing all textviews
-        mTxtTotalScore_View = findViewById(R.id.tempProfile_Txt);
-
-        // TODO: Remove temp code below to check DB functionality
-        String tempTextFromDB = "";
-        db = new DBHandler(this);
-
-        try {
-            ShotClass s = db.getShotFromDB(mCurrentUserEmail_Str);
-
-            tempTextFromDB =
-                    "Email: " + s.getShotEmail_Str() +
-                            "\nEvent Name: " + s.getShotEventName_Str() +
-                            "\nTotal Shot: " + s.getShotTotalNum_Str() +
-                            "\nTotal Hit: " + s.getShotHitNum_Str() +
-                            "\nNotes: " + s.getShotNotes_Str();
-
-            mTxtTotalScore_View.setText(tempTextFromDB);
-        } catch (Exception e){
-            Log.d("JRW", "nothing in db for this user");
-        }
+        mProfileTxt_View = findViewById(R.id.tempProfile_Txt);
 
     }
 }
