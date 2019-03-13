@@ -17,6 +17,7 @@ package edu.coe.djshadle.trapmaster;
 import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 public class ProfilesActivity extends AppCompatActivity {
@@ -108,15 +109,20 @@ public class ProfilesActivity extends AppCompatActivity {
         String tempTextFromDB = "";
         db = new DBHandler(this);
 
-        ShotClass s = db.getShotFromDB(mCurrentUserEmail_Str);
+        try {
+            ShotClass s = db.getShotFromDB(mCurrentUserEmail_Str);
 
-        tempTextFromDB =
-                "Email: " + s.getShotEmail_Str() +
-                "\nEvent Name: " + s.getShotEventName_Str() +
-                "\nTotal Shot: " + s.getShotTotalNum_Str() +
-                "\nTotal Hit: " + s.getShotHitNum_Str() +
-                "\nNotes: " + s.getShotNotes_Str();
+            tempTextFromDB =
+                    "Email: " + s.getShotEmail_Str() +
+                            "\nEvent Name: " + s.getShotEventName_Str() +
+                            "\nTotal Shot: " + s.getShotTotalNum_Str() +
+                            "\nTotal Hit: " + s.getShotHitNum_Str() +
+                            "\nNotes: " + s.getShotNotes_Str();
 
-        mTxtTotalScore_View.setText(tempTextFromDB);
+            mTxtTotalScore_View.setText(tempTextFromDB);
+        } catch (Exception e){
+            Log.d("JRW", "nothing in db for this user");
+        }
+
     }
 }

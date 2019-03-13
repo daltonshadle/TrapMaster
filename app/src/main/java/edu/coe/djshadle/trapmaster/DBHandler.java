@@ -33,8 +33,8 @@ public class DBHandler extends SQLiteOpenHelper {
     //********************************** Variables and Constants ***********************************
     //Database Variables & Constants
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "trapMaster.db";
-    SQLiteDatabase dbWhole;
+    private static final String DATABASE_NAME = "trapMasterDB";
+    private SQLiteDatabase dbWhole;
 
     //Profile Table Stuff
     private static final String TABLE_PROFILES = "profiles";
@@ -144,10 +144,9 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          ******************************************************************************************/
 
-        dbWhole = db;
 
         //Profile Table
-        String CREATE_PROFILE_TABLE = "CREATE TABLE " + TABLE_PROFILES + "("
+        String CREATE_PROFILE_TABLE = "CREATE TABLE " + TABLE_PROFILES + " ("
                 + KEY_PROFILE_ID + " INTEGER PRIMARY KEY,"
                 + KEY_PROFILE_USERNAME + " TEXT,"
                 + KEY_PROFILE_PASSWORD + " TEXT" +
@@ -155,7 +154,7 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_PROFILE_TABLE);
 
         //Gun Table
-        String CREATE_GUN_TABLE = "CREATE TABLE " + TABLE_GUNS + "("
+        String CREATE_GUN_TABLE = "CREATE TABLE " + TABLE_GUNS + " ("
                 + KEY_GUN_ID + " INTEGER PRIMARY KEY,"
                 + KEY_GUN_PROFILE_NAME + " TEXT,"
                 + KEY_GUN_NICKNAME + " TEXT,"
@@ -167,7 +166,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
 
         //Load Table
-        String CREATE_LOAD_TABLE = "CREATE TABLE " + TABLE_LOADS + "("
+        String CREATE_LOAD_TABLE = "CREATE TABLE " + TABLE_LOADS + " ("
                 + KEY_LOAD_ID + " INTEGER PRIMARY KEY,"
                 + KEY_LOAD_PROFILE_NAME + " TEXT,"
                 + KEY_LOAD_NICKNAME + " TEXT,"
@@ -180,7 +179,7 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_LOAD_TABLE);
 
         //Event Table Stuff
-        String CREATE_EVENT_TABLE = "CREATE TABLE " + TABLE_EVENTS + "("
+        String CREATE_EVENT_TABLE = "CREATE TABLE " + TABLE_EVENTS + " ("
                 + KEY_EVENT_ID + " INTEGER PRIMARY KEY,"
                 + KEY_EVENT_PROFILE_NAME + " TEXT,"
                 + KEY_EVENT_TEAM_NAME + " TEXT,"
@@ -197,7 +196,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
 
         //Location Table
-        String CREATE_LOCATION_TABLE = "CREATE TABLE " + TABLE_LOCATION + "("
+        String CREATE_LOCATION_TABLE = "CREATE TABLE " + TABLE_LOCATION + " ("
                 + KEY_LOCATION_ID + " INTEGER PRIMARY KEY,"
                 + KEY_LOCATION_PROFILE_NAME + " TEXT,"
                 + KEY_LOCATION_NAME + " TEXT"
@@ -205,7 +204,7 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_LOCATION_TABLE);
 
         //Shot Table
-        String CREATE_SHOT_TABLE = "CREATE TABLE " + TABLE_SHOT + "("
+        String CREATE_SHOT_TABLE = "CREATE TABLE " + TABLE_SHOT + " ("
                 + KEY_SHOT_ID + " INTEGER PRIMARY KEY,"
                 + KEY_SHOT_PROFILE_NAME + " TEXT,"
                 + KEY_SHOT_EVENT_NAME + " TEXT,"
@@ -216,12 +215,14 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_SHOT_TABLE);
 
         //Team Table
-        String CREATE_TEAM_TABLE = "CREATE TABLE " + TABLE_TEAM + "("
+        String CREATE_TEAM_TABLE = "CREATE TABLE " + TABLE_TEAM + " ("
                 + KEY_TEAM_ID + " INTEGER PRIMARY KEY,"
                 + KEY_TEAM_NAME + " TEXT,"
                 + KEY_TEAM_LIST + " TEXT"
                 + ")";
         db.execSQL(CREATE_TEAM_TABLE);
+
+        dbWhole = db;
     }
 
     @Override
@@ -240,6 +241,11 @@ public class DBHandler extends SQLiteOpenHelper {
          ******************************************************************************************/
 
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROFILES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOADS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATION);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SHOT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAM);
         onCreate(db);
     }
 
@@ -368,7 +374,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return doesEmailExist;
     }
 
-    //************************************* Profile Functions **************************************
+    //*************************************** Shot Functions ***************************************
     public void insertShotInDB (ShotClass s) {
         /*******************************************************************************************
          * Function: insertShotInDB
@@ -409,9 +415,8 @@ public class DBHandler extends SQLiteOpenHelper {
         ShotClass tempShot = new ShotClass();
 
         dbWhole = this.getReadableDatabase();
-        //String query = "SELECT * FROM " + TABLE_SHOT + " WHERE " + KEY_SHOT_PROFILE_NAME +
-        //        " = '" + email + "'";
-        String query = "SELECT * FROM " + TABLE_SHOT;
+        String query = "SELECT * FROM " + TABLE_SHOT + " WHERE " + KEY_SHOT_PROFILE_NAME +
+                " = '" + email + "'";
         Cursor cursor = dbWhole.rawQuery(query, null);
 
         if (cursor != null) {
@@ -424,8 +429,8 @@ public class DBHandler extends SQLiteOpenHelper {
             tempShot.setShotNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_NOTES)));
 
             while (!cursor.isLast()) {
-                Log.d("JRW", cursor.getString(cursor.getColumnIndex(KEY_SHOT_PROFILE_NAME)));
                 cursor.moveToNext();
+                Log.d("JRW", cursor.getString(cursor.getColumnIndex(KEY_SHOT_HIT_MISS)));
             }
         }
         dbWhole.close();
