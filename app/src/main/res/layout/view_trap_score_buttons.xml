@@ -8,32 +8,27 @@
     <edu.coe.djshadle.trapmaster.TenaryButtonClass
         android:id="@+id/terShot1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" />
+        android:layout_height="wrap_content" />
 
     <edu.coe.djshadle.trapmaster.TenaryButtonClass
         android:id="@+id/terShot2"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" />
+        android:layout_height="wrap_content" />
 
     <edu.coe.djshadle.trapmaster.TenaryButtonClass
         android:id="@+id/terShot3"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" />
+        android:layout_height="wrap_content" />
 
     <edu.coe.djshadle.trapmaster.TenaryButtonClass
         android:id="@+id/terShot4"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" />
+        android:layout_height="wrap_content" />
 
     <edu.coe.djshadle.trapmaster.TenaryButtonClass
         android:id="@+id/terShot5"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" />
+        android:layout_height="wrap_content" />
 
 
     <TextView

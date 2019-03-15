@@ -28,6 +28,7 @@
         <activity
             android:name=".NewEventActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="landscape"/> <!-- screen orientation is temporary -->
         <activity
             android:name=".EventHistoryActivity"

@@ -26,6 +26,7 @@ public class TenaryButtonClass extends LinearLayout implements View.OnClickListe
     //********************************** Variables and Constants ***********************************
     // General Constants
     private final static int HIT = 0, MISS = 1, NEUTRAL = 2;
+    private final double BUTTON_TEXT_SF = 0.12;
 
     // General Variables
     private int btnStage_Int;
@@ -113,6 +114,12 @@ public class TenaryButtonClass extends LinearLayout implements View.OnClickListe
 
     public void setStageChangeListener(OnStageChangeListener eventListener){
         stageChangeListener = eventListener;
+    }
+
+    public void setButtonSize(int width, int height){
+        LayoutParams param = new LayoutParams(width, height);
+        mButton_View.setLayoutParams(param);
+        mButton_View.setTextSize((float)(BUTTON_TEXT_SF * height));
     }
 
     //************************************** Other Functions ***************************************

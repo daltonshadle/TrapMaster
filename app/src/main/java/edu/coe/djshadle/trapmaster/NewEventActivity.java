@@ -22,9 +22,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -39,6 +41,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     private final int NUM_COUNTER_BUTTON = 5;
     private final int TOTAL_NUM_SHOTS = 25;
     private final String TRAP_STATE_KEY = "TRAP_STATE_KEY";
+    private final double HIT_MISS_TEXT_SF = 0.10;
+    private final int HEIGHT_SF = 3, WIDTH_SF = 5;
 
     // General Variables
     private int trapCounterChildCount_Int = 0;
@@ -53,6 +57,11 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     // UI References
     private TextView mTxtTotalScore_View;
     private LinearLayout mTrapCounter_SubLnrLay;
+    private LinearLayout mHitMiss_SubLnrLay;
+    private Button mHit_Btn;
+    private Button mMiss_Btn;
+    private Button mSave_Btn;
+    private Button mClear_Btn;
 
     //************************************* Activity Functions *************************************
     @Override
@@ -186,21 +195,22 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         trapCount_5.setTotalHitChange(this);
 
         // Initializing all buttons
-        Button hit_Btn = findViewById(R.id.hit_Btn);
-        Button miss_Btn = findViewById(R.id.miss_Btn);
-        Button save_Btn = findViewById(R.id.save_Btn);
-        Button clear_Btn = findViewById(R.id.clear_Btn);
+        mHit_Btn = findViewById(R.id.hit_Btn);
+        mMiss_Btn = findViewById(R.id.miss_Btn);
+        mSave_Btn = findViewById(R.id.save_Btn);
+        mClear_Btn = findViewById(R.id.clear_Btn);
 
-        hit_Btn.setOnClickListener(this);
-        miss_Btn.setOnClickListener(this);
-        save_Btn.setOnClickListener(this);
-        clear_Btn.setOnClickListener(this);
+        mHit_Btn.setOnClickListener(this);
+        mMiss_Btn.setOnClickListener(this);
+        mSave_Btn.setOnClickListener(this);
+        mClear_Btn.setOnClickListener(this);
 
         // Initializing all textviews
         mTxtTotalScore_View = findViewById(R.id.totalScore_Txt);
 
         // Initializing all layouts
         mTrapCounter_SubLnrLay = findViewById(R.id.newEventTrapCounter_SubLnrLay);
+        mHitMiss_SubLnrLay = findViewById(R.id.newEventHitMiss_SubLnrLay);
 
         // Initializing integer to layout child count
         trapCounterChildCount_Int = mTrapCounter_SubLnrLay.getChildCount();
@@ -211,6 +221,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         // Initializing database variable
         db = new DBHandler(this);
 
+        // Resizing buttons and text
+        scaleHitMissViews(WIDTH_SF, HEIGHT_SF);
     }
 
     @Override
@@ -280,6 +292,18 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                 }
                 break;
         }
+    }
+    
+    private void scaleHitMissViews(int widthSF, int heightSF) {
+        int screenWidth = getResources().getDisplayMetrics().widthPixels;
+        int screenHeight = getResources().getDisplayMetrics().heightPixels;
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(screenWidth/widthSF, ViewGroup.LayoutParams.MATCH_PARENT);
+        mHitMiss_SubLnrLay.setLayoutParams(params);
+
+        mHit_Btn.setTextSize((float) HIT_MISS_TEXT_SF * screenHeight/ heightSF);
+        mMiss_Btn.setTextSize((float) HIT_MISS_TEXT_SF * screenHeight/ heightSF);
+        mTxtTotalScore_View.setTextSize((float) HIT_MISS_TEXT_SF * screenHeight/ heightSF);
     }
 
     //********************************** Trap Counter Functions ************************************

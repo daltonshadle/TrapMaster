@@ -25,6 +25,8 @@ public class TrapCounterButtonsClass extends LinearLayout implements OnStageChan
     //********************************** Variables and Constants ***********************************
     // General Constants
     private final static int HIT = 0, MISS = 1, NEUTRAL = 2;
+    private final double TRAP_COUNTER_SCORE_SF = 0.15;
+    private final int HEIGHT_SF = 8, WIDTH_SF = 8;
 
     // General Variables
     private int trapCounterChildCount_Int = 0;
@@ -75,6 +77,9 @@ public class TrapCounterButtonsClass extends LinearLayout implements OnStageChan
         // the minus one is for the textview at the end of this layout
         trapCounterChildCount_Int = trapCounterLayout.getChildCount() - 1;
 
+        // Setting button size
+        scaleTrapCounterSize(WIDTH_SF,HEIGHT_SF);
+
     }
 
     protected void onFinishInflate(){
@@ -90,6 +95,18 @@ public class TrapCounterButtonsClass extends LinearLayout implements OnStageChan
 
     public void setTotalHitChange(OnTotalHitChange eventListener){
         totalHitChange = eventListener;
+    }
+
+    public void scaleTrapCounterSize(int widthSF, int heightSF){
+        int screenWidth = getResources().getDisplayMetrics().widthPixels;
+        int screenHeight = getResources().getDisplayMetrics().heightPixels;
+
+        for (int i = 0; i < trapCounterChildCount_Int; i++) {
+            TenaryButtonClass child = (TenaryButtonClass) trapCounterLayout.getChildAt(i);
+            child.setButtonSize(screenWidth/widthSF, screenHeight/heightSF);
+        }
+
+        totalHitText.setTextSize((float)(TRAP_COUNTER_SCORE_SF * screenHeight/heightSF));
     }
 
     //************************************** Other Functions ***************************************

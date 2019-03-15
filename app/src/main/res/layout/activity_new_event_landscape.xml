@@ -8,8 +8,7 @@
         android:id="@+id/newEventHitMiss_SubLnrLay"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_weight="1">
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/hit_Btn"
@@ -18,7 +17,7 @@
             android:layout_weight="3"
             android:backgroundTint="@color/hit"
             android:text="@string/hit_string"
-            android:textSize="30sp"/>
+            android:textSize="30sp" />
 
         <Button
             android:id="@+id/miss_Btn"
@@ -27,7 +26,7 @@
             android:layout_weight="3"
             android:backgroundTint="@color/miss"
             android:text="@string/miss_string"
-            android:textSize="30sp"/>
+            android:textSize="30sp" />
 
         <TextView
             android:id="@+id/totalScore_Txt"
@@ -43,9 +42,9 @@
 
     <LinearLayout
         android:id="@+id/newEventButtons_SubLnrLay"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
         android:orientation="vertical">
 
         <LinearLayout
@@ -115,10 +114,6 @@
 
 
     </LinearLayout>
-
-
-
-
 
 
 </LinearLayout>

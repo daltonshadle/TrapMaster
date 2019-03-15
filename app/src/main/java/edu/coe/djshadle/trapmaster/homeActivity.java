@@ -31,11 +31,22 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
     private String mCurrentUserEmail_Str = "tempEmail";
 
     // UI References
-    private TextView mTxtUserEmail_View;
 
     //*********************************** Home Activity Functions **********************************
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        /*******************************************************************************************
+         * Function: onCreate
+         *
+         * Purpose: When activity is started, function initializes the activity with any
+         *          saved instances
+         *
+         * Parameters: savedInstanceState (IN) - provides the saved instances from previous state
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         super.onCreate(savedInstanceState);
 
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
@@ -50,31 +61,62 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             mCurrentUserEmail_Str = getIntent().getStringExtra(getString(R.string.current_user_email));
         }
-        
-        initViews();
-        mTxtUserEmail_View.setText(mCurrentUserEmail_Str);
+
+        initializeViews();
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
+        /*******************************************************************************************
+         * Function: onSaveInstanceState
+         *
+         * Purpose: Function saves instances when activity is paused
+         *
+         * Parameters: savedInstanceState (OUT) - provides the saved instances from current state
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         super.onSaveInstanceState(savedInstanceState);
         // Save UI state changes to the savedInstanceState.
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
-        savedInstanceState.putString(CURRENT_USER_KEY, mTxtUserEmail_View.getText().toString());
+        savedInstanceState.putString(CURRENT_USER_KEY, mCurrentUserEmail_Str);
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
+        /*******************************************************************************************
+         * Function: onRestoreInstanceState
+         *
+         * Purpose: Function restores instances when activity resumes
+         *
+         * Parameters: savedInstanceState (IN) - provides the saved instances from previous state
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         super.onRestoreInstanceState(savedInstanceState);
         // Restore UI state from the savedInstanceState.
         // This bundle has also been passed to onCreate.
         mCurrentUserEmail_Str = savedInstanceState.getString(CURRENT_USER_KEY);
-        mTxtUserEmail_View.setText(mCurrentUserEmail_Str);
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        /*******************************************************************************************
+         * Function: onConfigurationChanged
+         *
+         * Purpose: Function called when configuration is changed (denoted by manifest file)
+         *
+         * Parameters: newConfig (IN) - contains information on configuration
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         super.onConfigurationChanged(newConfig);
 
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -83,12 +125,21 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
             setContentView(R.layout.activity_home_landscape);
         }
 
-        mTxtUserEmail_View = (TextView) findViewById(R.id.txtHomeUserEmail);
-        mTxtUserEmail_View.setText(mCurrentUserEmail_Str);
     }
 
     @Override
     public void onClick(View view) {
+        /*******************************************************************************************
+         * Function: OnClick
+         *
+         * Purpose: Function listener for buttons that provides functionality when clicked
+         *
+         * Parameters: view (IN) - is the clicked view that enacted listener
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         Intent i;
         switch (view.getId()) {
             case R.id.btnHomeNewEvent:
@@ -120,7 +171,18 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void initViews(){
+    private void initializeViews(){
+        /*******************************************************************************************
+         * Function: initializeViews
+         *
+         * Purpose: Function initializes all variables and all UI views to a resource id
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
         // Initializing all buttons
         Button mBtnNewEvent = findViewById(R.id.btnHomeNewEvent);
         Button mBtnArmory = findViewById(R.id.btnHomeArmory);
@@ -134,8 +196,12 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         mBtnProfiles.setOnClickListener(this);
         mBtnTeams.setOnClickListener(this);
 
-        // Initializing all textviews
-        mTxtUserEmail_View = findViewById(R.id.txtHomeUserEmail);
+        // Set action bar title
+        try {
+            setTitle(mCurrentUserEmail_Str);
+        } catch (Exception e) {
+            // Didn't work.
+        }
     }
 
     //************************************** Other Functions ***************************************
