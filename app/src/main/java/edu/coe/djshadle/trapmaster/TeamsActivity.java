@@ -49,6 +49,8 @@ public class TeamsActivity extends AppCompatActivity {
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
             setContentView(R.layout.activity_teams_portrait);
         }
+
+        initializeViews();
     }
 
     public void onConfigurationChanged(Configuration newConfig) {
@@ -72,4 +74,21 @@ public class TeamsActivity extends AppCompatActivity {
         }
 
     }
+
+    private void initializeViews() {
+        /*******************************************************************************************
+         * Function: initializeViews
+         *
+         * Purpose: Function initializes all variables and all UI views to a resource id
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Setting title of activity
+        setTitle("Teams");
+    }
+
 }

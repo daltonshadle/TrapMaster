@@ -59,7 +59,7 @@
             android:id="@+id/btnHomeProfiles"
             android:layout_width="@dimen/HomeButtonWidth"
             android:layout_height="@dimen/HomeButtonHeight"
-            android:text="Profiles"
+            android:text="Profile"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnHomeTeams" />
 

@@ -36,8 +36,7 @@ public class EventHistoryActivity extends AppCompatActivity {
     private DBHandler db;
 
     // UI References
-    private TextView mEventHistoryTxt_View;
-    private ListView mScoreList_View;
+    private ListView mScore_ListView;
 
     //************************************* Activity Functions *************************************
     @Override
@@ -106,27 +105,19 @@ public class EventHistoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
-        // Initializing all views
-        mEventHistoryTxt_View = findViewById(R.id.tempEventHistory_Txt);
-        mScoreList_View = findViewById(R.id.eventHistoryScore_List);
+        // Initializing list view
+        mScore_ListView = findViewById(R.id.eventHistoryScore_List);
 
         // Initializing list and database variables
-        ArrayList<String> shotString_List =  new ArrayList<>();
         db = new DBHandler(this);
 
         try {
-            ArrayList<ShotClass> s = db.getAllShotFromDB(mCurrentUserEmail_Str);
+            ArrayList<ShotClass> currentShot_List = db.getAllShotFromDB(mCurrentUserEmail_Str);
 
-            for (ShotClass tempShot : s) {
-                shotString_List.add("Email: " + tempShot.getShotEmail_Str() +
-                        "\nTotal Hit: " + tempShot.getShotHitNum_Str());
-            }
+            ShotListArrayAdapter shotAdapter = new ShotListArrayAdapter(this, currentShot_List);
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                    android.R.layout.simple_list_item_1, shotString_List);
-
-            mScoreList_View.setAdapter(adapter);
-            mScoreList_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            mScore_ListView.setAdapter(shotAdapter);
+            mScore_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
@@ -137,7 +128,8 @@ public class EventHistoryActivity extends AppCompatActivity {
             Log.d("JRW", "nothing in db for this user");
         }
 
-
+        // Setting title of activity
+        setTitle("Event History");
     }
 
 

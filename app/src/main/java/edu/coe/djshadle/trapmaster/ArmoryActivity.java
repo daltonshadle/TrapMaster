@@ -49,6 +49,8 @@ public class ArmoryActivity extends AppCompatActivity {
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
             setContentView(R.layout.activity_armory_portrait);
         }
+
+        initializeViews();
     }
 
     public void onConfigurationChanged(Configuration newConfig) {
@@ -71,5 +73,21 @@ public class ArmoryActivity extends AppCompatActivity {
             setContentView(R.layout.activity_armory_landscape);
         }
 
+    }
+
+    private void initializeViews() {
+        /*******************************************************************************************
+         * Function: initializeViews
+         *
+         * Purpose: Function initializes all variables and all UI views to a resource id
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Setting title of activity
+        setTitle("Armory");
     }
 }

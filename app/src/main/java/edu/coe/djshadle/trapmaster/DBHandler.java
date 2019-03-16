@@ -420,9 +420,7 @@ public class DBHandler extends SQLiteOpenHelper {
         String query = "SELECT * FROM " + TABLE_SHOT + " WHERE " + KEY_SHOT_PROFILE_NAME +
                 " = '" + email + "'";
 
-
         Cursor cursor = dbWhole.rawQuery(query, null);
-        cursor.moveToFirst();
 
         while (cursor.moveToNext()) {
             ShotClass tempShot = new ShotClass();

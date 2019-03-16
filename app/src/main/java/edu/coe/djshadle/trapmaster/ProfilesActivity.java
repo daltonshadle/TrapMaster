@@ -36,7 +36,6 @@ public class ProfilesActivity extends AppCompatActivity {
     private DBHandler db;
 
     // UI References
-    private TextView mProfileTxt_View;
 
     //************************************* Activity Functions *************************************
     @Override
@@ -104,8 +103,7 @@ public class ProfilesActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
-        // Initializing all textviews
-        mProfileTxt_View = findViewById(R.id.tempProfile_Txt);
-
+        // Setting title of activity
+        setTitle("Profile");
     }
 }
