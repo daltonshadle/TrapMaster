@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Home Dimensions -->
     <dimen name="HomeButtonSideAlign">30dp</dimen>
     <dimen name="HomeButtonTopAlign">80dp</dimen>
     <dimen name="HomeButtonWidth">150dp</dimen>
     <dimen name="HomeButtonHeight">100dp</dimen>
+
+    <!-- Quick Event Dimensions -->
+    <dimen name="QuickEventTextWidth">250dp</dimen>
+
+    <!-- Armory Dimensions -->
+    <dimen name="ArmoryAddButtonDim">55dp</dimen>
+
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="QuickEventTextWidth">250dp</dimen>
+
 </resources>

@@ -404,13 +404,13 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public ArrayList<ShotClass> getAllShotFromDB (String email) {
         /*******************************************************************************************
-         * Function: getShotFromDB
+         * Function: getAllShotFromDB
          *
          * Purpose: Function gathers shot information based on email provided
          *
          * Parameters: email (IN) - key string for receiving shot information
          *
-         * Returns: tempShot - returns ShotClass object with database information stored
+         * Returns: tempShot - returns list of ShotClass object with database information
          *
          ******************************************************************************************/
 
@@ -435,6 +435,132 @@ public class DBHandler extends SQLiteOpenHelper {
 
         dbWhole.close();
         return tempShot_List;
+    }
+
+    //*************************************** Load Functions ***************************************
+    public void insertLoadInDB (LoadClass l) {
+        /*******************************************************************************************
+         * Function: insertLoadInDB
+         *
+         * Purpose: Function inserts information from LoadClass object into database
+         *
+         * Parameters: l (IN) - load class object that holds information to put in database
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_LOAD_PROFILE_NAME, l.getLoadEmail_Str());
+        values.put(KEY_LOAD_NICKNAME, l.getLoadNickname_Str());
+        values.put(KEY_LOAD_BRAND, l.getLoadBrand_Str());
+        values.put(KEY_LOAD_GAUGE, l.getLoadGauge_Str());
+        values.put(KEY_LOAD_GRAIN, l.getLoadGrain_Str());
+        values.put(KEY_LOAD_LENGTH, l.getLoadLength_Str());
+        values.put(KEY_LOAD_NOTES, l.getLoadNotes_Str());
+
+        dbWhole.insert(TABLE_LOADS, null, values);
+        dbWhole.close();
+    }
+
+    public ArrayList<LoadClass> getAllLoadFromDB (String email) {
+        /*******************************************************************************************
+         * Function: getAllLoadFromDB
+         *
+         * Purpose: Function gathers load information based on email provided
+         *
+         * Parameters: email (IN) - key string for receiving load information
+         *
+         * Returns: tempLoad_List - returns list of LoadClass object with database information
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getReadableDatabase();
+
+        ArrayList<LoadClass> tempLoad_List = new ArrayList<>();
+        String query = "SELECT * FROM " + TABLE_LOADS + " WHERE " + KEY_LOAD_PROFILE_NAME +
+                " = '" + email + "'";
+
+        Cursor cursor = dbWhole.rawQuery(query, null);
+
+        while (cursor.moveToNext()) {
+            LoadClass tempLoad = new LoadClass();
+            tempLoad.setLoadEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_PROFILE_NAME)));
+            tempLoad.setLoadNickname_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_NICKNAME)));
+            tempLoad.setLoadBrand_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_BRAND)));
+            tempLoad.setLoadGauge_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_GAUGE)));
+            tempLoad.setLoadGrain_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_GRAIN)));
+            tempLoad.setLoadLength_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_LENGTH)));
+            tempLoad.setLoadNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_NOTES)));
+
+            tempLoad_List.add(tempLoad);
+        }
+
+        dbWhole.close();
+        return tempLoad_List;
+    }
+
+    //**************************************** Gun Functions ***************************************
+    public void insertGunInDB (GunClass g) {
+        /*******************************************************************************************
+         * Function: insertGunInDB
+         *
+         * Purpose: Function inserts information from GunClass object into database
+         *
+         * Parameters: g (IN) - g class object that holds information to put in database
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_GUN_PROFILE_NAME, g.getGunEmail_Str());
+        values.put(KEY_GUN_NICKNAME, g.getGunNickname_Str());
+        values.put(KEY_GUN_MODEL, g.getGunModel_Str());
+        values.put(KEY_GUN_GAUGE, g.getGunGauge_Str());
+        values.put(KEY_GUN_NOTES, g.getGunNotes_Str());
+
+        dbWhole.insert(TABLE_GUNS, null, values);
+        dbWhole.close();
+    }
+
+    public ArrayList<GunClass> getAllGunFromDB (String email) {
+        /*******************************************************************************************
+         * Function: getAllGunFromDB
+         *
+         * Purpose: Function gathers gun information based on email provided
+         *
+         * Parameters: email (IN) - key string for receiving gun information
+         *
+         * Returns: tempShot - returns list of GunClass object with database information
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getReadableDatabase();
+
+        ArrayList<GunClass> tempGun_List = new ArrayList<>();
+        String query = "SELECT * FROM " + TABLE_GUNS + " WHERE " + KEY_GUN_PROFILE_NAME +
+                " = '" + email + "'";
+
+        Cursor cursor = dbWhole.rawQuery(query, null);
+
+        while (cursor.moveToNext()) {
+            GunClass tempGun = new GunClass();
+            tempGun.setGunEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_PROFILE_NAME)));
+            tempGun.setGunNickname_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_NICKNAME)));
+            tempGun.setGunModel_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_MODEL)));
+            tempGun.setGunGauge_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_GAUGE)));
+            tempGun.setGunNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_NOTES)));
+
+            tempGun_List.add(tempGun);
+        }
+
+        dbWhole.close();
+        return tempGun_List;
     }
 
 }

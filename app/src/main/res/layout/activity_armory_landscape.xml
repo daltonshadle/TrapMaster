@@ -1,24 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/underConstruction_Img"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/armoryGun_LnrLay"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/under_construction_icon"
-        android:layout_centerInParent="true"/>
+        android:orientation="vertical"
+        android:layout_weight="1">
 
-    <TextView
-        android:id="@+id/underConstruction_Txt"
-        android:layout_width="200dp"
+        <ListView
+            android:id="@+id/armoryGun_List"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:scrollbars="vertical" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/armoryAddGun_Btn"
+            android:layout_width="@dimen/ArmoryAddButtonDim"
+            android:layout_height="@dimen/ArmoryAddButtonDim"
+            android:layout_gravity="right"
+            android:clickable="true"
+            app:srcCompat="@drawable/black_plus_icon"
+            android:layout_margin="5dp"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/armoryLoad_LnrLay"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/underConstruction_Img"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:text="@string/under_construction_string"
-        android:textAlignment="center"/>
-</RelativeLayout>
+        android:orientation="vertical"
+        android:layout_weight="1">
+
+        <ListView
+            android:id="@+id/armoryLoad_List"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:scrollbars="vertical" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/armoryAddLoad_Btn"
+            android:layout_width="@dimen/ArmoryAddButtonDim"
+            android:layout_height="@dimen/ArmoryAddButtonDim"
+            android:layout_gravity="right"
+            android:clickable="true"
+            app:srcCompat="@drawable/black_plus_icon"
+            android:layout_margin="5dp"/>
+
+    </LinearLayout>
+</LinearLayout>
