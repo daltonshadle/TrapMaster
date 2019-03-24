@@ -14,18 +14,27 @@
 package edu.coe.djshadle.trapmaster;
 
 //******************************************** Imports *********************************************
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -42,9 +51,6 @@ public class ArmoryActivity extends AppCompatActivity {
 
     // UI References
     private ListView mGunList_View, mLoadList_View;
-
-    // TEMP VARS TODO: Remove temp variables
-    int tempInt;
 
 
     //************************************* Activity Functions *************************************
@@ -118,9 +124,6 @@ public class ArmoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
-        // Initializing temp variables TODO: Remove temp variables
-        tempInt = 0;
-
         // Initializing database variable
         db = new DBHandler(this);
 
@@ -131,30 +134,16 @@ public class ArmoryActivity extends AppCompatActivity {
         mAddGun.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Add temp gun to database
-                tempInt += 1;
-                GunClass tempGun = new GunClass();
-                tempGun.setGunEmail_Str(mCurrentUserEmail_Str);
-                tempGun.setGunNickname_Str(Integer.toString(tempInt));
-                db.insertGunInDB(tempGun);
-
-                // Refresh gun listview
-                refreshGunListView();
+                // Display add gun dialog box for user input
+                addGunItemDialog();
             }
         });
 
         mAddLoad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Add temp load to database
-                tempInt += 1;
-                LoadClass tempLoad = new LoadClass();
-                tempLoad.setLoadEmail_Str(mCurrentUserEmail_Str);
-                tempLoad.setLoadNickname_Str(Integer.toString(tempInt));
-                db.insertLoadInDB(tempLoad);
-
-                // Refresh load listview
-                refreshLoadListView();
+                // Display add load dialog box for user input
+                addLoadItemDialog();
             }
         });
 
@@ -165,45 +154,14 @@ public class ArmoryActivity extends AppCompatActivity {
 
         setListViewLayoutParams();
 
-        try {
-            ArrayList<String> currentGunStr_List =  refreshGunList();
-
-            mCurrentGunList_Adapt = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, currentGunStr_List);
-
-            mGunList_View.setAdapter(mCurrentGunList_Adapt);
-            mGunList_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                }
-            });
-
-        } catch (Exception e){
-            Log.d("JRW", "no guns in db for this user");
-        }
-
-        try {
-            ArrayList<String> currentLoadStr_List =  refreshLoadList();
-
-            mCurrentLoadList_Adapt = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, currentLoadStr_List);
-
-            mLoadList_View.setAdapter(mCurrentLoadList_Adapt);
-            mLoadList_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                }
-            });
-
-        } catch (Exception e){
-            Log.d("JRW", "no loads in db for this user");
-        }
+        initializeGunListView();
+        initializeLoadListView();
 
         // Setting title of activity
         setTitle("Armory");
     }
 
-    //*************************************** Other Functions **************************************
+    //************************************* Listview Functions *************************************
     private ArrayList<String> refreshGunList() {
         /*******************************************************************************************
          * Function: refreshGunList
@@ -221,7 +179,8 @@ public class ArmoryActivity extends AppCompatActivity {
 
         for (int i = 0; i < currentGun_List.size(); i++) {
             GunClass tempGun = currentGun_List.get(i);
-            currentGunStr_List.add(tempGun.getGunEmail_Str() + " " + tempGun.getGunNickname_Str());
+            currentGunStr_List.add(tempGun.getGunNickname_Str() + " - " + tempGun.getGunModel_Str()
+                    + " " + tempGun.getGunGauge_Str());
         }
 
         if (currentGunStr_List.isEmpty()) {
@@ -248,7 +207,8 @@ public class ArmoryActivity extends AppCompatActivity {
 
         for (int i = 0; i < currentLoad_List.size(); i++) {
             LoadClass tempLoad = currentLoad_List.get(i);
-            currentLoadStr_List.add(tempLoad.getLoadEmail_Str() + " " + tempLoad.getLoadNickname_Str());
+            currentLoadStr_List.add(tempLoad.getLoadNickname_Str() + " - " + tempLoad.getLoadBrand_Str()
+                    + " " + tempLoad.getLoadGauge_Str());
         }
 
         if (currentLoadStr_List.isEmpty()) {
@@ -292,6 +252,86 @@ public class ArmoryActivity extends AppCompatActivity {
         mCurrentLoadList_Adapt.notifyDataSetChanged();
     }
 
+    private void initializeGunListView() {
+        /*******************************************************************************************
+         * Function: initializeGunListView
+         *
+         * Purpose: Function initializes the gun list view
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        try {
+            ArrayList<String> currentGunStr_List =  refreshGunList();
+
+            mCurrentGunList_Adapt = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, currentGunStr_List);
+
+            mGunList_View.setAdapter(mCurrentGunList_Adapt);
+            mGunList_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    // TODO: for editing gun list item
+
+                }
+            });
+
+            mGunList_View.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    // TODO: for deleting gun list item
+
+                    return false;
+                }
+            });
+
+        } catch (Exception e){
+            Log.d("JRW", "no guns in db for this user");
+        }
+
+    }
+
+    private void initializeLoadListView() {
+        /*******************************************************************************************
+         * Function: initializeGunListView
+         *
+         * Purpose: Function initializes the load list view
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        try {
+            ArrayList<String> currentLoadStr_List =  refreshLoadList();
+
+            mCurrentLoadList_Adapt = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, currentLoadStr_List);
+
+            mLoadList_View.setAdapter(mCurrentLoadList_Adapt);
+            mLoadList_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    // TODO: for editing load list item
+                }
+            });
+
+            mGunList_View.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    // TODO: for deleting load list item
+                    return false;
+                }
+            });
+
+        } catch (Exception e){
+            Log.d("JRW", "no loads in db for this user");
+        }
+
+    }
+
     private void setListViewLayoutParams() {
         /*******************************************************************************************
          * Function: setListViewLayoutParams
@@ -322,6 +362,270 @@ public class ArmoryActivity extends AppCompatActivity {
         mLoadList_View.setLayoutParams(params);
     }
 
+    private void addGunItemDialog() {
+        /*******************************************************************************************
+         * Function: addGunItemDialog
+         *
+         * Purpose: Function creates dialog and prompts user to add new gun item
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
 
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+        // Set Dialog Title
+        TextView title = new TextView(this);
+        title.setText("Add New Gun");
+        title.setPadding(10, 10, 10, 10);   // Set Position
+        title.setGravity(Gravity.START);
+        title.setTextColor(Color.BLACK);
+        title.setTextSize(20);
+        alertDialog.setCustomTitle(title);
+
+        // Set all edittext views for gathering gun information
+        LinearLayout newGunItemTxt_LnrLay = new LinearLayout(this);
+        newGunItemTxt_LnrLay.setOrientation(LinearLayout.VERTICAL);
+
+        // Set Gun Name EditText
+        final EditText newGunItemName_Edt = new EditText(this);
+        newGunItemName_Edt.setHint("Gun Nickname");
+        newGunItemName_Edt.setGravity(Gravity.START);
+        newGunItemName_Edt.setTextColor(Color.BLACK);
+        newGunItemTxt_LnrLay.addView(newGunItemName_Edt);
+
+        // Set Gun Model EditText
+        final EditText newGunItemModel_Edt = new EditText(this);
+        newGunItemModel_Edt.setHint("Gun Model");
+        newGunItemModel_Edt.setGravity(Gravity.START);
+        newGunItemModel_Edt.setTextColor(Color.BLACK);
+        newGunItemTxt_LnrLay.addView(newGunItemModel_Edt);
+
+        // Set Gun Gauge EditText
+        final EditText newGunItemGauge_Edt = new EditText(this);
+        newGunItemGauge_Edt.setHint("Gun Gauge");
+        newGunItemGauge_Edt.setGravity(Gravity.START);
+        newGunItemGauge_Edt.setTextColor(Color.BLACK);
+        newGunItemTxt_LnrLay.addView(newGunItemGauge_Edt);
+
+        // Set Gun Notes EditText
+        final EditText newGunItemNotes_Edt = new EditText(this);
+        newGunItemNotes_Edt.setHint("Gun Notes");
+        newGunItemNotes_Edt.setGravity(Gravity.START);
+        newGunItemNotes_Edt.setTextColor(Color.BLACK);
+        newGunItemTxt_LnrLay.addView(newGunItemNotes_Edt);
+
+        // Add linear layout to alert dialog
+        alertDialog.setView(newGunItemTxt_LnrLay);
+
+        // Set Buttons
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"SAVE", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Overwritten by on click listener below
+            }
+        });
+
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"CANCEL", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Overwritten by on click listener below
+            }
+        });
+
+        new Dialog(getApplicationContext());
+        alertDialog.show();
+
+        // Set Properties for Save Button
+        final Button newGunItemSave_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        LinearLayout.LayoutParams newGunItemSave_Params = (LinearLayout.LayoutParams) newGunItemSave_Btn.getLayoutParams();
+        newGunItemSave_Params.gravity = Gravity.FILL_HORIZONTAL;
+        newGunItemSave_Btn.setPadding(50, 10, 10, 10);   // Set Position
+        newGunItemSave_Btn.setTextColor(Color.BLUE);
+        newGunItemSave_Btn.setLayoutParams(newGunItemSave_Params);
+        newGunItemSave_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on SAVE Button
+
+                if (newGunItemName_Edt.getText().toString().equals("")) {
+                    newGunItemName_Edt.setError(getString(R.string.error_field_required));
+                    newGunItemName_Edt.requestFocus();
+                } else {
+                    GunClass newGunItem = new GunClass();
+
+                    newGunItem.setGunEmail_Str(mCurrentUserEmail_Str);
+                    newGunItem.setGunNickname_Str(newGunItemName_Edt.getText().toString());
+                    newGunItem.setGunModel_Str(newGunItemModel_Edt.getText().toString());
+                    newGunItem.setGunGauge_Str(newGunItemGauge_Edt.getText().toString());
+                    newGunItem.setGunNotes_Str(newGunItemNotes_Edt.getText().toString());
+
+                    db.insertGunInDB(newGunItem);
+
+                    alertDialog.dismiss();
+
+                    Toast.makeText(ArmoryActivity.this, "New gun saved!",
+                            Toast.LENGTH_LONG).show();
+
+                    // Refresh gun listview
+                    refreshGunListView();
+                }
+            }
+        });
+
+        final Button newGunItemCancel_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        LinearLayout.LayoutParams newGunItemCancel_Params = (LinearLayout.LayoutParams) newGunItemCancel_Btn.getLayoutParams();
+        newGunItemCancel_Params.gravity = Gravity.FILL_HORIZONTAL;
+        newGunItemCancel_Btn.setTextColor(Color.RED);
+        newGunItemCancel_Btn.setLayoutParams(newGunItemCancel_Params);
+        newGunItemCancel_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Cancel button
+                alertDialog.dismiss();
+            }
+        });
+    }
+
+    private void addLoadItemDialog() {
+        /*******************************************************************************************
+         * Function: addLoadItemDialog
+         *
+         * Purpose: Function creates dialog and prompts user to add new load item
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+        // Set Dialog Title
+        TextView title = new TextView(this);
+        title.setText("Add New Load");
+        title.setPadding(10, 10, 10, 10);   // Set Position
+        title.setGravity(Gravity.START);
+        title.setTextColor(Color.BLACK);
+        title.setTextSize(20);
+        alertDialog.setCustomTitle(title);
+
+        // Set all edittext views for gathering load information
+        LinearLayout newLoadItemTxt_LnrLay = new LinearLayout(this);
+        newLoadItemTxt_LnrLay.setOrientation(LinearLayout.VERTICAL);
+
+        // Set Load Name EditText
+        final EditText newLoadItemName_Edt = new EditText(this);
+        newLoadItemName_Edt.setHint("Load Nickname");
+        newLoadItemName_Edt.setGravity(Gravity.START);
+        newLoadItemName_Edt.setTextColor(Color.BLACK);
+        newLoadItemTxt_LnrLay.addView(newLoadItemName_Edt);
+
+        // Set Load Brand EditText
+        final EditText newLoadItemBrand_Edt = new EditText(this);
+        newLoadItemBrand_Edt.setHint("Load Brand");
+        newLoadItemBrand_Edt.setGravity(Gravity.START);
+        newLoadItemBrand_Edt.setTextColor(Color.BLACK);
+        newLoadItemTxt_LnrLay.addView(newLoadItemBrand_Edt);
+
+        // Set Load Gauge EditText
+        final EditText newLoadItemGauge_Edt = new EditText(this);
+        newLoadItemGauge_Edt.setHint("Load Gauge");
+        newLoadItemGauge_Edt.setGravity(Gravity.START);
+        newLoadItemGauge_Edt.setTextColor(Color.BLACK);
+        newLoadItemTxt_LnrLay.addView(newLoadItemGauge_Edt);
+
+        // Set Load Length EditText
+        final EditText newLoadItemLength_Edt = new EditText(this);
+        newLoadItemLength_Edt.setHint("Load Length");
+        newLoadItemLength_Edt.setGravity(Gravity.START);
+        newLoadItemLength_Edt.setTextColor(Color.BLACK);
+        newLoadItemTxt_LnrLay.addView(newLoadItemLength_Edt);
+
+        // Set Load Grain EditText
+        final EditText newLoadItemGrain_Edt = new EditText(this);
+        newLoadItemGrain_Edt.setHint("Load Grain");
+        newLoadItemGrain_Edt.setGravity(Gravity.START);
+        newLoadItemGrain_Edt.setTextColor(Color.BLACK);
+        newLoadItemTxt_LnrLay.addView(newLoadItemGrain_Edt);
+
+        // Set Load Notes EditText
+        final EditText newLoadItemNotes_Edt = new EditText(this);
+        newLoadItemNotes_Edt.setHint("Load Notes");
+        newLoadItemNotes_Edt.setGravity(Gravity.START);
+        newLoadItemNotes_Edt.setTextColor(Color.BLACK);
+        newLoadItemTxt_LnrLay.addView(newLoadItemNotes_Edt);
+
+        // Add linear layout to alert dialog
+        alertDialog.setView(newLoadItemTxt_LnrLay);
+
+        // Set Buttons
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"SAVE", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Overwritten by on click listener below
+            }
+        });
+
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"CANCEL", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Overwritten by on click listener below
+            }
+        });
+
+        new Dialog(getApplicationContext());
+        alertDialog.show();
+
+        // Set Properties for Save Button
+        final Button newLoadItemSave_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        LinearLayout.LayoutParams newGunItemSave_Params = (LinearLayout.LayoutParams) newLoadItemSave_Btn.getLayoutParams();
+        newGunItemSave_Params.gravity = Gravity.FILL_HORIZONTAL;
+        newLoadItemSave_Btn.setPadding(50, 10, 10, 10);   // Set Position
+        newLoadItemSave_Btn.setTextColor(Color.BLUE);
+        newLoadItemSave_Btn.setLayoutParams(newGunItemSave_Params);
+        newLoadItemSave_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on SAVE Button
+
+                if (newLoadItemName_Edt.getText().toString().equals("")) {
+                    newLoadItemName_Edt.setError(getString(R.string.error_field_required));
+                    newLoadItemName_Edt.requestFocus();
+                } else {
+                    LoadClass newLoadItem = new LoadClass();
+
+                    newLoadItem.setLoadEmail_Str(mCurrentUserEmail_Str);
+                    newLoadItem.setLoadNickname_Str(newLoadItemName_Edt.getText().toString());
+                    newLoadItem.setLoadBrand_Str(newLoadItemBrand_Edt.getText().toString());
+                    newLoadItem.setLoadGauge_Str(newLoadItemGauge_Edt.getText().toString());
+                    newLoadItem.setLoadLength_Str(newLoadItemLength_Edt.getText().toString());
+                    newLoadItem.setLoadGrain_Str(newLoadItemGrain_Edt.getText().toString());
+                    newLoadItem.setLoadNotes_Str(newLoadItemNotes_Edt.getText().toString());
+
+                    db.insertLoadInDB(newLoadItem);
+
+                    alertDialog.dismiss();
+
+                    Toast.makeText(ArmoryActivity.this, "New load saved!",
+                            Toast.LENGTH_LONG).show();
+
+                    // Refresh load listview
+                    refreshLoadListView();
+                }
+            }
+        });
+
+        final Button newLoadItemCancel_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        LinearLayout.LayoutParams newGunItemCancel_Params = (LinearLayout.LayoutParams) newLoadItemCancel_Btn.getLayoutParams();
+        newGunItemCancel_Params.gravity = Gravity.FILL_HORIZONTAL;
+        newLoadItemCancel_Btn.setTextColor(Color.RED);
+        newLoadItemCancel_Btn.setLayoutParams(newGunItemCancel_Params);
+        newLoadItemCancel_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Cancel button
+                alertDialog.dismiss();
+            }
+        });
+    }
 
 }
