@@ -502,6 +502,32 @@ public class DBHandler extends SQLiteOpenHelper {
         return tempLoad_List;
     }
 
+    public void deleteLoadInDB (String email, String loadName) {
+        /*******************************************************************************************
+         * Function: deleteLoadInDB
+         *
+         * Purpose: Function deletes item from database based on email and loadName
+         *
+         * Parameters: email (IN) - email to remove gun from
+         *             loadName (IN) - name of load to remove
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getWritableDatabase();
+
+        String whereClause_Str = "(" + KEY_LOAD_PROFILE_NAME + " = '" + email + "' AND "
+                + KEY_LOAD_NICKNAME + " = '" + loadName + "')";
+        try {
+            dbWhole.delete(TABLE_LOADS, whereClause_Str, null);
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        dbWhole.close();
+    }
+
     //**************************************** Gun Functions ***************************************
     public void insertGunInDB (GunClass g) {
         /*******************************************************************************************
@@ -561,6 +587,93 @@ public class DBHandler extends SQLiteOpenHelper {
 
         dbWhole.close();
         return tempGun_List;
+    }
+
+    public void deleteGunInDB (String email, String gunName) {
+        /*******************************************************************************************
+         * Function: deleteGunInDB
+         *
+         * Purpose: Function deletes item from database based on email and gunName
+         *
+         * Parameters: email (IN) - email to remove gun from
+         *             gunName (IN) - name of gun to remove
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getWritableDatabase();
+
+        String whereClause_Str = "(" + KEY_GUN_PROFILE_NAME + " = '" + email + "' AND "
+                + KEY_GUN_NICKNAME + " = '" + gunName + "')";
+        try {
+            dbWhole.delete(TABLE_GUNS, whereClause_Str, null);
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        dbWhole.close();
+    }
+
+    public void updateGunInDB (GunClass g, int gunID_Int) {
+        /*******************************************************************************************
+         * Function: updateGunInDB
+         *
+         * Purpose: Function updates item from database based on database ID
+         *
+         * Parameters: g (IN) - object that holds information for updating item in the database
+         *             gunID_Int (IN) - ID number of the item in the database
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_GUN_PROFILE_NAME, g.getGunEmail_Str());
+        values.put(KEY_GUN_NICKNAME, g.getGunNickname_Str());
+        values.put(KEY_GUN_MODEL, g.getGunModel_Str());
+        values.put(KEY_GUN_GAUGE, g.getGunGauge_Str());
+        values.put(KEY_GUN_NOTES, g.getGunNotes_Str());
+
+        String whereClaus = KEY_GUN_ID + " = " + Integer.toString(gunID_Int);
+
+        dbWhole.update(TABLE_GUNS, values, whereClaus, null);
+        dbWhole.close();
+    }
+
+    public int getIDforGun (String email, String gunName) {
+        /*******************************************************************************************
+         * Function: getIDforGun
+         *
+         * Purpose: Function returns the ID number of a gun in the database
+         *
+         * Parameters: email (IN) - email of gun to get ID
+         *             gunName (IN) - name of gun to get ID
+         *
+         * Returns: gunID_Int - ID number of gun
+         *
+         ******************************************************************************************/
+
+        int gunID_Int = 99999;
+        String query = "SELECT " + KEY_GUN_ID + " FROM " + TABLE_GUNS + " WHERE "
+                + KEY_GUN_PROFILE_NAME + " = '" + email + "' AND " + KEY_GUN_NICKNAME + " = '"
+                + gunName + "'";
+
+        dbWhole = this.getReadableDatabase();
+
+        try {
+            Cursor cursor = dbWhole.rawQuery(query, null);
+            cursor.moveToFirst();
+            gunID_Int = cursor.getInt(cursor.getColumnIndex(KEY_GUN_ID));
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        dbWhole.close();
+
+        return gunID_Int;
     }
 
 }

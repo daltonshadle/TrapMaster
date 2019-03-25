@@ -179,8 +179,12 @@ public class ArmoryActivity extends AppCompatActivity {
 
         for (int i = 0; i < currentGun_List.size(); i++) {
             GunClass tempGun = currentGun_List.get(i);
-            currentGunStr_List.add(tempGun.getGunNickname_Str() + " - " + tempGun.getGunModel_Str()
-                    + " " + tempGun.getGunGauge_Str());
+            String gunListItem_Str = tempGun.getGunNickname_Str() + " - " + tempGun.getGunModel_Str()
+                    + " " + tempGun.getGunGauge_Str();
+            // TEMP
+            gunListItem_Str = tempGun.getGunNickname_Str();
+
+            currentGunStr_List.add(gunListItem_Str);
         }
 
         if (currentGunStr_List.isEmpty()) {
@@ -207,8 +211,13 @@ public class ArmoryActivity extends AppCompatActivity {
 
         for (int i = 0; i < currentLoad_List.size(); i++) {
             LoadClass tempLoad = currentLoad_List.get(i);
-            currentLoadStr_List.add(tempLoad.getLoadNickname_Str() + " - " + tempLoad.getLoadBrand_Str()
-                    + " " + tempLoad.getLoadGauge_Str());
+            String loadItem_Str = tempLoad.getLoadNickname_Str() + " - " + tempLoad.getLoadBrand_Str()
+                    + " " + tempLoad.getLoadGauge_Str();
+
+            // TEMP
+            loadItem_Str = tempLoad.getLoadNickname_Str();
+
+            currentLoadStr_List.add(loadItem_Str);
         }
 
         if (currentLoadStr_List.isEmpty()) {
@@ -270,11 +279,16 @@ public class ArmoryActivity extends AppCompatActivity {
             mCurrentGunList_Adapt = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, currentGunStr_List);
 
             mGunList_View.setAdapter(mCurrentGunList_Adapt);
+            mGunList_View.setLongClickable(true);
+
             mGunList_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     // TODO: for editing gun list item
+                    String gunName_Str = (String) adapterView.getItemAtPosition(i);
+                    Log.d("JRW", "OnItemLongClick for gun is here: " + gunName_Str);
 
+                    db.getIDforGun(mCurrentUserEmail_Str, gunName_Str);
                 }
             });
 
@@ -282,7 +296,12 @@ public class ArmoryActivity extends AppCompatActivity {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                     // TODO: for deleting gun list item
+                    String gunName_Str = (String) adapterView.getItemAtPosition(i);
+                    Log.d("JRW", "OnItemLongClick for gun is here: " + gunName_Str);
 
+                    if (!isDefaultItemText(gunName_Str)) {
+                        removeGunItemDialog(gunName_Str);
+                    }
                     return false;
                 }
             });
@@ -311,17 +330,26 @@ public class ArmoryActivity extends AppCompatActivity {
             mCurrentLoadList_Adapt = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, currentLoadStr_List);
 
             mLoadList_View.setAdapter(mCurrentLoadList_Adapt);
+            mLoadList_View.setLongClickable(true);
+
             mLoadList_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     // TODO: for editing load list item
+
                 }
             });
 
-            mGunList_View.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            mLoadList_View.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                     // TODO: for deleting load list item
+                    String loadName_Str = (String) adapterView.getItemAtPosition(i);
+                    Log.d("JRW", "OnItemLongClick for load is here: " + loadName_Str);
+
+                    if (!isDefaultItemText(loadName_Str)) {
+                        removeLoadItemDialog(loadName_Str);
+                    }
                     return false;
                 }
             });
@@ -626,6 +654,160 @@ public class ArmoryActivity extends AppCompatActivity {
                 alertDialog.dismiss();
             }
         });
+    }
+
+    private void removeGunItemDialog(String gunName_Str) {
+        /*******************************************************************************************
+         * Function: removeGunItemDialog
+         *
+         * Purpose: Function creates dialog and prompts user to remove a gun item
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        final String finalGunName_Str = gunName_Str;
+
+        // Set Dialog Title
+        alertDialog.setTitle("Delete gun");
+
+        // Set Dialog Message
+        alertDialog.setMessage("Are you sure you want to delete this gun?");
+
+
+        // Set Buttons
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"DELETE", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Overwritten by on click listener below
+            }
+        });
+
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"CANCEL", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Overwritten by on click listener below
+            }
+        });
+
+        new Dialog(getApplicationContext());
+        alertDialog.show();
+
+        // Set Properties for Save Button
+        final Button deleteGunItem_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        LinearLayout.LayoutParams deleteGunItem_Params = (LinearLayout.LayoutParams) deleteGunItem_Btn.getLayoutParams();
+        deleteGunItem_Params.gravity = Gravity.FILL_HORIZONTAL;
+        deleteGunItem_Btn.setPadding(50, 10, 10, 10);   // Set Position
+        deleteGunItem_Btn.setTextColor(Color.BLUE);
+        deleteGunItem_Btn.setLayoutParams(deleteGunItem_Params);
+        deleteGunItem_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Delete Button
+                db.deleteGunInDB(mCurrentUserEmail_Str, finalGunName_Str);
+
+                alertDialog.dismiss();
+
+                Toast.makeText(ArmoryActivity.this, "Gun deleted.",
+                        Toast.LENGTH_LONG).show();
+
+                // Refresh gun listview
+                refreshGunListView();
+            }
+        });
+
+        final Button deleteGunItemCancel_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        LinearLayout.LayoutParams deleteGunItemCancel_Params = (LinearLayout.LayoutParams) deleteGunItemCancel_Btn.getLayoutParams();
+        deleteGunItemCancel_Params.gravity = Gravity.FILL_HORIZONTAL;
+        deleteGunItemCancel_Btn.setTextColor(Color.RED);
+        deleteGunItemCancel_Btn.setLayoutParams(deleteGunItemCancel_Params);
+        deleteGunItemCancel_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Cancel button
+                alertDialog.dismiss();
+            }
+        });
+    }
+
+    private void removeLoadItemDialog(String loadName_Str) {
+        /*******************************************************************************************
+         * Function: removeLoadItemDialog
+         *
+         * Purpose: Function creates dialog and prompts user to remove a load item
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        final String finalLoadName_Str = loadName_Str;
+
+        // Set Dialog Title
+        alertDialog.setTitle("Delete Load");
+
+        // Set Dialog Message
+        alertDialog.setMessage("Are you sure you want to delete this load?");
+
+
+        // Set Buttons
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"DELETE", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Overwritten by on click listener below
+            }
+        });
+
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"CANCEL", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Overwritten by on click listener below
+            }
+        });
+
+        new Dialog(getApplicationContext());
+        alertDialog.show();
+
+        // Set Properties for Save Button
+        final Button deleteLoadItem_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        LinearLayout.LayoutParams deleteLoadItem_Params = (LinearLayout.LayoutParams) deleteLoadItem_Btn.getLayoutParams();
+        deleteLoadItem_Params.gravity = Gravity.FILL_HORIZONTAL;
+        deleteLoadItem_Btn.setPadding(50, 10, 10, 10);   // Set Position
+        deleteLoadItem_Btn.setTextColor(Color.BLUE);
+        deleteLoadItem_Btn.setLayoutParams(deleteLoadItem_Params);
+        deleteLoadItem_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Delete Button
+                db.deleteLoadInDB(mCurrentUserEmail_Str, finalLoadName_Str);
+
+                alertDialog.dismiss();
+
+                Toast.makeText(ArmoryActivity.this, "Load deleted.",
+                        Toast.LENGTH_LONG).show();
+
+                // Refresh load listview
+                refreshLoadListView();
+            }
+        });
+
+        final Button deleteLoadItemCancel_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        LinearLayout.LayoutParams deleteLoadItemCancel_Params = (LinearLayout.LayoutParams) deleteLoadItemCancel_Btn.getLayoutParams();
+        deleteLoadItemCancel_Params.gravity = Gravity.FILL_HORIZONTAL;
+        deleteLoadItemCancel_Btn.setTextColor(Color.RED);
+        deleteLoadItemCancel_Btn.setLayoutParams(deleteLoadItemCancel_Params);
+        deleteLoadItemCancel_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Cancel button
+                alertDialog.dismiss();
+            }
+        });
+    }
+
+    private boolean isDefaultItemText(String item_Str) {
+        return item_Str.contains("Click add for a new");
     }
 
 }
