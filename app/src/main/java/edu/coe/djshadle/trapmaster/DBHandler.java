@@ -35,7 +35,7 @@ public class DBHandler extends SQLiteOpenHelper {
     //********************************** Variables and Constants ***********************************
     //Database Variables & Constants
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "trapMasterDB";
+    private static final String DATABASE_NAME = "trapMasterDB.db";
     private SQLiteDatabase dbWhole;
 
     //Profile Table Stuff
@@ -810,5 +810,6 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole.update(TABLE_GUNS, values, whereClaus, null);
         dbWhole.close();
     }
+
 
 }
