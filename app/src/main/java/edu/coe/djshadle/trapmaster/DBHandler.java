@@ -528,6 +528,106 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole.close();
     }
 
+    public int getIDforLoad (String email, String loadName) {
+        /*******************************************************************************************
+         * Function: getIDforLoad
+         *
+         * Purpose: Function returns the ID number of a load in the database
+         *
+         * Parameters: email (IN) - email of load to get ID
+         *             loadName (IN) - name of load to get ID
+         *
+         * Returns: loadID_Int - ID number of load
+         *
+         ******************************************************************************************/
+
+        int loadID_Int = 99999;
+        String query = "SELECT " + KEY_LOAD_ID + " FROM " + TABLE_LOADS + " WHERE "
+                + KEY_LOAD_PROFILE_NAME + " = '" + email + "' AND " + KEY_LOAD_NICKNAME + " = '"
+                + loadName + "'";
+
+        dbWhole = this.getReadableDatabase();
+
+        try {
+            Cursor cursor = dbWhole.rawQuery(query, null);
+            cursor.moveToFirst();
+            loadID_Int = cursor.getInt(cursor.getColumnIndex(KEY_LOAD_ID));
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        dbWhole.close();
+
+        return loadID_Int;
+    }
+
+    public LoadClass getLoadInDB (int loadID_Int) {
+        /*******************************************************************************************
+         * Function: getLoadInDB
+         *
+         * Purpose: Function returns the ID number of a load in the database
+         *
+         * Parameters: loadID_Int (IN) - ID of the load information to return
+         *
+         * Returns: tempLoad - Information of the load stored at loadID_Int
+         *
+         ******************************************************************************************/
+
+        LoadClass tempLoad = new LoadClass();
+        String query = "SELECT * FROM " + TABLE_LOADS + " WHERE "
+                + KEY_LOAD_ID + " = " + Integer.toString(loadID_Int);
+
+        dbWhole = this.getReadableDatabase();
+
+        try {
+            Cursor cursor = dbWhole.rawQuery(query, null);
+            cursor.moveToFirst();
+            tempLoad.setLoadEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_PROFILE_NAME)));
+            tempLoad.setLoadNickname_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_NICKNAME)));
+            tempLoad.setLoadBrand_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_BRAND)));
+            tempLoad.setLoadGauge_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_GAUGE)));
+            tempLoad.setLoadGrain_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_GRAIN)));
+            tempLoad.setLoadLength_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_LENGTH)));
+            tempLoad.setLoadNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_NOTES)));
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        dbWhole.close();
+
+        return tempLoad;
+    }
+
+    public void updateLoadInDB (LoadClass l, int loadID_Int) {
+        /*******************************************************************************************
+         * Function: updateLoadInDB
+         *
+         * Purpose: Function updates item from database based on database ID
+         *
+         * Parameters: l (IN) - object that holds information for updating item in the database
+         *             loadID_Int (IN) - ID number of the item in the database
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_LOAD_PROFILE_NAME, l.getLoadEmail_Str());
+        values.put(KEY_LOAD_NICKNAME, l.getLoadNickname_Str());
+        values.put(KEY_LOAD_BRAND, l.getLoadBrand_Str());
+        values.put(KEY_LOAD_GAUGE, l.getLoadGauge_Str());
+        values.put(KEY_LOAD_GRAIN, l.getLoadGrain_Str());
+        values.put(KEY_LOAD_LENGTH, l.getLoadLength_Str());
+        values.put(KEY_LOAD_NOTES, l.getLoadNotes_Str());
+
+        String whereClaus = KEY_GUN_ID + " = " + Integer.toString(loadID_Int);
+
+        dbWhole.update(TABLE_LOADS, values, whereClaus, null);
+        dbWhole.close();
+    }
+
     //**************************************** Gun Functions ***************************************
     public void insertGunInDB (GunClass g) {
         /*******************************************************************************************
@@ -615,34 +715,6 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole.close();
     }
 
-    public void updateGunInDB (GunClass g, int gunID_Int) {
-        /*******************************************************************************************
-         * Function: updateGunInDB
-         *
-         * Purpose: Function updates item from database based on database ID
-         *
-         * Parameters: g (IN) - object that holds information for updating item in the database
-         *             gunID_Int (IN) - ID number of the item in the database
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        dbWhole = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_GUN_PROFILE_NAME, g.getGunEmail_Str());
-        values.put(KEY_GUN_NICKNAME, g.getGunNickname_Str());
-        values.put(KEY_GUN_MODEL, g.getGunModel_Str());
-        values.put(KEY_GUN_GAUGE, g.getGunGauge_Str());
-        values.put(KEY_GUN_NOTES, g.getGunNotes_Str());
-
-        String whereClaus = KEY_GUN_ID + " = " + Integer.toString(gunID_Int);
-
-        dbWhole.update(TABLE_GUNS, values, whereClaus, null);
-        dbWhole.close();
-    }
-
     public int getIDforGun (String email, String gunName) {
         /*******************************************************************************************
          * Function: getIDforGun
@@ -674,6 +746,69 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole.close();
 
         return gunID_Int;
+    }
+
+    public GunClass getGunInDB (int gunID_Int) {
+        /*******************************************************************************************
+         * Function: getGunInDB
+         *
+         * Purpose: Function returns the ID number of a gun in the database
+         *
+         * Parameters: gunID_Int (IN) - ID of the gun information to return
+         *
+         * Returns: tempGun - Information of the gun stored at gunID_Int
+         *
+         ******************************************************************************************/
+
+        GunClass tempGun = new GunClass();
+        String query = "SELECT * FROM " + TABLE_GUNS + " WHERE "
+                + KEY_GUN_ID + " = " + Integer.toString(gunID_Int);
+
+        dbWhole = this.getReadableDatabase();
+
+        try {
+            Cursor cursor = dbWhole.rawQuery(query, null);
+            cursor.moveToFirst();
+            tempGun.setGunEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_PROFILE_NAME)));
+            tempGun.setGunNickname_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_NICKNAME)));
+            tempGun.setGunModel_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_MODEL)));
+            tempGun.setGunGauge_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_GAUGE)));
+            tempGun.setGunNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_NOTES)));
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        dbWhole.close();
+
+        return tempGun;
+    }
+
+    public void updateGunInDB (GunClass g, int gunID_Int) {
+        /*******************************************************************************************
+         * Function: updateGunInDB
+         *
+         * Purpose: Function updates item from database based on database ID
+         *
+         * Parameters: g (IN) - object that holds information for updating item in the database
+         *             gunID_Int (IN) - ID number of the item in the database
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_GUN_PROFILE_NAME, g.getGunEmail_Str());
+        values.put(KEY_GUN_NICKNAME, g.getGunNickname_Str());
+        values.put(KEY_GUN_MODEL, g.getGunModel_Str());
+        values.put(KEY_GUN_GAUGE, g.getGunGauge_Str());
+        values.put(KEY_GUN_NOTES, g.getGunNotes_Str());
+
+        String whereClaus = KEY_GUN_ID + " = " + Integer.toString(gunID_Int);
+
+        dbWhole.update(TABLE_GUNS, values, whereClaus, null);
+        dbWhole.close();
     }
 
 }
