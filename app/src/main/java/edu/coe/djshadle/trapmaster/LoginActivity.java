@@ -15,9 +15,11 @@ package edu.coe.djshadle.trapmaster;
 
 //******************************************** Imports *********************************************
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,13 +27,23 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.ActionCodeSettings;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.regex.Pattern;
 
 public class LoginActivity extends AppCompatActivity {
 
     //********************************* Variables and Constants ************************************
     //General Constants
-    final int MIN_PASS_LENGTH = 7;
+    private final int MIN_PASS_LENGTH = 7;
+    private final String TAG = "JRW";
 
     //General Variables
     private String mEmail_Str = "SAVED_EMAIL";
@@ -41,6 +53,9 @@ public class LoginActivity extends AppCompatActivity {
     // UI References
     private EditText mEmail_View;
     private EditText mPassword_View;
+
+    //Google Variables
+    FirebaseAuth auth;
 
     //************************************* Activity Functions *************************************
     @Override
@@ -163,6 +178,17 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // Initialize Google/Firebase Auth
+        auth = FirebaseAuth.getInstance();
+
+        // If user is already signed in, go straight to the home page
+        if (auth.getCurrentUser() != null) {
+            mEmail_Str = auth.getCurrentUser().getEmail();
+            Intent homeActivity_Intent = new Intent(LoginActivity.this, homeActivity.class);
+            homeActivity_Intent.putExtra(getString(R.string.current_user_email), mEmail_Str);
+            startActivity(homeActivity_Intent);
+            finish();
+        }
     }
 
     //************************************** Login Functions ***************************************
@@ -220,11 +246,7 @@ public class LoginActivity extends AppCompatActivity {
             // form field with an error.
             focusView.requestFocus();
         } else {
-            //Login was successful; continue to next activity
-            Intent homeActivity_Intent = new Intent(LoginActivity.this, homeActivity.class);
-            homeActivity_Intent.putExtra(getString(R.string.current_user_email), email);
-            startActivity(homeActivity_Intent);
-            finish();
+            signUserWithFireBase(email, password);
         }
     }
 
@@ -314,14 +336,8 @@ public class LoginActivity extends AppCompatActivity {
             // form field with an error.
             focusView.requestFocus();
         } else {
-            //Login was successful; continue to next activity as new user
-            ProfileClass p = new ProfileClass(email, password);
-            db.insertProfileInDB(p);
-
-            Intent homeActivity_Intent = new Intent(LoginActivity.this, homeActivity.class);
-            homeActivity_Intent.putExtra(getString(R.string.current_user_email), email);
-            startActivity(homeActivity_Intent);
-            finish();
+            // Google Code to register user
+            registerUserWithFireBase(email, password);
         }
     }
 
@@ -362,6 +378,82 @@ public class LoginActivity extends AppCompatActivity {
          ******************************************************************************************/
 
         return password.length() >= MIN_PASS_LENGTH;
+    }
+
+    //************************************* Google Functions ***************************************
+    private void registerUserWithFireBase(final String email, final String password){
+        /*******************************************************************************************
+         * Function: registerUserWithFireBase
+         *
+         * Purpose: Function registers a new user with Firebase
+         *
+         * Parameters: email (IN) - email of user to register
+         *             password (IN) - password of user to register
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        //create user
+        auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(LoginActivity.this, "Registration failed!",
+                                    Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, task.getException().toString());
+                        } else {
+                            //Login was successful; continue to next activity as new user
+                            ProfileClass p = new ProfileClass(email, password);
+                            db.insertProfileInDB(p);
+
+                            Intent homeActivity_Intent = new Intent(LoginActivity.this, homeActivity.class);
+                            homeActivity_Intent.putExtra(getString(R.string.current_user_email), email);
+                            startActivity(homeActivity_Intent);
+                            finish();
+                        }
+                    }
+                });
+    }
+
+    private void signUserWithFireBase(final String email, final String password){
+        /*******************************************************************************************
+         * Function: registerUserWithFireBase
+         *
+         * Purpose: Function signs in a new user with Firebase
+         *
+         * Parameters: email (IN) - email of user to sign in
+         *             password (IN) - password of user to sign in
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        //authenticate user
+        auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            // there was an error
+                            Toast.makeText(LoginActivity.this, "Sign in failed!",
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            //Login was successful; continue to next activity
+                            Intent homeActivity_Intent = new Intent(LoginActivity.this, homeActivity.class);
+                            homeActivity_Intent.putExtra(getString(R.string.current_user_email), email);
+                            startActivity(homeActivity_Intent);
+                            finish();
+                        }
+                    }
+                });
     }
 
 }
