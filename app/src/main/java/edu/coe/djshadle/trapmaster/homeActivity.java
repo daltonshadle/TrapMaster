@@ -16,11 +16,16 @@ package edu.coe.djshadle.trapmaster;
 //******************************************** Imports *********************************************
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class homeActivity extends AppCompatActivity implements View.OnClickListener {
     //********************************* Variables and Constants ************************************
@@ -31,6 +36,9 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
     private String mCurrentUserEmail_Str = "tempEmail";
 
     // UI References
+
+    //Google Variables
+    FirebaseAuth auth;
 
     //*********************************** Home Activity Functions **********************************
     @Override
@@ -167,6 +175,9 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
                 i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
                 startActivity(i);
                 break;
+            case R.id.btnTempSignOut:
+                auth.signOut();
+                break;
 
         }
     }
@@ -189,12 +200,14 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         Button mBtnEventHistory = findViewById(R.id.btnHomeEventHistory);
         Button mBtnProfiles = findViewById(R.id.btnHomeProfiles);
         Button mBtnTeams = findViewById(R.id.btnHomeTeams);
+        Button mBtnSignOut = findViewById(R.id.btnTempSignOut);
 
         mBtnNewEvent.setOnClickListener(this);
         mBtnArmory.setOnClickListener(this);
         mBtnEventHistory.setOnClickListener(this);
         mBtnProfiles.setOnClickListener(this);
         mBtnTeams.setOnClickListener(this);
+        mBtnSignOut.setOnClickListener(this);
 
         // Set action bar title
         try {
@@ -202,8 +215,25 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         } catch (Exception e) {
             // Didn't work.
         }
+
+        // Initialize Google code for storing
+        auth = FirebaseAuth.getInstance();
+        // this listener will be called when there is change in firebase user session
+        FirebaseAuth.AuthStateListener authListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user == null) {
+                    // user auth state is changed - user is null
+                    // launch login activity
+                    startActivity(new Intent(homeActivity.this, LoginActivity.class));
+                    finish();
+                }
+            }
+        };
+        auth.addAuthStateListener(authListener);
+
     }
 
     //************************************** Other Functions ***************************************
-
 }
