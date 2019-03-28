@@ -450,6 +450,12 @@ public class ArmoryActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Perform Action on Delete Button
+
+                //TEMP CODE TODO: REMOVE
+                GunClass tempGun = db.getGunInDB(db.getIDforGun(mCurrentUserEmail_Str, finalGunName_Str));
+                FirebaseInterfaceSQL fire = new FirebaseInterfaceSQL();
+                fire.deleteGunInFirbase(tempGun);
+
                 db.deleteGunInDB(mCurrentUserEmail_Str, finalGunName_Str);
 
                 alertDialog.dismiss();
@@ -667,6 +673,10 @@ public class ArmoryActivity extends AppCompatActivity {
                     if (addNewGun) {
                         // User is ADDING a gun item
                         db.insertGunInDB(newGunItem);
+
+                        // TEMP CODE TODO REMOVE
+                        FirebaseInterfaceSQL fire = new FirebaseInterfaceSQL();
+                        fire.insertGunInFirbase(newGunItem);
                     } else {
                         // User is EDITING a gun item
                         db.updateGunInDB(newGunItem, gunID_Int);
