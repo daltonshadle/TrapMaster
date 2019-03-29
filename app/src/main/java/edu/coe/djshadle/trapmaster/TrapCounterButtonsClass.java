@@ -26,7 +26,7 @@ public class TrapCounterButtonsClass extends LinearLayout implements OnStageChan
     // General Constants
     private final static int HIT = 0, MISS = 1, NEUTRAL = 2;
     private final double TRAP_COUNTER_SCORE_SF = 0.15;
-    private final int HEIGHT_SF = 8, WIDTH_SF = 8;
+    private final int HEIGHT_SF = 9, WIDTH_SF = 8;
 
     // General Variables
     private int trapCounterChildCount_Int = 0;

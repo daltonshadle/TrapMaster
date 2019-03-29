@@ -29,6 +29,9 @@ import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -187,6 +190,48 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        /*******************************************************************************************
+         * Function: onCreateOptionsMenu
+         *
+         * Purpose: Function inflater menu from resources
+         *
+         * Parameters: menu (IN) - menu input
+         *
+         * Returns: True
+         *
+         ******************************************************************************************/
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.new_event_activity_menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        /*******************************************************************************************
+         * Function: onCreateOptionsMenu
+         *
+         * Purpose: Function inflater menu from resources
+         *
+         * Parameters: item (IN) - menu item input
+         *
+         * Returns: True
+         *
+         ******************************************************************************************/
+
+        int id = item.getItemId();
+
+        if (id == R.id.newEventCancel_MenuItem) {
+            // Cancel shoot, return to home
+            Intent homeActivity_Intent = new Intent(this, homeActivity.class);
+            homeActivity_Intent.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+            startActivity(homeActivity_Intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     //************************************* UI View Functions **************************************
     private void initializeViews() {
         /*******************************************************************************************
@@ -245,6 +290,13 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         // Initialize Google/Firebase Auth
         auth = FirebaseAuth.getInstance();
+
+        // Set action bar title
+        try {
+            setTitle("New Event");
+        } catch (Exception e) {
+            // Didn't work.
+        }
     }
 
     @Override
@@ -616,6 +668,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                 alertDialog.dismiss();
             }
         });
+
+        // TODO: Add another button to register a new user
     }
 
     private void signUserWithFireBase(final String email, final String password){
