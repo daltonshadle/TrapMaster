@@ -382,7 +382,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void signUserWithFireBase(final String email, final String password){
         /*******************************************************************************************
-         * Function: registerUserWithFireBase
+         * Function: signUserWithFireBase
          *
          * Purpose: Function signs in a new user with Firebase
          *

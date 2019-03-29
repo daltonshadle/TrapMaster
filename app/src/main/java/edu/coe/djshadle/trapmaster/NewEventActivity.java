@@ -14,14 +14,20 @@
 package edu.coe.djshadle.trapmaster;
 
 //******************************************** Imports *********************************************
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,11 +57,13 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     private final String TRAP_STATE_KEY = "TRAP_STATE_KEY";
     private final double HIT_MISS_TEXT_SF = 0.10;
     private final int HEIGHT_SF = 3, WIDTH_SF = 5;
+    private final String TAG = "JRW";
 
     // General Variables
     private int trapCounterChildCount_Int = 0;
     private int totalHits_Int = 0;
     private boolean quickEventFlag_Bool;
+    private boolean quickEventSignInSuccess_Bool = false;
     private ArrayList<Integer> trapCounterState_Array;
     private String mCurrentUserEmail_Str = "tempEmail";
     private String mEventName_Str = "tempEventName";
@@ -289,7 +297,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                 break;
             case R.id.save_Btn:
                 if (isAllTrapCounterChecked()) {
-                    // TODO: fill in temp code from testing (mEventName, mShotNotes, etc)
+                    // All traps are checked and ready to save
                     Log.d("JRW", "Save button quick event: " + Boolean.toString(quickEventFlag_Bool));
                     if (quickEventFlag_Bool) {
                         // Quick Event, must have them log in
@@ -303,6 +311,10 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                         homeActivity_Intent.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
                         startActivity(homeActivity_Intent);
                     }
+                } else {
+                    // Not all traps are checked, not ready to save
+                    Toast.makeText(NewEventActivity.this,
+                            "All scoring buttons need to be checked", Toast.LENGTH_LONG).show();
                 }
                 break;
         }
@@ -493,74 +505,122 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     //************************************** Other Functions ***************************************
     private void quickEventLogin() {
-        /*******************************************************************************************
-         * Function: quickEventLogin
-         *
-         * Purpose: Function creates a alert dialog to sign user in, used in a Quick Event situation
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
+            /*******************************************************************************************
+             * Function: quickEventLogin
+             *
+             * Purpose: Function creates a alert dialog to sign user in, used in a Quick Event situation
+             *
+             * Parameters: None
+             *
+             * Returns: None
+             *
+             ******************************************************************************************/
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 
-        Log.d("JRW", "Inside the quick event login");
+        // Set Dialog Title
+        TextView title = new TextView(this);
+        title.setText("Sign In");
+        title.setPadding(10, 10, 10, 10);   // Set Position
+        title.setGravity(Gravity.START);
+        title.setTextColor(Color.BLACK);
+        title.setTextSize(20);
+        alertDialog.setCustomTitle(title);
 
-        LayoutInflater temp_LI = LayoutInflater.from(NewEventActivity.this);
-        View quickEventLogin_View = temp_LI.inflate(R.layout.view_quick_event_login, null);
+        // Set all edittext views for gathering information
+        LinearLayout dialogView_LnrLay = new LinearLayout(this);
+        dialogView_LnrLay.setOrientation(LinearLayout.VERTICAL);
 
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(NewEventActivity.this);
-        alertDialogBuilder.setView(quickEventLogin_View);
+        // Set Email EditText
+        final EditText email_Edt = new EditText(this);
+        email_Edt.setHint("Email");
+        email_Edt.setGravity(Gravity.START);
+        email_Edt.setTextColor(Color.BLACK);
+        dialogView_LnrLay.addView(email_Edt);
 
-        final AlertDialog alertDialogLogin = alertDialogBuilder.create();
-        alertDialogLogin.show();
-        alertDialogLogin.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        // Set Gun Model EditText
+        final EditText pass_Edt = new EditText(this);
+        pass_Edt.setHint("Password");
+        pass_Edt.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        pass_Edt.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        pass_Edt.setGravity(Gravity.START);
+        pass_Edt.setTextColor(Color.BLACK);
+        dialogView_LnrLay.addView(pass_Edt);
 
-        final EditText mQuickEventEmail_Txt = quickEventLogin_View.findViewById(R.id.quickEventEmail_Txt);
-        final EditText mQuickEventPass_Txt = quickEventLogin_View.findViewById(R.id.quickEventPassword_Txt);
-        Button mQuickEventLogin_Btn = quickEventLogin_View.findViewById(R.id.quickEventLogin_Button);
-        Button mQuickEventCancel_Btn = quickEventLogin_View.findViewById(R.id.quickEventCancel_Button);
+        // Add linear layout to alert dialog
+        alertDialog.setView(dialogView_LnrLay);
 
+        // Set Buttons
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"SIGN IN", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Overwritten by on click listener below
+            }
+        });
 
-        mQuickEventLogin_Btn.setOnClickListener(new View.OnClickListener() {
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"CANCEL", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Overwritten by on click listener below
+            }
+        });
+
+        new Dialog(getApplicationContext());
+        alertDialog.show();
+
+        // Set Properties for Neutral Button
+        final Button neutral_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        LinearLayout.LayoutParams neutralBtn_Params = (LinearLayout.LayoutParams) neutral_Btn.getLayoutParams();
+        neutralBtn_Params.gravity = Gravity.FILL_HORIZONTAL;
+        neutral_Btn.setPadding(50, 10, 10, 10);   // Set Position
+        neutral_Btn.setTextColor(Color.BLUE);
+        neutral_Btn.setLayoutParams(neutralBtn_Params);
+        neutral_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: your click listener
-                String tempEmail_Str = mQuickEventEmail_Txt.getText().toString();
-                String tempPass_Str = mQuickEventPass_Txt.getText().toString();
+                // Perform Action on Neutral Button
+                String tempEmail_Str = email_Edt.getText().toString();
+                String tempPass_Str = pass_Edt.getText().toString();
                 boolean cancel_Bool = false;
 
                 // Check for a valid email address.
                 if (TextUtils.isEmpty(tempEmail_Str)) {
-                    mQuickEventEmail_Txt.setError(getString(R.string.error_field_required));
-                    mQuickEventEmail_Txt.requestFocus();
+                    email_Edt.setError(getString(R.string.error_field_required));
+                    email_Edt.requestFocus();
                     cancel_Bool = true;
                 }
 
                 // Check for a valid password.
                 if (TextUtils.isEmpty(tempPass_Str)) {
-                    mQuickEventPass_Txt.setError(getString(R.string.error_field_required));
-                    mQuickEventPass_Txt.requestFocus();
+                    pass_Edt.setError(getString(R.string.error_field_required));
+                    pass_Edt.requestFocus();
                     cancel_Bool = true;
                 }
 
                 if (!cancel_Bool) {
                     signUserWithFireBase(tempEmail_Str, tempPass_Str);
+                    alertDialog.dismiss();
                 }
+
+
             }
         });
 
-        mQuickEventCancel_Btn.setOnClickListener(new View.OnClickListener() {
+        // Set Properties for Negative Button
+        final Button negative_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        LinearLayout.LayoutParams negativeBtn_Params = (LinearLayout.LayoutParams) negative_Btn.getLayoutParams();
+        negativeBtn_Params.gravity = Gravity.FILL_HORIZONTAL;
+        negative_Btn.setTextColor(Color.RED);
+        negative_Btn.setLayoutParams(negativeBtn_Params);
+        negative_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                alertDialogLogin.cancel();
+                // Perform Action on Negative button
+                alertDialog.dismiss();
             }
         });
     }
 
     private void signUserWithFireBase(final String email, final String password){
         /*******************************************************************************************
-         * Function: registerUserWithFireBase
+         * Function: signUserWithFireBase
          *
          * Purpose: Function signs in a new user with Firebase
          *
@@ -572,34 +632,33 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          ******************************************************************************************/
 
         //authenticate user
-        auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(NewEventActivity.this, new OnCompleteListener<AuthResult>() {
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(NewEventActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
+
                         if (!task.isSuccessful()) {
                             // there was an error
                             String exceptionMsg_Str = "Sign in failed! " + task.getException().getMessage();
 
                             Toast.makeText(NewEventActivity.this, exceptionMsg_Str,
                                     Toast.LENGTH_LONG).show();
-                        } else {
-                            //Login was successful
-                            // Save score with name, start home activity with email passed in intent
-                            mCurrentUserEmail_Str = email;
 
-                            saveScoreToDB(mCurrentUserEmail_Str, mEventName_Str, TOTAL_NUM_SHOTS,
-                                    totalHits_Int, mShotNotes_Str);
-                            // continue to next activity
-                            Intent homeActivity_Intent = new Intent(NewEventActivity.this, homeActivity.class);
-                            homeActivity_Intent.putExtra(getString(R.string.current_user_email), email);
-                            startActivity(homeActivity_Intent);
-                            finish();
+                            // Relaunch quick event login
+                            quickEventLogin();
+                        } else {
+                            // Login was successful
+                            // set current user and have user press save again
+                            Toast.makeText(NewEventActivity.this, "Sign in successful!",
+                                    Toast.LENGTH_LONG).show();
+                            mCurrentUserEmail_Str = email;
+                            quickEventFlag_Bool = false;
                         }
                     }
                 });
+
     }
 
 }
