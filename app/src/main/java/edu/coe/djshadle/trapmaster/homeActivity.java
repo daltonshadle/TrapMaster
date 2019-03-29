@@ -19,6 +19,9 @@ import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -135,6 +138,46 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        /*******************************************************************************************
+         * Function: onCreateOptionsMenu
+         *
+         * Purpose: Function inflater menu from resources
+         *
+         * Parameters: menu (IN) - menu input
+         *
+         * Returns: True
+         *
+         ******************************************************************************************/
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.home_activity_menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        /*******************************************************************************************
+         * Function: onCreateOptionsMenu
+         *
+         * Purpose: Function inflater menu from resources
+         *
+         * Parameters: item (IN) - menu item input
+         *
+         * Returns: True
+         *
+         ******************************************************************************************/
+
+        int id = item.getItemId();
+
+        if (id == R.id.homeSignOut_MenuItem) {
+            // Sign out user
+            auth.signOut();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public void onClick(View view) {
         /*******************************************************************************************
@@ -175,10 +218,6 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
                 i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
                 startActivity(i);
                 break;
-            case R.id.btnTempSignOut:
-                auth.signOut();
-                break;
-
         }
     }
 
@@ -200,14 +239,12 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         Button mBtnEventHistory = findViewById(R.id.btnHomeEventHistory);
         Button mBtnProfiles = findViewById(R.id.btnHomeProfiles);
         Button mBtnTeams = findViewById(R.id.btnHomeTeams);
-        Button mBtnSignOut = findViewById(R.id.btnTempSignOut);
 
         mBtnNewEvent.setOnClickListener(this);
         mBtnArmory.setOnClickListener(this);
         mBtnEventHistory.setOnClickListener(this);
         mBtnProfiles.setOnClickListener(this);
         mBtnTeams.setOnClickListener(this);
-        mBtnSignOut.setOnClickListener(this);
 
         // Set action bar title
         try {
@@ -232,7 +269,6 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
         auth.addAuthStateListener(authListener);
-
     }
 
     //************************************** Other Functions ***************************************
