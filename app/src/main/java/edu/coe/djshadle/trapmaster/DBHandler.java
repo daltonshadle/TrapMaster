@@ -855,5 +855,210 @@ public class DBHandler extends SQLiteOpenHelper {
         return doesNicknameExist;
     }
 
+    //************************************** Event Functions ***************************************
+    public void insertEventInDB (EventClass e) {
+        /*******************************************************************************************
+         * Function: insertEventInDB
+         *
+         * Purpose: Function inserts information from EventClass object into database
+         *
+         * Parameters: e (IN) - event class object that holds information to put in database
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
 
+        dbWhole = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_EVENT_PROFILE_NAME, e.getEventEmail_Str());
+        values.put(KEY_EVENT_TEAM_NAME, e.getEventTeam_Str());
+        values.put(KEY_EVENT_NAME, e.getEventName_Str());
+        values.put(KEY_EVENT_LOCATION, e.getEventLocation_Str());
+        values.put(KEY_EVENT_GUN, e.getEventGun_Str());
+        values.put(KEY_EVENT_LOAD, e.getEventLoad_Str());
+        values.put(KEY_EVENT_DATE, e.getEventDate_Str());
+        values.put(KEY_EVENT_SCORE, e.getEventScore_Str());
+        values.put(KEY_EVENT_WEATHER, e.getEventWeather_Str());
+        values.put(KEY_EVENT_NOTES, e.getEventNotes_Str());
+
+
+        dbWhole.insert(TABLE_EVENTS, null, values);
+        dbWhole.close();
+    }
+
+    public ArrayList<EventClass> getAllEventFromDB (String email) {
+        /*******************************************************************************************
+         * Function: getAllEventFromDB
+         *
+         * Purpose: Function gathers event information based on email provided
+         *
+         * Parameters: email (IN) - key string for receiving event information
+         *
+         * Returns: tempEvent_List - returns list of EventClass object with database information
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getReadableDatabase();
+
+        ArrayList<EventClass> tempEvent_List = new ArrayList<>();
+        String query = "SELECT * FROM " + TABLE_EVENTS + " WHERE " + KEY_EVENT_PROFILE_NAME +
+                " = '" + email + "'";
+
+        Cursor cursor = dbWhole.rawQuery(query, null);
+
+        while (cursor.moveToNext()) {
+            EventClass tempEvent = new EventClass();
+
+            tempEvent.setEventID_Int(cursor.getInt(cursor.getColumnIndex(KEY_EVENT_ID)));
+            tempEvent.setEventEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_PROFILE_NAME)));
+            tempEvent.setEventTeam_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_TEAM_NAME)));
+            tempEvent.setEventName_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_NAME)));
+            tempEvent.setEventLocation_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_LOCATION)));
+            tempEvent.setEventGun_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_GUN)));
+            tempEvent.setEventLoad_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_LOAD)));
+            tempEvent.setEventDate_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_DATE)));
+            tempEvent.setEventScore_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_SCORE)));
+            tempEvent.setEventWeather_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_WEATHER)));
+            tempEvent.setEventNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_NOTES)));
+
+            tempEvent_List.add(tempEvent);
+        }
+
+        dbWhole.close();
+        return tempEvent_List;
+    }
+
+    public void deleteEventInDB (String email, String eventName) {
+        /*******************************************************************************************
+         * Function: deleteEventInDB
+         *
+         * Purpose: Function deletes item from database based on email and eventName
+         *
+         * Parameters: email (IN) - email to remove gun from
+         *             eventName (IN) - name of event to remove
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getWritableDatabase();
+
+        String whereClause_Str = "(" + KEY_EVENT_PROFILE_NAME + " = '" + email + "' AND "
+                + KEY_EVENT_NAME + " = '" + eventName + "')";
+        try {
+            dbWhole.delete(TABLE_EVENTS, whereClause_Str, null);
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        dbWhole.close();
+    }
+
+    public int getIDforEvent (String email, String eventName) {
+        /*******************************************************************************************
+         * Function: getIDforEvent
+         *
+         * Purpose: Function returns the ID number of a event in the database
+         *
+         * Parameters: email (IN) - email of gun to get ID
+         *             eventName (IN) - name of event to get ID
+         *
+         * Returns: eventID_Int - ID number of event
+         *
+         ******************************************************************************************/
+
+        int eventID_Int = -1;
+        String query = "SELECT " + KEY_EVENT_NAME + " FROM " + TABLE_EVENTS + " WHERE "
+                + KEY_EVENT_PROFILE_NAME + " = '" + email + "' AND " + KEY_EVENT_NAME + " = '"
+                + eventName + "'";
+
+        dbWhole = this.getReadableDatabase();
+
+        try {
+            Cursor cursor = dbWhole.rawQuery(query, null);
+            cursor.moveToFirst();
+            eventID_Int = cursor.getInt(cursor.getColumnIndex(KEY_EVENT_ID));
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        dbWhole.close();
+
+        return eventID_Int;
+    }
+
+    public EventClass getEventInDB (int eventID_Int) {
+        /*******************************************************************************************
+         * Function: getEventInDB
+         *
+         * Purpose: Function returns the ID number of a event in the database
+         *
+         * Parameters: eventID_Int (IN) - ID of the event information to return
+         *
+         * Returns: tempEvent - Information of the event stored at eventID_Int
+         *
+         ******************************************************************************************/
+
+        EventClass tempEvent = new EventClass();
+        String query = "SELECT * FROM " + TABLE_EVENTS + " WHERE "
+                + KEY_EVENT_ID + " = " + Integer.toString(eventID_Int);
+
+        dbWhole = this.getReadableDatabase();
+
+        try {
+            Cursor cursor = dbWhole.rawQuery(query, null);
+            cursor.moveToFirst();
+            tempEvent.setEventID_Int(cursor.getInt(cursor.getColumnIndex(KEY_EVENT_ID)));
+            tempEvent.setEventEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_PROFILE_NAME)));
+            tempEvent.setEventTeam_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_TEAM_NAME)));
+            tempEvent.setEventName_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_NAME)));
+            tempEvent.setEventLocation_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_LOCATION)));
+            tempEvent.setEventGun_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_GUN)));
+            tempEvent.setEventLoad_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_LOAD)));
+            tempEvent.setEventDate_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_DATE)));
+            tempEvent.setEventScore_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_SCORE)));
+            tempEvent.setEventWeather_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_WEATHER)));
+            tempEvent.setEventNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_NOTES)));
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        dbWhole.close();
+
+        return tempEvent;
+    }
+
+    public void updateEventInDB (EventClass e, int eventID_Int) {
+        /*******************************************************************************************
+         * Function: updateEventInDB
+         *
+         * Purpose: Function updates item from database based on database ID
+         *
+         * Parameters: e (IN) - object that holds information for updating item in the database
+         *             eventID_Int (IN) - ID number of the item in the database
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_EVENT_PROFILE_NAME, e.getEventEmail_Str());
+        values.put(KEY_EVENT_TEAM_NAME, e.getEventTeam_Str());
+        values.put(KEY_EVENT_NAME, e.getEventName_Str());
+        values.put(KEY_EVENT_LOCATION, e.getEventLocation_Str());
+        values.put(KEY_EVENT_GUN, e.getEventGun_Str());
+        values.put(KEY_EVENT_LOAD, e.getEventLoad_Str());
+        values.put(KEY_EVENT_DATE, e.getEventDate_Str());
+        values.put(KEY_EVENT_SCORE, e.getEventScore_Str());
+        values.put(KEY_EVENT_WEATHER, e.getEventWeather_Str());
+        values.put(KEY_EVENT_NOTES, e.getEventNotes_Str());
+
+        String whereClaus = KEY_EVENT_ID + " = " + Integer.toString(eventID_Int);
+
+        dbWhole.update(TABLE_EVENTS, values, whereClaus, null);
+        dbWhole.close();
+    }
 }

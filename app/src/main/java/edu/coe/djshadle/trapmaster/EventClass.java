@@ -15,7 +15,7 @@ package edu.coe.djshadle.trapmaster;
 
 public class EventClass {
     //************************************* Private Variables **************************************
-    private String eventID_Str;
+    private int eventID_Int;
     private String eventEmail_Str;
     private String eventTeam_Str;
     private String eventName_Str;
@@ -41,7 +41,7 @@ public class EventClass {
          *
          ******************************************************************************************/
 
-        this.eventID_Str = "tempID";
+        this.eventID_Int = -1;
         this.eventEmail_Str = "tempEmail";
         this.eventTeam_Str = "tempTeam";
         this.eventName_Str = "tempEventName";
@@ -78,7 +78,7 @@ public class EventClass {
          *
          ******************************************************************************************/
 
-        this.eventID_Str = "tempID";
+        this.eventID_Int = -1;
         this.eventEmail_Str = eventEmail_Str;
         this.eventTeam_Str = eventTeam_Str;
         this.eventName_Str = eventName_Str;
@@ -180,5 +180,13 @@ public class EventClass {
 
     public void setEventNotes_Str(String eventNotes_Str) {
         this.eventNotes_Str = eventNotes_Str;
+    }
+
+    public int getEventID_Int() {
+        return eventID_Int;
+    }
+
+    public void setEventID_Int(int eventID_Int) {
+        this.eventID_Int = eventID_Int;
     }
 }

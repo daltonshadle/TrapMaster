@@ -34,9 +34,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +50,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NewEventActivity extends AppCompatActivity implements OnTotalHitChange, View.OnClickListener {
 
@@ -61,13 +65,15 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     private final double HIT_MISS_TEXT_SF = 0.10;
     private final int HEIGHT_SF = 3, WIDTH_SF = 5;
     private final String TAG = "JRW";
+    private final String DEFAULT_EVENT_TEXT = "Click to add a new event!";
 
     // General Variables
     private int trapCounterChildCount_Int = 0;
     private int totalHits_Int = 0;
     private boolean quickEventFlag_Bool;
-    private boolean quickEventSignInSuccess_Bool = false;
     private ArrayList<Integer> trapCounterState_Array;
+    private ArrayList<EventClass> mUserEvent_List;
+    private ArrayAdapter<String> mCurrentEventList_Adapt;
     private String mCurrentUserEmail_Str = "tempEmail";
     private String mEventName_Str = "tempEventName";
     private String mShotNotes_Str = "tempNotes";
@@ -555,28 +561,22 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         db.insertShotInDB(temp_Shot);
     }
 
-    //************************************** Other Functions ***************************************
+    //*********************************** QuickEvent Functions *************************************
     private void quickEventLogin() {
-            /*******************************************************************************************
-             * Function: quickEventLogin
-             *
-             * Purpose: Function creates a alert dialog to sign user in, used in a Quick Event situation
-             *
-             * Parameters: None
-             *
-             * Returns: None
-             *
-             ******************************************************************************************/
+        /*******************************************************************************************
+         * Function: quickEventLogin
+         *
+         * Purpose: Function creates a alert dialog to sign user in, used in a Quick Event situation
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
         final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 
         // Set Dialog Title
-        TextView title = new TextView(this);
-        title.setText("Sign In");
-        title.setPadding(10, 10, 10, 10);   // Set Position
-        title.setGravity(Gravity.START);
-        title.setTextColor(Color.BLACK);
-        title.setTextSize(20);
-        alertDialog.setCustomTitle(title);
+        alertDialog.setTitle("Sign In");
 
         // Set all edittext views for gathering information
         LinearLayout dialogView_LnrLay = new LinearLayout(this);
@@ -715,4 +715,135 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     }
 
+    //************************************** Event Functions ***************************************
+    private void eventPickerDialog() {
+        /*******************************************************************************************
+         * Function: eventPickerDialog
+         *
+         * Purpose: Function creates a alert dialog to pick an event when saving
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        final String NEUTRAL_STR = "";
+        final String NEGATIVE_STR = "CANCEL";
+
+        // Set Dialog Title
+        alertDialog.setTitle("Event Picker");
+
+        // Set Dialog Message
+        alertDialog.setMessage("Choose an event to store this score under.");
+
+        // Set all edittext views for gathering information
+        LinearLayout dialogView_LnrLay = new LinearLayout(this);
+        dialogView_LnrLay.setOrientation(LinearLayout.VERTICAL);
+
+        // Set Dialog ListView
+        initializeEventListView();
+        final ListView event_ListView = new ListView(this);
+        event_ListView.setAdapter(mCurrentEventList_Adapt);
+        event_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String eventName_Str = (String) adapterView.getItemAtPosition(i);
+                Log.d("JRW", "OnItemClick for event is here: " + eventName_Str);
+
+                if (!isDefaultItemText(eventName_Str)) {
+                    // Start dialog for creating a new event
+
+                } else {
+                    // Get event from db
+
+
+                }
+            }
+        });
+        dialogView_LnrLay.addView(event_ListView);
+
+        // Add linear layout to alert dialog
+        alertDialog.setView(dialogView_LnrLay);
+
+        // Set Buttons
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,NEGATIVE_STR, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Overwritten by on click listener below
+            }
+        });
+
+        new Dialog(getApplicationContext());
+        alertDialog.show();
+
+        // Set Properties for Negative Button
+        final Button negative_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        LinearLayout.LayoutParams negativeBtn_Params = (LinearLayout.LayoutParams) negative_Btn.getLayoutParams();
+        negativeBtn_Params.gravity = Gravity.FILL_HORIZONTAL;
+        negative_Btn.setTextColor(Color.RED);
+        negative_Btn.setLayoutParams(negativeBtn_Params);
+        negative_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Negative button
+                alertDialog.dismiss();
+            }
+        });
+    }
+
+    private ArrayList<String> refreshEventList() {
+        /*******************************************************************************************
+         * Function: refreshEventList
+         *
+         * Purpose: Function returns the current list of events for the current user
+         *
+         * Parameters: None
+         *
+         * Returns: currentEventStr_List - a string list of events for current user
+         *
+         ******************************************************************************************/
+
+        mUserEvent_List = db.getAllEventFromDB(mCurrentUserEmail_Str);
+        ArrayList<String> currentEventStr_List =  new ArrayList<>();
+
+        for (int i = 0; i < mUserEvent_List.size(); i++) {
+            EventClass tempEvent = mUserEvent_List.get(i);
+            String gunListItem_Str = tempEvent.getEventName_Str();
+
+            currentEventStr_List.add(gunListItem_Str);
+        }
+
+        if (currentEventStr_List.isEmpty()) {
+            currentEventStr_List.add(DEFAULT_EVENT_TEXT);
+        }
+
+        return currentEventStr_List;
+    }
+
+    private void initializeEventListView() {
+        /*******************************************************************************************
+         * Function: initializeGunListView
+         *
+         * Purpose: Function initializes the gun list view
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        try {
+            ArrayList<String> currentEventStr_List =  refreshEventList();
+
+            mCurrentEventList_Adapt = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, currentEventStr_List);
+
+        } catch (Exception e){
+            Log.d("JRW", "no guns in db for this user");
+        }
+
+    }
+
+    private Boolean isDefaultItemText(String Event) {
+        return (Event.equals(DEFAULT_EVENT_TEXT));
+    }
 }

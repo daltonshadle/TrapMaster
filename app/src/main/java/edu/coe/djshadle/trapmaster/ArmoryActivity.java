@@ -574,13 +574,7 @@ public class ArmoryActivity extends AppCompatActivity {
         final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 
         // Set Dialog Title
-        TextView title = new TextView(this);
-        title.setText("Add New Gun");
-        title.setPadding(10, 10, 10, 10);   // Set Position
-        title.setGravity(Gravity.START);
-        title.setTextColor(Color.BLACK);
-        title.setTextSize(20);
-        alertDialog.setCustomTitle(title);
+        alertDialog.setTitle("Add New Gun");
 
         // Set all edittext views for gathering gun information
         LinearLayout newGunItemTxt_LnrLay = new LinearLayout(this);
@@ -617,7 +611,7 @@ public class ArmoryActivity extends AppCompatActivity {
         if (!addNewGun) {
             // User is EDITING a gun item
             gunFromDB = db.getGunInDB(gunID_Int);
-            title.setText("Edit Gun");
+            alertDialog.setTitle("Edit Gun");
             newGunItemName_Edt.setText(gunFromDB.getGunNickname_Str());
             newGunItemModel_Edt.setText(gunFromDB.getGunModel_Str());
             newGunItemGauge_Edt.setText(gunFromDB.getGunGauge_Str());
@@ -727,13 +721,7 @@ public class ArmoryActivity extends AppCompatActivity {
         final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 
         // Set Dialog Title
-        TextView title = new TextView(this);
-        title.setText("Add New Load");
-        title.setPadding(10, 10, 10, 10);   // Set Position
-        title.setGravity(Gravity.START);
-        title.setTextColor(Color.BLACK);
-        title.setTextSize(20);
-        alertDialog.setCustomTitle(title);
+        alertDialog.setTitle("Add New Load");
 
         // Set all edittext views for gathering load information
         LinearLayout newLoadItemTxt_LnrLay = new LinearLayout(this);
@@ -784,7 +772,7 @@ public class ArmoryActivity extends AppCompatActivity {
         if (!addNewLoad) {
             // User is EDITING a gun item
             loadFromDB = db.getLoadInDB(loadID_Int);
-            title.setText("Edit Load");
+            alertDialog.setTitle("Edit Load");
             newLoadItemName_Edt.setText(loadFromDB.getLoadNickname_Str());
             newLoadItemBrand_Edt.setText(loadFromDB.getLoadBrand_Str());
             newLoadItemGauge_Edt.setText(loadFromDB.getLoadGauge_Str());

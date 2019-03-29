@@ -135,7 +135,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             setContentView(R.layout.activity_home_landscape);
         }
-        
+
         initializeViews();
     }
 
