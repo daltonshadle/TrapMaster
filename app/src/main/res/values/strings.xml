@@ -35,6 +35,11 @@
 
 
     <!--********************************* Construction Strings **********************************-->
+    <string name="error_armory_gun_already_exists">Gun nickname already exists</string>
+    <string name="error_armory_load_already_exists">Load nickname already exists</string>
+
+
+    <!--********************************* Construction Strings **********************************-->
     <string name="under_construction_string">This feature is currently under construction.
         Check back after the next update to see if it was added!</string>
 

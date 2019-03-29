@@ -49,6 +49,8 @@ public class ArmoryActivity extends AppCompatActivity {
     private DBHandler db;
     private ArrayAdapter<String> mCurrentGunList_Adapt;
     private ArrayAdapter<String> mCurrentLoadList_Adapt;
+    private ArrayList<GunClass> mUserGun_List;
+    private ArrayList<LoadClass> mUserLoad_List;
     private boolean isPortait = true;
 
     // UI References
@@ -176,11 +178,11 @@ public class ArmoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
-        ArrayList<GunClass> currentGun_List = db.getAllGunFromDB(mCurrentUserEmail_Str);
+        mUserGun_List = db.getAllGunFromDB(mCurrentUserEmail_Str);
         ArrayList<String> currentGunStr_List =  new ArrayList<>();
 
-        for (int i = 0; i < currentGun_List.size(); i++) {
-            GunClass tempGun = currentGun_List.get(i);
+        for (int i = 0; i < mUserGun_List.size(); i++) {
+            GunClass tempGun = mUserGun_List.get(i);
             String gunListItem_Str = tempGun.getGunNickname_Str() + " - " + tempGun.getGunModel_Str()
                     + " " + tempGun.getGunGauge_Str();
 
@@ -209,11 +211,11 @@ public class ArmoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
-        ArrayList<LoadClass> currentLoad_List = db.getAllLoadFromDB(mCurrentUserEmail_Str);
+        mUserLoad_List = db.getAllLoadFromDB(mCurrentUserEmail_Str);
         ArrayList<String> currentLoadStr_List =  new ArrayList<>();
 
-        for (int i = 0; i < currentLoad_List.size(); i++) {
-            LoadClass tempLoad = currentLoad_List.get(i);
+        for (int i = 0; i < mUserLoad_List.size(); i++) {
+            LoadClass tempLoad = mUserLoad_List.get(i);
             String loadItem_Str = tempLoad.getLoadNickname_Str() + " - " + tempLoad.getLoadBrand_Str()
                     + " " + tempLoad.getLoadGauge_Str();
 
@@ -652,9 +654,16 @@ public class ArmoryActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Perform Action on SAVE Button
+                boolean isGunNicknameEmpty = newGunItemName_Edt.getText().toString().equals("");
+                boolean isGunNicknameInDB = db.isGunNicknameInDB(mCurrentUserEmail_Str, newGunItemName_Edt.getText().toString(), gunID_Int);
 
-                if (newGunItemName_Edt.getText().toString().equals("")) {
+                if (isGunNicknameEmpty) {
+                    // Check if the gun nickname is empty
                     newGunItemName_Edt.setError(getString(R.string.error_field_required));
+                    newGunItemName_Edt.requestFocus();
+                } else if (isGunNicknameInDB) {
+                    // Check if the gun nickname is already used in the database, uer cannot have 2 guns with same name
+                    newGunItemName_Edt.setError(getString(R.string.error_armory_gun_already_exists));
                     newGunItemName_Edt.requestFocus();
                 } else {
                     GunClass newGunItem = new GunClass();
@@ -814,9 +823,16 @@ public class ArmoryActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Perform Action on SAVE Button
+                boolean isLoadNicknameEmpty = newLoadItemName_Edt.getText().toString().equals("");
+                boolean isLoadNicknameInDB = db.isLoadNicknameInDB(mCurrentUserEmail_Str, newLoadItemName_Edt.getText().toString(), loadID_Int);
 
-                if (newLoadItemName_Edt.getText().toString().equals("")) {
+                if (isLoadNicknameEmpty) {
+                    // Check if the load nickname is empty
                     newLoadItemName_Edt.setError(getString(R.string.error_field_required));
+                    newLoadItemName_Edt.requestFocus();
+                } else if (isLoadNicknameInDB) {
+                    // Check if the load nickname is already used in the database, uer cannot have 2 loads with same name
+                    newLoadItemName_Edt.setError(getString(R.string.error_armory_load_already_exists));
                     newLoadItemName_Edt.requestFocus();
                 } else {
                     LoadClass newLoadItem = new LoadClass();

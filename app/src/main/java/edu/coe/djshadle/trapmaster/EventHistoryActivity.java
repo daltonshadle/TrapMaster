@@ -34,6 +34,7 @@ public class EventHistoryActivity extends AppCompatActivity {
     // General Variables
     private String mCurrentUserEmail_Str = "********";
     private DBHandler db;
+    private ArrayList<ShotClass> mUserShot_List;
 
     // UI References
     private ListView mScore_ListView;
@@ -112,9 +113,9 @@ public class EventHistoryActivity extends AppCompatActivity {
         db = new DBHandler(this);
 
         try {
-            ArrayList<ShotClass> currentShot_List = db.getAllShotFromDB(mCurrentUserEmail_Str);
+            mUserShot_List = db.getAllShotFromDB(mCurrentUserEmail_Str);
 
-            ShotListArrayAdapter shotAdapter = new ShotListArrayAdapter(this, currentShot_List);
+            ShotListArrayAdapter shotAdapter = new ShotListArrayAdapter(this, mUserShot_List);
 
             mScore_ListView.setAdapter(shotAdapter);
             mScore_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

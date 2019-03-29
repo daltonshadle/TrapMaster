@@ -15,7 +15,7 @@ package edu.coe.djshadle.trapmaster;
 
 public class GunClass {
     //************************************* Private Variables **************************************
-    private String gunID_Str;
+    private int gunID_Int;
     private String gunEmail_Str;  //Key
     private String gunNickname_Str;
     private String gunModel_Str;
@@ -36,7 +36,7 @@ public class GunClass {
          *
          ******************************************************************************************/
 
-        this.gunID_Str = "tempID";
+        this.gunID_Int = -1;
         this.gunEmail_Str = "tempEmail";
         this.gunNickname_Str = "tempNickname";
         this.gunModel_Str = "tempModel";
@@ -61,7 +61,7 @@ public class GunClass {
          *
          ******************************************************************************************/
 
-        this.gunID_Str = "tempID";
+        this.gunID_Int = -1;
         this.gunEmail_Str = gunEmail_Str;
         this.gunNickname_Str = gunNickname_Str;
         this.gunModel_Str = gunModel_Str;
@@ -118,5 +118,13 @@ public class GunClass {
 
     public void setGunNotes_Str(String gunNotes_Str) {
         this.gunNotes_Str = gunNotes_Str;
+    }
+
+    public int getGunID_Int() {
+        return gunID_Int;
+    }
+
+    public void setGunID_Int(int gunID_Str) {
+        this.gunID_Int = gunID_Str;
     }
 }

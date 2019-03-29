@@ -16,7 +16,7 @@ package edu.coe.djshadle.trapmaster;
 
 public class LoadClass {
     //************************************* Private Variables **************************************
-    private String loadID_Str;
+    private int loadID_Int;
     private String loadEmail_Str;
     private String loadNickname_Str;
     private String loadBrand_Str;
@@ -39,7 +39,7 @@ public class LoadClass {
          *
          ******************************************************************************************/
 
-        this.loadID_Str = "tempID";
+        this.loadID_Int = -1;
         this.loadEmail_Str = "tempEmail";
         this.loadNickname_Str = "tempNickname";
         this.loadBrand_Str = "tempBrand";
@@ -69,7 +69,7 @@ public class LoadClass {
          *
          ******************************************************************************************/
 
-        this.loadID_Str = "tempID";
+        this.loadID_Int = -1;
         this.loadEmail_Str = loadEmail_Str;
         this.loadNickname_Str = loadNickname_Str;
         this.loadBrand_Str = loadBrand_Str;
@@ -144,5 +144,13 @@ public class LoadClass {
 
     public void setLoadNotes_Str(String loadNotes_Str) {
         this.loadNotes_Str = loadNotes_Str;
+    }
+
+    public int getLoadID_Int() {
+        return loadID_Int;
+    }
+
+    public void setLoadID_Int(int loadID_Str) {
+        this.loadID_Int = loadID_Str;
     }
 }

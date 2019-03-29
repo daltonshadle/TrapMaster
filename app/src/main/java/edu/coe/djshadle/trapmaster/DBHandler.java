@@ -447,6 +447,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         while (cursor.moveToNext()) {
             LoadClass tempLoad = new LoadClass();
+            tempLoad.setLoadID_Int(cursor.getInt(cursor.getColumnIndex(KEY_LOAD_ID)));
             tempLoad.setLoadEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_PROFILE_NAME)));
             tempLoad.setLoadNickname_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_NICKNAME)));
             tempLoad.setLoadBrand_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_BRAND)));
@@ -588,6 +589,47 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole.close();
     }
 
+    public boolean isLoadNicknameInDB (String email, String nickname, int ID) {
+        /*******************************************************************************************
+         * Function: isLoadNicknameInDB
+         *
+         * Purpose: Function decides if nickname is already in db for user
+         *
+         * Parameters: email (IN) - key string for finding profile
+         *             nickname (IN) - string to find in database
+         *             ID (IN) - ID of load being passed in, this is to ignore this load when checking
+         *
+         * Returns: doesNicknameExist - returns true if the user already has a load under that name,
+         *                              besides the load that shares the same ID
+         *
+         ******************************************************************************************/
+
+        boolean doesNicknameExist = false;
+        int currentID = -1;
+        String currentNickname;
+        String query = "SELECT * FROM " + TABLE_LOADS + " WHERE "
+                + KEY_LOAD_PROFILE_NAME + " = '" + email + "'";
+
+        dbWhole = this.getReadableDatabase();
+        Cursor cursor = dbWhole.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                currentNickname = cursor.getString(cursor.getColumnIndex(KEY_LOAD_NICKNAME));
+                currentID = cursor.getInt(cursor.getColumnIndex(KEY_LOAD_ID));
+
+                if (currentNickname.equals(nickname) && currentID != ID) {
+                    //name already exists
+                    doesNicknameExist = true;
+                    break;
+                }
+            } while (cursor.moveToNext());
+        }
+
+        dbWhole.close();
+        return doesNicknameExist;
+    }
+
     //**************************************** Gun Functions ***************************************
     public void insertGunInDB (GunClass g) {
         /*******************************************************************************************
@@ -636,6 +678,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         while (cursor.moveToNext()) {
             GunClass tempGun = new GunClass();
+            tempGun.setGunID_Int(cursor.getInt(cursor.getColumnIndex(KEY_GUN_ID)));
             tempGun.setGunEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_PROFILE_NAME)));
             tempGun.setGunNickname_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_NICKNAME)));
             tempGun.setGunModel_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_MODEL)));
@@ -769,6 +812,47 @@ public class DBHandler extends SQLiteOpenHelper {
 
         dbWhole.update(TABLE_GUNS, values, whereClaus, null);
         dbWhole.close();
+    }
+
+    public boolean isGunNicknameInDB (String email, String nickname, int ID) {
+        /*******************************************************************************************
+         * Function: isGunNicknameInDB
+         *
+         * Purpose: Function decides if nickname is already in db for user
+         *
+         * Parameters: email (IN) - key string for finding profile
+         *             nickname (IN) - string to find in database
+         *             ID (IN) - ID of gun being passed in, this is to ignore this gun when checking
+         *
+         * Returns: doesNicknameExist - returns true if the user already has a gun under that name,
+         *                              besides the gun that shares the same ID
+         *
+         ******************************************************************************************/
+
+        boolean doesNicknameExist = false;
+        int currentID = -1;
+        String currentNickname;
+        String query = "SELECT * FROM " + TABLE_GUNS
+                + " WHERE " + KEY_GUN_PROFILE_NAME + " = '" + email + "'";
+
+        dbWhole = this.getReadableDatabase();
+        Cursor cursor = dbWhole.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                currentNickname = cursor.getString(cursor.getColumnIndex(KEY_GUN_NICKNAME));
+                currentID = cursor.getInt(cursor.getColumnIndex(KEY_GUN_ID));
+
+                if (currentNickname.equals(nickname) && currentID != ID) {
+                    //name already exists
+                    doesNicknameExist = true;
+                    break;
+                }
+            } while (cursor.moveToNext());
+        }
+
+        dbWhole.close();
+        return doesNicknameExist;
     }
 
 
