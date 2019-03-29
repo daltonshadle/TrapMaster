@@ -16,9 +16,11 @@ package edu.coe.djshadle.trapmaster;
 //******************************************** Imports *********************************************
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +30,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -62,6 +70,9 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     private Button mMiss_Btn;
     private Button mSave_Btn;
     private Button mClear_Btn;
+
+    //Google Variables
+    FirebaseAuth auth;
 
     //************************************* Activity Functions *************************************
     @Override
@@ -223,6 +234,9 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         // Resizing buttons and text
         scaleHitMissViews(WIDTH_SF, HEIGHT_SF);
+
+        // Initialize Google/Firebase Auth
+        auth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -514,28 +528,25 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                 // TODO: your click listener
                 String tempEmail_Str = mQuickEventEmail_Txt.getText().toString();
                 String tempPass_Str = mQuickEventPass_Txt.getText().toString();
+                boolean cancel_Bool = false;
 
-                if (db.isEmailInDB(tempEmail_Str)) {
-                    // Email is in the database and user is registered
-                    if (db.doesPassMatchInDB(tempEmail_Str, tempPass_Str)) {
-                        // Save score with name, start home activity with email passed in intent
-                        mCurrentUserEmail_Str = tempEmail_Str;
-
-                        saveScoreToDB(mCurrentUserEmail_Str, mEventName_Str, TOTAL_NUM_SHOTS,
-                                totalHits_Int, mShotNotes_Str);
-
-                        Intent homeActivity_Intent = new Intent(NewEventActivity.this, homeActivity.class);
-                        homeActivity_Intent.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
-                        startActivity(homeActivity_Intent);
-                    } else {
-                        // Password doesn't match email, alert user
-                        // TODO: alert user
-                    }
-                } else {
-                    // Email is not in database, user is not registered
-                    // TODO: prompt user to register
+                // Check for a valid email address.
+                if (TextUtils.isEmpty(tempEmail_Str)) {
+                    mQuickEventEmail_Txt.setError(getString(R.string.error_field_required));
+                    mQuickEventEmail_Txt.requestFocus();
+                    cancel_Bool = true;
                 }
 
+                // Check for a valid password.
+                if (TextUtils.isEmpty(tempPass_Str)) {
+                    mQuickEventPass_Txt.setError(getString(R.string.error_field_required));
+                    mQuickEventPass_Txt.requestFocus();
+                    cancel_Bool = true;
+                }
+
+                if (!cancel_Bool) {
+                    signUserWithFireBase(tempEmail_Str, tempPass_Str);
+                }
             }
         });
 
@@ -545,6 +556,50 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                 alertDialogLogin.cancel();
             }
         });
+    }
+
+    private void signUserWithFireBase(final String email, final String password){
+        /*******************************************************************************************
+         * Function: registerUserWithFireBase
+         *
+         * Purpose: Function signs in a new user with Firebase
+         *
+         * Parameters: email (IN) - email of user to sign in
+         *             password (IN) - password of user to sign in
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        //authenticate user
+        auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(NewEventActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            // there was an error
+                            String exceptionMsg_Str = "Sign in failed! " + task.getException().getMessage();
+
+                            Toast.makeText(NewEventActivity.this, exceptionMsg_Str,
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            //Login was successful
+                            // Save score with name, start home activity with email passed in intent
+                            mCurrentUserEmail_Str = email;
+
+                            saveScoreToDB(mCurrentUserEmail_Str, mEventName_Str, TOTAL_NUM_SHOTS,
+                                    totalHits_Int, mShotNotes_Str);
+                            // continue to next activity
+                            Intent homeActivity_Intent = new Intent(NewEventActivity.this, homeActivity.class);
+                            homeActivity_Intent.putExtra(getString(R.string.current_user_email), email);
+                            startActivity(homeActivity_Intent);
+                            finish();
+                        }
+                    }
+                });
     }
 
 }

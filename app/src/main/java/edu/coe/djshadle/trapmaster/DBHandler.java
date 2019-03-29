@@ -42,7 +42,6 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String TABLE_PROFILES = "profiles";
     private static final String KEY_PROFILE_ID = "id";
     private static final String KEY_PROFILE_USERNAME = "profileUsername";  //Key
-    private static final String KEY_PROFILE_PASSWORD = "profilePassword";
 
     //Gun Table Stuff
     private static final String TABLE_GUNS = "guns";
@@ -150,9 +149,8 @@ public class DBHandler extends SQLiteOpenHelper {
         //Profile Table
         String CREATE_PROFILE_TABLE = "CREATE TABLE " + TABLE_PROFILES + " ("
                 + KEY_PROFILE_ID + " INTEGER PRIMARY KEY,"
-                + KEY_PROFILE_USERNAME + " TEXT,"
-                + KEY_PROFILE_PASSWORD + " TEXT" +
-                ")";
+                + KEY_PROFILE_USERNAME + " TEXT"
+                + ")";
         db.execSQL(CREATE_PROFILE_TABLE);
 
         //Gun Table
@@ -268,7 +266,6 @@ public class DBHandler extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_PROFILE_USERNAME, p.getProfileEmail_Str());
-        values.put(KEY_PROFILE_PASSWORD, p.getProfilePassword_Str());
 
         dbWhole.insert(TABLE_PROFILES, null, values);
         dbWhole.close();
@@ -298,47 +295,10 @@ public class DBHandler extends SQLiteOpenHelper {
 
             tempProfile.setProfileID_Str(cursor.getString(cursor.getColumnIndex(KEY_PROFILE_ID)));
             tempProfile.setProfileEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_PROFILE_USERNAME)));
-            tempProfile.setProfilePassword_Str((cursor.getString(cursor.getColumnIndex(KEY_PROFILE_PASSWORD))));
         }
 
         dbWhole.close();
         return tempProfile;
-    }
-
-    public boolean doesPassMatchInDB(String email, String pass){
-        /*******************************************************************************************
-         * Function: doesPassMatchInDB
-         *
-         * Purpose: Function compares password to profile based on the email provided
-         *
-         * Parameters: email (IN) - key string for finding profile
-         *             pass (IN) - password attempt
-         *
-         * Returns: doesPassMatch - returns true if the pass parameter matches password listed in db
-         *
-         ******************************************************************************************/
-
-        String dbPass;
-        boolean doesPassMatch = false;
-        String query = "SELECT " + KEY_PROFILE_PASSWORD + " FROM " + TABLE_PROFILES + " WHERE " + KEY_PROFILE_USERNAME + " = '" + email + "'";
-
-        dbWhole = this.getReadableDatabase();
-        Cursor cursor = dbWhole.rawQuery(query, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                dbPass = cursor.getString(cursor.getColumnIndex(KEY_PROFILE_PASSWORD));
-
-                if (dbPass.equals(pass)) {
-                    //name already exists
-                    doesPassMatch = true;
-                    break;
-                }
-            } while (cursor.moveToNext());
-        }
-
-        dbWhole.close();
-        return doesPassMatch;
     }
 
     public boolean isEmailInDB(String email) {

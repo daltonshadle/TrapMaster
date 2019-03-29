@@ -197,7 +197,7 @@ public class LoginActivity extends AppCompatActivity {
          * Function: attemptLogin
          *
          * Purpose: Function processes login information and compares with database, goes to home
-         *          if criteria is met
+         *          if criteria is met, Firebase will handle email and password authentication
          *
          * Parameters: None
          *
@@ -222,21 +222,11 @@ public class LoginActivity extends AppCompatActivity {
             mEmail_View.setError(getString(R.string.error_field_required));
             focusView = mEmail_View;
             cancel = true;
-        } else if (!isEmailInDB(email)) {
-            //TODO: give notification that email is not in DB
-            mEmail_View.setError(getString(R.string.error_invalid_email));
-            focusView = mEmail_View;
-            cancel = true;
         }
 
         // Check for a valid password.
         if (TextUtils.isEmpty(password)) {
             mPassword_View.setError(getString(R.string.error_field_required));
-            focusView = mPassword_View;
-            cancel = true;
-        } else if (!isPasswordWithEmail(email, password)) {
-            //TODO: give notification that password does not match email
-            mPassword_View.setError(getString(R.string.error_incorrect_password));
             focusView = mPassword_View;
             cancel = true;
         }
@@ -248,37 +238,6 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             signUserWithFireBase(email, password);
         }
-    }
-
-    private boolean isEmailInDB(String email) {
-        /*******************************************************************************************
-         * Function: isEmailInDB
-         *
-         * Purpose: Function checks if email is in the database
-         *
-         * Parameters: email (IN) - email to check for in database
-         *
-         * Returns: True if the email is in the database
-         *
-         ******************************************************************************************/
-
-        return db.isEmailInDB(email);
-    }
-
-    private boolean isPasswordWithEmail(String email, String password) {
-        /*******************************************************************************************
-         * Function: isPasswordWithEmail
-         *
-         * Purpose: Function checks if email and password match in database
-         *
-         * Parameters: email (IN) - email to reference in database
-         *             password (IN) - password to check in database
-         *
-         * Returns: True if the password matches the email in the database
-         *
-         ******************************************************************************************/
-
-        return db.doesPassMatchInDB(email, password);
     }
 
     //************************************ Register Functions **************************************
@@ -403,12 +362,13 @@ public class LoginActivity extends AppCompatActivity {
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Toast.makeText(LoginActivity.this, "Registration failed!",
+                            String exceptionMsg_Str = "Registration failed! " + task.getException().getMessage();
+
+                            Toast.makeText(LoginActivity.this, exceptionMsg_Str,
                                     Toast.LENGTH_SHORT).show();
-                            Log.d(TAG, task.getException().toString());
                         } else {
                             //Login was successful; continue to next activity as new user
-                            ProfileClass p = new ProfileClass(email, password);
+                            ProfileClass p = new ProfileClass(email);
                             db.insertProfileInDB(p);
 
                             Intent homeActivity_Intent = new Intent(LoginActivity.this, homeActivity.class);
@@ -443,7 +403,9 @@ public class LoginActivity extends AppCompatActivity {
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             // there was an error
-                            Toast.makeText(LoginActivity.this, "Sign in failed!",
+                            String exceptionMsg_Str = "Sign in failed! " + task.getException().getMessage();
+
+                            Toast.makeText(LoginActivity.this, exceptionMsg_Str,
                                     Toast.LENGTH_LONG).show();
                         } else {
                             //Login was successful; continue to next activity

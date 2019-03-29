@@ -17,7 +17,6 @@ public class ProfileClass {
     //************************************* Private Variables **************************************
     private String profileID_Str;
     private String profileEmail_Str;  //Key
-    private String profilePassword_Str;
 
     //************************************* Public Functions ***************************************
     // Constructors
@@ -35,10 +34,26 @@ public class ProfileClass {
 
         this.profileID_Str = "tempID";
         this.profileEmail_Str = "tempEmail";
-        this.profilePassword_Str = "tempPass";
     }
 
-    public ProfileClass(String profileID_Str, String profileEmail_Str, String profilePassword_Str) {
+    public ProfileClass(String profileEmail_Str) {
+        /*******************************************************************************************
+         * Function: ProfileClass
+         *
+         * Purpose: Constructor for this class with parameters
+         *
+         * Parameters: profileEmail_Str (IN) - email for the profile
+         *             profilePassword_Str (IN) - password for the profile
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        this.profileID_Str = "tempID";
+        this.profileEmail_Str = profileEmail_Str;
+    }
+
+    public ProfileClass(String profileID_Str, String profileEmail_Str) {
         /*******************************************************************************************
          * Function: ProfileClass
          *
@@ -54,25 +69,6 @@ public class ProfileClass {
 
         this.profileID_Str = profileID_Str;
         this.profileEmail_Str = profileEmail_Str;
-        this.profilePassword_Str = profilePassword_Str;
-    }
-
-    public ProfileClass(String profileEmail_Str, String profilePassword_Str) {
-        /*******************************************************************************************
-         * Function: ProfileClass
-         *
-         * Purpose: Constructor for this class with parameters
-         *
-         * Parameters: profileEmail_Str (IN) - email for the profile
-         *             profilePassword_Str (IN) - password for the profile
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        this.profileID_Str = "tempID";
-        this.profileEmail_Str = profileEmail_Str;
-        this.profilePassword_Str = profilePassword_Str;
     }
 
     // Getters and Setters
@@ -100,13 +96,5 @@ public class ProfileClass {
 
     public void setProfileEmail_Str(String profileEmail_Str) {
         this.profileEmail_Str = profileEmail_Str;
-    }
-
-    public String getProfilePassword_Str() {
-        return profilePassword_Str;
-    }
-
-    public void setProfilePassword_Str(String profilePassword_Str) {
-        this.profilePassword_Str = profilePassword_Str;
     }
 }
