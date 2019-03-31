@@ -342,7 +342,6 @@ public class ArmoryActivity extends AppCompatActivity {
             mLoadList_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    // TODO: for editing load list item
                     String loadName_Str = (String) adapterView.getItemAtPosition(i);
                     Log.d("JRW", "OnItemClick for load is here: " + loadName_Str);
 
@@ -356,7 +355,6 @@ public class ArmoryActivity extends AppCompatActivity {
             mLoadList_View.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    // TODO: for deleting load list item
                     String loadName_Str = (String) adapterView.getItemAtPosition(i);
                     Log.d("JRW", "OnItemLongClick for load is here: " + loadName_Str);
 

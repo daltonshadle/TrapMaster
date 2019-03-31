@@ -23,7 +23,6 @@ public class EventClass {
     private String eventGun_Str;
     private String eventLoad_Str;
     private String eventDate_Str;
-    private String eventScore_Str;
     private String eventWeather_Str;
     private String eventNotes_Str;
 
@@ -49,14 +48,13 @@ public class EventClass {
         this.eventGun_Str = "tempGun";
         this.eventLoad_Str = "tempLoad";
         this.eventDate_Str = "tempDate";
-        this.eventScore_Str = "tempScore";
         this.eventWeather_Str = "tempWeather";
         this.eventNotes_Str = "tempNotes";
     }
 
     public EventClass(String eventEmail_Str, String eventTeam_Str,
                       String eventName_Str, String eventLocation_Str, String eventGun_Str,
-                      String eventLoad_Str, String eventDate_Str, String eventScore_Str,
+                      String eventLoad_Str, String eventDate_Str,
                       String eventWeather_Str, String eventNotes_Str) {
         /*******************************************************************************************
          * Function: EventClass
@@ -70,7 +68,6 @@ public class EventClass {
          *             eventGun_Str (IN) - gun tagged with the event
          *             eventLoad_Str (IN) - load tagged with the event
          *             eventDate_Str (IN) - date tagged with the event
-         *             eventScore_Str (IN) - score tagged with the event
          *             eventWeather_Str (IN) - weather tagged with the event
          *             eventNotes_Str (IN) - notes tagged with the event
          *
@@ -86,7 +83,6 @@ public class EventClass {
         this.eventGun_Str = eventGun_Str;
         this.eventLoad_Str = eventLoad_Str;
         this.eventDate_Str = eventDate_Str;
-        this.eventScore_Str = eventScore_Str;
         this.eventWeather_Str = eventWeather_Str;
         this.eventNotes_Str = eventNotes_Str;
     }
@@ -156,14 +152,6 @@ public class EventClass {
 
     public void setEventDate_Str(String eventDate_Str) {
         this.eventDate_Str = eventDate_Str;
-    }
-
-    public String getEventScore_Str() {
-        return eventScore_Str;
-    }
-
-    public void setEventScore_Str(String eventScore_Str) {
-        this.eventScore_Str = eventScore_Str;
     }
 
     public String getEventWeather_Str() {

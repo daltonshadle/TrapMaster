@@ -73,7 +73,6 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_EVENT_GUN = "eventGun";
     private static final String KEY_EVENT_LOAD = "eventLoad";
     private static final String KEY_EVENT_DATE = "eventDate";
-    private static final String KEY_EVENT_SCORE = "eventScore";
     private static final String KEY_EVENT_WEATHER = "eventWeather";
     private static final String KEY_EVENT_NOTES = "eventNotes";
 
@@ -188,7 +187,6 @@ public class DBHandler extends SQLiteOpenHelper {
                 + KEY_EVENT_GUN + " TEXT,"
                 + KEY_EVENT_LOAD + " TEXT,"
                 + KEY_EVENT_DATE + " TEXT,"
-                + KEY_EVENT_SCORE + " INTEGER,"
                 + KEY_EVENT_WEATHER + " TEXT,"
                 + KEY_EVENT_NOTES + " TEXT"
                 + ")";
@@ -878,7 +876,6 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_EVENT_GUN, e.getEventGun_Str());
         values.put(KEY_EVENT_LOAD, e.getEventLoad_Str());
         values.put(KEY_EVENT_DATE, e.getEventDate_Str());
-        values.put(KEY_EVENT_SCORE, e.getEventScore_Str());
         values.put(KEY_EVENT_WEATHER, e.getEventWeather_Str());
         values.put(KEY_EVENT_NOTES, e.getEventNotes_Str());
 
@@ -918,7 +915,6 @@ public class DBHandler extends SQLiteOpenHelper {
             tempEvent.setEventGun_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_GUN)));
             tempEvent.setEventLoad_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_LOAD)));
             tempEvent.setEventDate_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_DATE)));
-            tempEvent.setEventScore_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_SCORE)));
             tempEvent.setEventWeather_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_WEATHER)));
             tempEvent.setEventNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_NOTES)));
 
@@ -1017,7 +1013,6 @@ public class DBHandler extends SQLiteOpenHelper {
             tempEvent.setEventGun_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_GUN)));
             tempEvent.setEventLoad_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_LOAD)));
             tempEvent.setEventDate_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_DATE)));
-            tempEvent.setEventScore_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_SCORE)));
             tempEvent.setEventWeather_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_WEATHER)));
             tempEvent.setEventNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_NOTES)));
         } catch (Exception e) {
@@ -1052,7 +1047,6 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_EVENT_GUN, e.getEventGun_Str());
         values.put(KEY_EVENT_LOAD, e.getEventLoad_Str());
         values.put(KEY_EVENT_DATE, e.getEventDate_Str());
-        values.put(KEY_EVENT_SCORE, e.getEventScore_Str());
         values.put(KEY_EVENT_WEATHER, e.getEventWeather_Str());
         values.put(KEY_EVENT_NOTES, e.getEventNotes_Str());
 
@@ -1060,5 +1054,47 @@ public class DBHandler extends SQLiteOpenHelper {
 
         dbWhole.update(TABLE_EVENTS, values, whereClaus, null);
         dbWhole.close();
+    }
+
+    public boolean isEventNameInDB (String email, String eventName, int ID) {
+        /*******************************************************************************************
+         * Function: isEventNameInDB
+         *
+         * Purpose: Function decides if event name is already in db for user
+         *
+         * Parameters: email (IN) - key string for finding profile
+         *             eventName (IN) - string to find in database
+         *             ID (IN) - ID of gun being passed in, this is to ignore this gun when checking,
+         *                       if it is -1, it means event name is being added
+         *
+         * Returns: doesEventNameExist - returns true if the user already has an event under that name,
+         *                               besides the event that shares the same ID
+         *
+         ******************************************************************************************/
+
+        boolean doesEventNameExist = false;
+        int currentID = -1;
+        String currentEventName;
+        String query = "SELECT * FROM " + TABLE_EVENTS
+                + " WHERE " + KEY_EVENT_PROFILE_NAME + " = '" + email + "'";
+
+        dbWhole = this.getReadableDatabase();
+        Cursor cursor = dbWhole.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                currentEventName = cursor.getString(cursor.getColumnIndex(KEY_EVENT_NAME));
+                currentID = cursor.getInt(cursor.getColumnIndex(KEY_EVENT_ID));
+
+                if (currentEventName.equals(eventName) && currentID != ID) {
+                    //name already exists
+                    doesEventNameExist = true;
+                    break;
+                }
+            } while (cursor.moveToNext());
+        }
+
+        dbWhole.close();
+        return doesEventNameExist;
     }
 }

@@ -64,19 +64,13 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     private final String TRAP_STATE_KEY = "TRAP_STATE_KEY";
     private final double HIT_MISS_TEXT_SF = 0.10;
     private final int HEIGHT_SF = 3, WIDTH_SF = 5;
-    private final String TAG = "JRW";
-    private final String DEFAULT_EVENT_TEXT = "Click to add a new event!";
 
     // General Variables
     private int trapCounterChildCount_Int = 0;
     private int totalHits_Int = 0;
     private boolean quickEventFlag_Bool;
     private ArrayList<Integer> trapCounterState_Array;
-    private ArrayList<EventClass> mUserEvent_List;
-    private ArrayAdapter<String> mCurrentEventList_Adapt;
     private String mCurrentUserEmail_Str = "tempEmail";
-    private String mEventName_Str = "tempEventName";
-    private String mShotNotes_Str = "tempNotes";
     DBHandler db;
 
     // UI References
@@ -361,13 +355,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                         // Quick Event, must have them log in
                         quickEventLogin();
                     } else {
-                        // Not a quick event
-                        saveScoreToDB(mCurrentUserEmail_Str, mEventName_Str, TOTAL_NUM_SHOTS,
-                                totalHits_Int, mShotNotes_Str);
-
-                        Intent homeActivity_Intent = new Intent(this, homeActivity.class);
-                        homeActivity_Intent.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
-                        startActivity(homeActivity_Intent);
+                        // Not a quick event, launch post event dialog
+                        postEventDialog();
                     }
                 } else {
                     // Not all traps are checked, not ready to save
@@ -716,11 +705,11 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     }
 
     //************************************** Event Functions ***************************************
-    private void eventPickerDialog() {
+    private void postEventDialog() {
         /*******************************************************************************************
-         * Function: eventPickerDialog
+         * Function: postEventDialog
          *
-         * Purpose: Function creates a alert dialog to pick an event when saving
+         * Purpose: Function creates a alert dialog to start post event activity
          *
          * Parameters: None
          *
@@ -728,45 +717,22 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          ******************************************************************************************/
         final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        final String NEUTRAL_STR = "";
+        final String NEUTRAL_STR = "CONTINUE";
         final String NEGATIVE_STR = "CANCEL";
 
         // Set Dialog Title
-        alertDialog.setTitle("Event Picker");
+        alertDialog.setTitle("Post Event");
 
         // Set Dialog Message
-        alertDialog.setMessage("Choose an event to store this score under.");
-
-        // Set all edittext views for gathering information
-        LinearLayout dialogView_LnrLay = new LinearLayout(this);
-        dialogView_LnrLay.setOrientation(LinearLayout.VERTICAL);
-
-        // Set Dialog ListView
-        initializeEventListView();
-        final ListView event_ListView = new ListView(this);
-        event_ListView.setAdapter(mCurrentEventList_Adapt);
-        event_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String eventName_Str = (String) adapterView.getItemAtPosition(i);
-                Log.d("JRW", "OnItemClick for event is here: " + eventName_Str);
-
-                if (!isDefaultItemText(eventName_Str)) {
-                    // Start dialog for creating a new event
-
-                } else {
-                    // Get event from db
-
-
-                }
-            }
-        });
-        dialogView_LnrLay.addView(event_ListView);
-
-        // Add linear layout to alert dialog
-        alertDialog.setView(dialogView_LnrLay);
+        alertDialog.setMessage("Continue to post event logger?");
 
         // Set Buttons
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,NEUTRAL_STR, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Overwritten by on click listener below
+            }
+        });
+
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,NEGATIVE_STR, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // Overwritten by on click listener below
@@ -775,6 +741,27 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         new Dialog(getApplicationContext());
         alertDialog.show();
+
+        // Set Properties for Neutral Button
+        final Button neutral_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        LinearLayout.LayoutParams neutralBtn_Params = (LinearLayout.LayoutParams) neutral_Btn.getLayoutParams();
+        neutralBtn_Params.gravity = Gravity.FILL_HORIZONTAL;
+        neutral_Btn.setTextColor(Color.BLUE);
+        neutral_Btn.setLayoutParams(neutralBtn_Params);
+        neutral_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Neutral button
+                // Start Post Event Activity passing score and current user
+
+                alertDialog.dismiss();
+
+                Intent postEventActivity_Intent = new Intent(NewEventActivity.this, PostEventActivity.class);
+                postEventActivity_Intent.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+                postEventActivity_Intent.putExtra(getString(R.string.current_user_score), totalHits_Int);
+                startActivity(postEventActivity_Intent);
+            }
+        });
 
         // Set Properties for Negative Button
         final Button negative_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
@@ -786,64 +773,17 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             @Override
             public void onClick(View view) {
                 // Perform Action on Negative button
+                // Save score to database and return user to home activity
+
                 alertDialog.dismiss();
+
+                saveScoreToDB(mCurrentUserEmail_Str, "", TOTAL_NUM_SHOTS,
+                        totalHits_Int, "");
+
+                Intent homeActivity_Intent = new Intent(NewEventActivity.this, homeActivity.class);
+                homeActivity_Intent.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+                startActivity(homeActivity_Intent);
             }
         });
-    }
-
-    private ArrayList<String> refreshEventList() {
-        /*******************************************************************************************
-         * Function: refreshEventList
-         *
-         * Purpose: Function returns the current list of events for the current user
-         *
-         * Parameters: None
-         *
-         * Returns: currentEventStr_List - a string list of events for current user
-         *
-         ******************************************************************************************/
-
-        mUserEvent_List = db.getAllEventFromDB(mCurrentUserEmail_Str);
-        ArrayList<String> currentEventStr_List =  new ArrayList<>();
-
-        for (int i = 0; i < mUserEvent_List.size(); i++) {
-            EventClass tempEvent = mUserEvent_List.get(i);
-            String gunListItem_Str = tempEvent.getEventName_Str();
-
-            currentEventStr_List.add(gunListItem_Str);
-        }
-
-        if (currentEventStr_List.isEmpty()) {
-            currentEventStr_List.add(DEFAULT_EVENT_TEXT);
-        }
-
-        return currentEventStr_List;
-    }
-
-    private void initializeEventListView() {
-        /*******************************************************************************************
-         * Function: initializeGunListView
-         *
-         * Purpose: Function initializes the gun list view
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        try {
-            ArrayList<String> currentEventStr_List =  refreshEventList();
-
-            mCurrentEventList_Adapt = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, currentEventStr_List);
-
-        } catch (Exception e){
-            Log.d("JRW", "no guns in db for this user");
-        }
-
-    }
-
-    private Boolean isDefaultItemText(String Event) {
-        return (Event.equals(DEFAULT_EVENT_TEXT));
     }
 }

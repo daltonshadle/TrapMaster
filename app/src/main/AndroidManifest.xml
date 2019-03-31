@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="edu.coe.djshadle.trapmaster">
-
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
-
 
     <application
         android:allowBackup="true"
@@ -15,21 +13,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".LoginActivity">
+        <activity android:name=".PostEventActivity"></activity>
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".homeActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden">
-        </activity>
+            android:configChanges="orientation|screenSize|keyboardHidden"></activity>
         <activity
             android:name=".NewEventActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:screenOrientation="landscape"/> <!-- screen orientation is temporary -->
+            android:screenOrientation="landscape" /> <!-- screen orientation is temporary -->
         <activity
             android:name=".EventHistoryActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />

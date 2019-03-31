@@ -26,6 +26,7 @@
     <string name="hit_string">HIT</string>
     <string name="miss_string">MISS</string>
     <string name="shot_string">SHOT</string>
+    <string name="current_user_score">current_user_score</string>
 
 
     <!--********************************** Quick Event Strings **********************************-->
@@ -34,10 +35,12 @@
     <string name="quick_event_cancel">Cancel</string>
 
 
-    <!--********************************* Construction Strings **********************************-->
+    <!--************************************ Armory Strings *************************************-->
     <string name="error_armory_gun_already_exists">Gun nickname already exists</string>
     <string name="error_armory_load_already_exists">Load nickname already exists</string>
 
+    <!--********************************** Post Event Strings ***********************************-->
+    <string name="error_event_already_exists">Event name already exists</string>
 
     <!--********************************* Construction Strings **********************************-->
     <string name="under_construction_string">This feature is currently under construction.
