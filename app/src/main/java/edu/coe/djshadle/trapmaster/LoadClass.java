@@ -40,13 +40,13 @@ public class LoadClass {
          ******************************************************************************************/
 
         this.loadID_Int = -1;
-        this.loadEmail_Str = "tempEmail";
-        this.loadNickname_Str = "tempNickname";
-        this.loadBrand_Str = "tempBrand";
-        this.loadGauge_Str = "tempGauge";
-        this.loadLength_Str = "tempLength";
-        this.loadGrain_Str = "tempGrain";
-        this.loadNotes_Str = "tempNotes";
+        this.loadEmail_Str = "";
+        this.loadNickname_Str = "";
+        this.loadBrand_Str = "";
+        this.loadGauge_Str = "";
+        this.loadLength_Str = "";
+        this.loadGrain_Str = "";
+        this.loadNotes_Str = "";
     }
 
     public LoadClass(String loadEmail_Str, String loadNickname_Str,

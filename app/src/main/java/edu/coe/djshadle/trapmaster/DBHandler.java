@@ -541,6 +541,7 @@ public class DBHandler extends SQLiteOpenHelper {
         try {
             Cursor cursor = dbWhole.rawQuery(query, null);
             cursor.moveToFirst();
+            tempLoad.setLoadID_Int(cursor.getInt(cursor.getColumnIndex(KEY_LOAD_ID)));
             tempLoad.setLoadEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_PROFILE_NAME)));
             tempLoad.setLoadNickname_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_NICKNAME)));
             tempLoad.setLoadBrand_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_BRAND)));
