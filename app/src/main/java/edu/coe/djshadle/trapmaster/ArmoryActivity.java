@@ -63,7 +63,6 @@ public class ArmoryActivity extends AppCompatActivity {
     // UI References
     private ListView mGunList_View, mLoadList_View;
 
-
     //************************************* Activity Functions *************************************
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -642,7 +641,6 @@ public class ArmoryActivity extends AppCompatActivity {
                         } else {
                             gun_Item.setGunNickname_Str(itemEdt_Str);
                             item_Edt.setText(gun_Item.getGunModel_Str());
-                            GUN_DIALOG_STATE = (GUN_DIALOG_STATE + 1);
                         }
 
                         break;
@@ -650,13 +648,11 @@ public class ArmoryActivity extends AppCompatActivity {
                         // Model
                         gun_Item.setGunModel_Str(itemEdt_Str);
                         item_Edt.setText(gun_Item.getGunGauge_Str());
-                        GUN_DIALOG_STATE = (GUN_DIALOG_STATE + 1);
                         break;
                     case 2:
                         // Gauge
                         gun_Item.setGunGauge_Str(itemEdt_Str);
                         item_Edt.setText(gun_Item.getGunNotes_Str());
-                        GUN_DIALOG_STATE = (GUN_DIALOG_STATE + 1);
                         break;
                     case 3:
                         // Notes
@@ -677,11 +673,10 @@ public class ArmoryActivity extends AppCompatActivity {
 
                         // Refresh gun listview
                         refreshGunListView();
-
-                        // Reset Dialog state
-                        GUN_DIALOG_STATE = 0;
                         break;
                 }
+
+                GUN_DIALOG_STATE = (GUN_DIALOG_STATE + 1) % 4;
 
                 alertDialog.setMessage(GUN_DIALOG_MSG.get(GUN_DIALOG_STATE));
                 item_Edt.setHint(GUN_EDT_HINT.get(GUN_DIALOG_STATE));
@@ -771,6 +766,40 @@ public class ArmoryActivity extends AppCompatActivity {
         if (POSITIVE_BTN) {
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    // Processed with onClick below
+
+                }
+            });
+        }
+
+        // Neutral Button, Left
+        if (NEUTRAL_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed with onClick below
+                }
+            });
+        }
+
+        // Negative Button, Middle
+        if (NEGATIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed with onClick below
+                }
+            });
+        }
+
+
+        new Dialog(getApplicationContext());
+        alertDialog.show();
+
+        // Set Button Colors
+        if (POSITIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
                     // Perform Action on Positive button
                     db.deleteLoadInDB(mCurrentUserEmail_Str, finalLoadName_Str);
 
@@ -784,39 +813,25 @@ public class ArmoryActivity extends AppCompatActivity {
                 }
             });
         }
-
-        // Neutral Button, Left
         if (NEUTRAL_BTN) {
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
                     // Perform Action on NEUTRAL Button
+
                 }
             });
         }
-
-        // Negative Button, Middle
         if (NEGATIVE_BTN) {
-            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
                     // Perform Action on Negative button
                     alertDialog.dismiss();
                 }
             });
-        }
-
-
-        new Dialog(getApplicationContext());
-        alertDialog.show();
-
-        // Set Button Colors
-        if (POSITIVE_BTN) {
-            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
-        }
-        if (NEUTRAL_BTN) {
-            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
-        }
-        if (NEGATIVE_BTN) {
-            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
         }
     }
 
@@ -949,32 +964,27 @@ public class ArmoryActivity extends AppCompatActivity {
                         } else {
                             load_Item.setLoadNickname_Str(itemEdt_Str);
                             item_Edt.setText(load_Item.getLoadBrand_Str());
-                            LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
                         }
                         break;
                     case 1:
                         // Brand
                         load_Item.setLoadBrand_Str(itemEdt_Str);
                         item_Edt.setText(load_Item.getLoadGauge_Str());
-                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
                         break;
                     case 2:
                         // Gauge
                         load_Item.setLoadGauge_Str(itemEdt_Str);
                         item_Edt.setText(load_Item.getLoadLength_Str());
-                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
                         break;
                     case 3:
                         // Length
                         load_Item.setLoadLength_Str(itemEdt_Str);
                         item_Edt.setText(load_Item.getLoadGrain_Str());
-                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
                         break;
                     case 4:
                         //Grain
                         load_Item.setLoadGrain_Str(itemEdt_Str);
                         item_Edt.setText(load_Item.getLoadNotes_Str());
-                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
                         break;
                     case 5:
                         // Notes
@@ -996,10 +1006,10 @@ public class ArmoryActivity extends AppCompatActivity {
                         // Refresh load listview
                         refreshLoadListView();
 
-                        // Reset Dialog state
-                        LOAD_DIALOG_STATE = 0;
                         break;
                 }
+
+                LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1) % 6;
 
                 alertDialog.setMessage(LOAD_DIALOG_MSG.get(LOAD_DIALOG_STATE));
                 item_Edt.setHint(LOAD_EDT_HINT.get(LOAD_DIALOG_STATE));
@@ -1059,5 +1069,5 @@ public class ArmoryActivity extends AppCompatActivity {
     private boolean isDefaultItemText(String item_Str) {
         return (item_Str.contains(DEFAULT_GUN_TEXT) || item_Str.contains(DEFAULT_LOAD_TEXT));
     }
-    
+
 }

@@ -36,12 +36,14 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 
 public class PostEventActivity extends AppCompatActivity {
@@ -54,11 +56,14 @@ public class PostEventActivity extends AppCompatActivity {
     private final int TOTAL_NUM_SHOTS = 25;
 
     // General Variables
+    DBHandler db;
     private boolean isPortait = true;
     private String mCurrentUserEmail_Str = "tempEmail";
+    // event
     private ArrayList<EventClass> mUserEvent_List;
     private ArrayAdapter<String> mCurrentEventList_Adapt;
-    DBHandler db;
+    private int EVENT_DIALOG_STATE = 0;
+    private ArrayList<String> EVENT_DIALOG_MSG, EVENT_POS_BTN_TXT, EVENT_NEU_BTN_TXT, EVENT_EDT_HINT;
     // shot variables
     private String mShotNotes_Str = "";
     private int mShotScore_Int = 0;
@@ -177,7 +182,11 @@ public class PostEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Add event action
-                addNewEventDialog();
+                //addNewEventDialog();
+
+                EventClass temp_Event = new EventClass();
+                temp_Event.setEventID_Int(-1);
+                editEventDialog(temp_Event);
             }
         });
 
@@ -335,10 +344,6 @@ public class PostEventActivity extends AppCompatActivity {
             Log.d(TAG, "no events in db for this user");
         }
 
-    }
-
-    private Boolean isDefaultItemText(String Event) {
-        return (Event.equals(DEFAULT_EVENT_TEXT));
     }
 
     private void addNewEventDialog() {
@@ -569,6 +574,294 @@ public class PostEventActivity extends AppCompatActivity {
         return tempLoad_Adapt;
     }
 
+    private Boolean isDefaultItemText(String Event) {
+        return (Event.equals(DEFAULT_EVENT_TEXT));
+    }
+
+    private void initializeEventDialogStrings() {
+        EVENT_DIALOG_MSG = new ArrayList<String>(Arrays.asList(
+                "Enter a name for this event.",
+                "Enter the location for this event.",
+                "Choose the gun used for this event.",
+                "Choose the load used for this event.",
+                "Choose the date this event took place.",
+                "Enter a weather description for this event.",
+                "Enter any notes for this event."));
+        EVENT_POS_BTN_TXT = new ArrayList<String>(Arrays.asList(
+                "NEXT",
+                "NEXT",
+                "NEXT",
+                "NEXT",
+                "NEXT",
+                "NEXT",
+                "SAVE"));
+        EVENT_NEU_BTN_TXT = new ArrayList<String>(Arrays.asList(
+                "CANCEL",
+                "BACK",
+                "BACK",
+                "BACK",
+                "BACK",
+                "BACK",
+                "BACK"));
+        EVENT_EDT_HINT = new ArrayList<String>(Arrays.asList(
+                "i.e. MyEvent",
+                "i.e. Shooting Star Gun Club",
+                "",
+                "",
+                "",
+                "i.e. Warm, Sunny, Windy",
+                "i.e. This was a good event!"));
+    }
+
+    private void editEventDialog(final EventClass event_Item) {
+        /*******************************************************************************************
+         * Function: editEventDialog
+         *
+         * Purpose: Function creates dialog and prompts user to add or edit an event item
+         *
+         * Parameters: event_Item (IN) - object to edit or add, if adding object, eventID = -1
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+        initializeEventDialogStrings();
+        event_Item.setEventEmail_Str(mCurrentUserEmail_Str);
+
+        // Dialog Constants
+        String DIALOG_TITLE = "Add New Event";;
+
+        int POSITIVE_BTN_COLOR = Color.BLUE;
+        int NEUTRAL_BTN_COLOR = Color.RED;
+
+        // Pre-Dialog Processing
+        if (event_Item.getEventID_Int() != -1) {
+            DIALOG_TITLE = "Edit Event";
+        }
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+        // Set Dialog Title
+        alertDialog.setTitle(DIALOG_TITLE);
+
+        // Set Dialog Message
+        alertDialog.setMessage(EVENT_DIALOG_MSG.get(EVENT_DIALOG_STATE));
+
+        // Set view for gathering information
+        final RelativeLayout subView_RelLay = new RelativeLayout(this);
+
+        // Set view
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        final EditText item_Edt = new EditText(this);
+        item_Edt.setHint(EVENT_EDT_HINT.get(EVENT_DIALOG_STATE));
+        item_Edt.setText(event_Item.getEventName_Str());
+        item_Edt.setGravity(Gravity.START);
+        item_Edt.setTextColor(Color.BLACK);
+        item_Edt.setLayoutParams(params);
+        subView_RelLay.addView(item_Edt);
+
+        final Spinner item_Spin = new Spinner(this);
+        item_Spin.setGravity(Gravity.START);
+        item_Spin.setLayoutParams(params);
+
+        final DatePicker item_Date = new DatePicker(this);
+
+
+        // Add linear layout to alert dialog
+        alertDialog.setView(subView_RelLay);
+
+        // Set Buttons
+        // Positive Button, Right
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, EVENT_POS_BTN_TXT.get(EVENT_DIALOG_STATE), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Processed by onClick below
+            }
+        });
+
+        // Neutral Button, Left
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, EVENT_NEU_BTN_TXT.get(EVENT_DIALOG_STATE), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Processed by onClick below
+            }
+        });
+
+
+        new Dialog(getApplicationContext());
+        alertDialog.show();
+
+        // Set Buttons
+        final Button pos_Btn = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        final Button neu_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+
+        pos_Btn.setTextColor(POSITIVE_BTN_COLOR);
+        pos_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Positive button
+                switch (EVENT_DIALOG_STATE){
+                    case 0:
+                        // Name
+                        String item_Txt = item_Edt.getText().toString();
+
+                        boolean isEventNameEmpty = item_Txt.equals("");
+                        boolean isEventNameInDB = db.isEventNameInDB(mCurrentUserEmail_Str, item_Txt, event_Item.getEventID_Int());
+
+                        if (isEventNameEmpty) {
+                            // Check if the event name is empty
+                            item_Edt.setError(getString(R.string.error_field_required));
+                            item_Edt.requestFocus();
+                        } else if (isEventNameInDB) {
+                            // Check if the event name is already used in the database,
+                            // user cannot have 2 events with same name
+                            item_Edt.setError(getString(R.string.error_event_already_exists));
+                            item_Edt.requestFocus();
+                        } else {
+                            event_Item.setEventName_Str(item_Txt);
+                            item_Edt.setText(event_Item.getEventLocation_Str());
+                        }
+
+                        break;
+                    case 1:
+                        // Location
+                        item_Txt = item_Edt.getText().toString();
+
+                        event_Item.setEventLocation_Str(item_Txt);
+
+                        subView_RelLay.removeView(item_Edt);
+                        item_Spin.setAdapter(initializeGunSpinnerAdapt());
+                        subView_RelLay.addView(item_Spin);
+                        break;
+                    case 2:
+                        // Gun
+                        item_Txt = item_Spin.toString();
+
+                        if (item_Txt.equals(DEFAULT_GUN_TEXT)) {
+                            item_Txt = "";
+                        }
+
+                        event_Item.setEventGun_Str(item_Txt);
+
+                        item_Spin.setAdapter(initializeLoadSpinnerAdapt());
+                        break;
+                    case 3:
+                        // Load
+                        item_Txt = item_Spin.toString();
+
+                        if (item_Txt.equals(DEFAULT_LOAD_TEXT)) {
+                            item_Txt = "";
+                        }
+
+                        event_Item.setEventLoad_Str(item_Txt);
+
+                        subView_RelLay.removeView(item_Spin);
+                        subView_RelLay.addView(item_Date);
+                        break;
+                    case 4:
+                        // Date
+                        item_Txt = item_Date.toString();
+
+                        event_Item.setEventDate_Str(item_Txt);
+
+                        subView_RelLay.removeView(item_Date);
+                        subView_RelLay.addView(item_Edt);
+                        item_Edt.setText(event_Item.getEventWeather_Str());
+                        break;
+                    case 5:
+                        // Weather
+                        item_Txt = item_Edt.getText().toString();
+
+                        event_Item.setEventWeather_Str(item_Txt);
+                        item_Edt.setText(event_Item.getEventNotes_Str());
+                        break;
+                    case 6:
+                        // Notes
+                        item_Txt = item_Edt.getText().toString();
+
+                        event_Item.setEventNotes_Str(item_Txt);
+
+                        saveEventToDB(event_Item);
+
+                        alertDialog.dismiss();
+
+                        Toast.makeText(PostEventActivity.this, "Event saved!",
+                                Toast.LENGTH_LONG).show();
+
+                        refreshEventListView();
+                        break;
+                }
+
+                EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1) % 7;
+
+                alertDialog.setMessage(EVENT_DIALOG_MSG.get(EVENT_DIALOG_STATE));
+                item_Edt.setHint(EVENT_EDT_HINT.get(EVENT_DIALOG_STATE));
+                pos_Btn.setText(EVENT_POS_BTN_TXT.get(EVENT_DIALOG_STATE));
+                neu_Btn.setText(EVENT_NEU_BTN_TXT.get(EVENT_DIALOG_STATE));
+            }
+        });
+
+        neu_Btn.setTextColor(NEUTRAL_BTN_COLOR);
+        neu_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Neutral button
+
+                switch (EVENT_DIALOG_STATE){
+                    case 0:
+                        // Name
+                        alertDialog.dismiss();
+                        break;
+                    case 1:
+                        // Location
+                        item_Edt.setText(event_Item.getEventName_Str());
+                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
+                        break;
+                    case 2:
+                        // Gun
+                        item_Edt.setText(event_Item.getEventLocation_Str());
+
+                        subView_RelLay.removeView(item_Spin);
+                        subView_RelLay.addView(item_Edt);
+
+                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
+                        break;
+                    case 3:
+                        // Load
+                        item_Spin.setAdapter(initializeGunSpinnerAdapt());
+                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
+                        break;
+                    case 4:
+                        // Date
+                        item_Spin.setAdapter(initializeLoadSpinnerAdapt());
+
+                        subView_RelLay.removeView(item_Date);
+                        subView_RelLay.addView(item_Spin);
+
+                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
+                        break;
+                    case 5:
+                        // Weather
+                        subView_RelLay.removeView(item_Edt);
+                        subView_RelLay.addView(item_Date);
+
+                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
+                        break;
+                    case 6:
+                        // Notes
+                        item_Edt.setText(event_Item.getEventWeather_Str());
+                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
+                        break;
+                }
+
+                alertDialog.setMessage(EVENT_DIALOG_MSG.get(EVENT_DIALOG_STATE));
+                item_Edt.setHint(EVENT_EDT_HINT.get(EVENT_DIALOG_STATE));
+                pos_Btn.setText(EVENT_POS_BTN_TXT.get(EVENT_DIALOG_STATE));
+                neu_Btn.setText(EVENT_NEU_BTN_TXT.get(EVENT_DIALOG_STATE));
+            }
+
+        });
+    }
+
     //************************************ Database Functions **************************************
     private void saveScoreToDB(String email_Str, String eventName_Str, int totalShot_Int,
                                int totalHit_Int, String notes_Str) {
@@ -621,6 +914,21 @@ public class PostEventActivity extends AppCompatActivity {
                 loadName_Str, date_Str, weather_Str, notes_Str);
 
         db.insertEventInDB(temp_Event);
+    }
+
+    private void saveEventToDB(EventClass e){
+        /*******************************************************************************************
+         * Function: saveEventToDB
+         *
+         * Purpose: Function takes info necessary to save event to database
+         *
+         * Parameters: e (IN) - event object to save
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        db.insertEventInDB(e);
     }
 
 

@@ -41,15 +41,15 @@ public class EventClass {
          ******************************************************************************************/
 
         this.eventID_Int = -1;
-        this.eventEmail_Str = "tempEmail";
-        this.eventTeam_Str = "tempTeam";
-        this.eventName_Str = "tempEventName";
-        this.eventLocation_Str = "tempLocation";
-        this.eventGun_Str = "tempGun";
-        this.eventLoad_Str = "tempLoad";
-        this.eventDate_Str = "tempDate";
-        this.eventWeather_Str = "tempWeather";
-        this.eventNotes_Str = "tempNotes";
+        this.eventEmail_Str = "";
+        this.eventTeam_Str = "";
+        this.eventName_Str = "";
+        this.eventLocation_Str = "";
+        this.eventGun_Str = "";
+        this.eventLoad_Str = "";
+        this.eventDate_Str = "";
+        this.eventWeather_Str = "";
+        this.eventNotes_Str = "";
     }
 
     public EventClass(String eventEmail_Str, String eventTeam_Str,
