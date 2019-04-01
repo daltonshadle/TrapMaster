@@ -37,11 +37,11 @@ public class GunClass {
          ******************************************************************************************/
 
         this.gunID_Int = -1;
-        this.gunEmail_Str = "tempEmail";
-        this.gunNickname_Str = "tempNickname";
-        this.gunModel_Str = "tempModel";
-        this.gunGauge_Str = "tempGauge";
-        this.gunNotes_Str = "tempNotes";
+        this.gunEmail_Str = "";
+        this.gunNickname_Str = "";
+        this.gunModel_Str = "";
+        this.gunGauge_Str = "";
+        this.gunNotes_Str = "";
     }
 
     public GunClass(String gunEmail_Str, String gunNickname_Str,

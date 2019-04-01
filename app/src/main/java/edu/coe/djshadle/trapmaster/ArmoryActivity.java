@@ -140,6 +140,9 @@ public class ArmoryActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // Display add gun dialog box for user input, -1 = adding a new gun
                 editGunItemDialog(-1);
+                //GunClass temp_Gun = new GunClass();
+                //temp_Gun.setGunID_Int(-1);
+                //editGunNicknameDialog(temp_Gun);
             }
         });
 
@@ -294,6 +297,8 @@ public class ArmoryActivity extends AppCompatActivity {
                     Log.d("JRW", "OnItemClick for gun is here: " + gunName_Str);
 
                     if (!isDefaultItemText(gunName_Str)) {
+                        //GunClass temp_Gun = db.getGunInDB(db.getIDforGun(mCurrentUserEmail_Str, gunName_Str));
+                        //editGunNicknameDialog(temp_Gun);
                         editGunItemDialog(db.getIDforGun(mCurrentUserEmail_Str, gunName_Str));
                     }
                 }
@@ -401,6 +406,7 @@ public class ArmoryActivity extends AppCompatActivity {
         mLoadList_View.setLayoutParams(params);
     }
 
+    //************************************ Gun Dialog Functions ************************************
     private void removeGunItemDialog(String gunName_Str) {
         /*******************************************************************************************
          * Function: removeGunItemDialog
@@ -413,143 +419,101 @@ public class ArmoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
+        final String DIALOG_TITLE = "Delete Gun";
+        final String DIALOG_MSG = "Are you sure you want to delete this gun?";
+
+        final boolean POSITIVE_BTN = true;  // Right
+        final boolean NEUTRAL_BTN = false;   // Left
+        final boolean NEGATIVE_BTN = true;  // Middle
+
+        final String POSITIVE_BUTTON_TXT = "DELETE";
+        final String NEUTRAL_BUTTON_TXT = "";
+        final String NEGATIVE_BUTTON_TXT = "CANCEL";
+
+        final int POSITIVE_BTN_COLOR = Color.BLUE;
+        final int NEUTRAL_BTN_COLOR = Color.RED;
+        final int NEGATIVE_BTN_COLOR = Color.RED;
+
+
         final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         final String finalGunName_Str = gunName_Str;
 
         // Set Dialog Title
-        alertDialog.setTitle("Delete gun");
+        alertDialog.setTitle(DIALOG_TITLE);
 
         // Set Dialog Message
-        alertDialog.setMessage("Are you sure you want to delete this gun?");
-
+        alertDialog.setMessage(DIALOG_MSG);
 
         // Set Buttons
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"DELETE", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // Overwritten by on click listener below
-            }
-        });
+        // Positive Button, Right
+        if (POSITIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+                    }
+            });
+        }
 
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"CANCEL", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // Overwritten by on click listener below
-            }
-        });
+        // Neutral Button, Left
+        if (NEUTRAL_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+                }
+            });
+        }
+
+        // Negative Button, Middle
+        if (NEGATIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+                }
+            });
+        }
+
 
         new Dialog(getApplicationContext());
         alertDialog.show();
 
-        // Set Properties for Save Button
-        final Button deleteGunItem_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-        LinearLayout.LayoutParams deleteGunItem_Params = (LinearLayout.LayoutParams) deleteGunItem_Btn.getLayoutParams();
-        deleteGunItem_Params.gravity = Gravity.FILL_HORIZONTAL;
-        deleteGunItem_Btn.setPadding(50, 10, 10, 10);   // Set Position
-        deleteGunItem_Btn.setTextColor(Color.BLUE);
-        deleteGunItem_Btn.setLayoutParams(deleteGunItem_Params);
-        deleteGunItem_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Perform Action on Delete Button
-
-                db.deleteGunInDB(mCurrentUserEmail_Str, finalGunName_Str);
-
-                alertDialog.dismiss();
-
-                Toast.makeText(ArmoryActivity.this, "Gun deleted.",
-                        Toast.LENGTH_LONG).show();
-
-                // Refresh gun listview
-                refreshGunListView();
-            }
-        });
-
-        final Button deleteGunItemCancel_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-        LinearLayout.LayoutParams deleteGunItemCancel_Params = (LinearLayout.LayoutParams) deleteGunItemCancel_Btn.getLayoutParams();
-        deleteGunItemCancel_Params.gravity = Gravity.FILL_HORIZONTAL;
-        deleteGunItemCancel_Btn.setTextColor(Color.RED);
-        deleteGunItemCancel_Btn.setLayoutParams(deleteGunItemCancel_Params);
-        deleteGunItemCancel_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Perform Action on Cancel button
-                alertDialog.dismiss();
-            }
-        });
-    }
-
-    private void removeLoadItemDialog(String loadName_Str) {
-        /*******************************************************************************************
-         * Function: removeLoadItemDialog
-         *
-         * Purpose: Function creates dialog and prompts user to remove a load item
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        final String finalLoadName_Str = loadName_Str;
-
-        // Set Dialog Title
-        alertDialog.setTitle("Delete Load");
-
-        // Set Dialog Message
-        alertDialog.setMessage("Are you sure you want to delete this load?");
-
-
         // Set Buttons
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"DELETE", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // Overwritten by on click listener below
-            }
-        });
+        if (POSITIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Positive button
+                    db.deleteGunInDB(mCurrentUserEmail_Str, finalGunName_Str);
 
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,"CANCEL", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // Overwritten by on click listener below
-            }
-        });
+                    alertDialog.dismiss();
 
-        new Dialog(getApplicationContext());
-        alertDialog.show();
+                    Toast.makeText(ArmoryActivity.this, "Gun deleted.",
+                            Toast.LENGTH_LONG).show();
 
-        // Set Properties for Save Button
-        final Button deleteLoadItem_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-        LinearLayout.LayoutParams deleteLoadItem_Params = (LinearLayout.LayoutParams) deleteLoadItem_Btn.getLayoutParams();
-        deleteLoadItem_Params.gravity = Gravity.FILL_HORIZONTAL;
-        deleteLoadItem_Btn.setPadding(50, 10, 10, 10);   // Set Position
-        deleteLoadItem_Btn.setTextColor(Color.BLUE);
-        deleteLoadItem_Btn.setLayoutParams(deleteLoadItem_Params);
-        deleteLoadItem_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Perform Action on Delete Button
-                db.deleteLoadInDB(mCurrentUserEmail_Str, finalLoadName_Str);
-
-                alertDialog.dismiss();
-
-                Toast.makeText(ArmoryActivity.this, "Load deleted.",
-                        Toast.LENGTH_LONG).show();
-
-                // Refresh load listview
-                refreshLoadListView();
-            }
-        });
-
-        final Button deleteLoadItemCancel_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-        LinearLayout.LayoutParams deleteLoadItemCancel_Params = (LinearLayout.LayoutParams) deleteLoadItemCancel_Btn.getLayoutParams();
-        deleteLoadItemCancel_Params.gravity = Gravity.FILL_HORIZONTAL;
-        deleteLoadItemCancel_Btn.setTextColor(Color.RED);
-        deleteLoadItemCancel_Btn.setLayoutParams(deleteLoadItemCancel_Params);
-        deleteLoadItemCancel_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Perform Action on Cancel button
-                alertDialog.dismiss();
-            }
-        });
+                    // Refresh gun listview
+                    refreshGunListView();
+                }
+            });
+        }
+        if (NEUTRAL_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Neutral button
+                }
+            });
+        }
+        if (NEGATIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perfrom Action on Negative button
+                    alertDialog.dismiss();
+                }
+            });
+        }
     }
 
     private void editGunItemDialog(final int gunID_Int) {
@@ -697,6 +661,651 @@ public class ArmoryActivity extends AppCompatActivity {
                 alertDialog.dismiss();
             }
         });
+    }
+
+    // These next four functions are temporary. I might try to use them for an
+    // iterative dialog to gather info one by one.
+    private void editGunNicknameDialog(final GunClass gun_Item) {
+        /*******************************************************************************************
+         * Function: editGunNicknameDialog
+         *
+         * Purpose: Function creates dialog and prompts user to enter gun nickname, if adding a gun,
+         *          set gun_Item ID = -1
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+        // Pre-Dialog Processing
+        String dialogTitle_Str = "Add New Gun";
+        String edittext_Str = gun_Item.getGunNickname_Str();
+        final int gunID_Int = gun_Item.getGunID_Int();
+
+        if (gunID_Int != -1) {
+            dialogTitle_Str = "Edit Gun";
+            edittext_Str = db.getGunInDB(gunID_Int).getGunNickname_Str();
+        }
+
+        // Dialog Constants
+        final String DIALOG_TITLE = dialogTitle_Str;
+        final String DIALOG_MSG = "Enter the nickname of the gun.";
+
+        final boolean POSITIVE_BTN = true;  // Right
+        final boolean NEUTRAL_BTN = true;   // Left
+        final boolean NEGATIVE_BTN = false;  // Middle
+
+        final String POSITIVE_BUTTON_TXT = "NEXT";     // Right
+        final String NEUTRAL_BUTTON_TXT = "CANCEL";   // Left
+        final String NEGATIVE_BUTTON_TXT = "CANCEL";  // Middle
+
+        final int POSITIVE_BTN_COLOR = Color.BLUE;
+        final int NEUTRAL_BTN_COLOR = Color.RED;
+        final int NEGATIVE_BTN_COLOR = Color.RED;
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+        // Set Dialog Title
+        alertDialog.setTitle(DIALOG_TITLE);
+
+        // Set Dialog Message
+        alertDialog.setMessage(DIALOG_MSG);
+
+        // Set view for gathering information
+        LinearLayout subView_LnrLay = new LinearLayout(this);
+        subView_LnrLay.setOrientation(LinearLayout.VERTICAL);
+
+        // Set view
+        final EditText item_Edt = new EditText(this);
+        item_Edt.setHint("Gun Nickname");
+        item_Edt.setText(edittext_Str);
+        item_Edt.setGravity(Gravity.START);
+        item_Edt.setTextColor(Color.BLACK);
+        subView_LnrLay.addView(item_Edt);
+
+        // Add linear layout to alert dialog
+        alertDialog.setView(subView_LnrLay);
+
+        // Set Buttons
+        // Positive Button, Right
+        if (POSITIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+
+                }
+            });
+        }
+
+        // Neutral Button, Left
+        if (NEUTRAL_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+
+                }
+            });
+        }
+
+        // Negative Button, Middle
+        if (NEGATIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+
+                }
+            });
+        }
+
+
+        new Dialog(getApplicationContext());
+        alertDialog.show();
+
+        // Set Buttons
+        if (POSITIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Positive button
+                    boolean isGunNicknameEmpty = item_Edt.getText().toString().equals("");
+                    boolean isGunNicknameInDB = db.isGunNicknameInDB(mCurrentUserEmail_Str, item_Edt.getText().toString(), gunID_Int);
+
+                    if (isGunNicknameEmpty) {
+                        // Check if the gun nickname is empty
+                        item_Edt.setError(getString(R.string.error_field_required));
+                        item_Edt.requestFocus();
+                    } else if (isGunNicknameInDB) {
+                        // Check if the gun nickname is already used in the database, uer cannot have 2 guns with same name
+                        item_Edt.setError(getString(R.string.error_armory_gun_already_exists));
+                        item_Edt.requestFocus();
+                    } else {
+                        // All is good, continue with the dialog
+                        GunClass tempGun = gun_Item;
+                        tempGun.setGunNickname_Str(item_Edt.getText().toString());
+                        editGunModelDialog(tempGun);
+                        alertDialog.dismiss();
+                    }
+                }
+            });
+        }
+        if (NEUTRAL_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Neutral button
+                    alertDialog.dismiss();
+                }
+            });
+        }
+        if (NEGATIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perfrom Action on Negative button
+                }
+            });
+        }
+    }
+
+    private void editGunModelDialog(final GunClass gun_Item) {
+        /*******************************************************************************************
+         * Function: editGunModelDialog
+         *
+         * Purpose: Function creates dialog and prompts user to enter gun nickname, if adding a gun,
+         *          set gun_Item ID = -1
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+        // Pre-Dialog Processing
+        String dialogTitle_Str = "Add New Gun";
+        String edittext_Str = gun_Item.getGunModel_Str();
+        final int gunID_Int = gun_Item.getGunID_Int();
+
+        if (gunID_Int != -1) {
+            dialogTitle_Str = "Edit Gun";
+            edittext_Str = db.getGunInDB(gunID_Int).getGunModel_Str();
+        }
+
+        // Dialog Constants
+        final String DIALOG_TITLE = dialogTitle_Str;
+        final String DIALOG_MSG = "Enter the model of the gun.";
+
+        final boolean POSITIVE_BTN = true;  // Right
+        final boolean NEUTRAL_BTN = true;   // Left
+        final boolean NEGATIVE_BTN = false;  // Middle
+
+        final String POSITIVE_BUTTON_TXT = "NEXT";     // Right
+        final String NEUTRAL_BUTTON_TXT = "BACK";   // Left
+        final String NEGATIVE_BUTTON_TXT = "CANCEL";  // Middle
+
+        final int POSITIVE_BTN_COLOR = Color.BLUE;
+        final int NEUTRAL_BTN_COLOR = Color.RED;
+        final int NEGATIVE_BTN_COLOR = Color.RED;
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+        // Set Dialog Title
+        alertDialog.setTitle(DIALOG_TITLE);
+
+        // Set Dialog Message
+        alertDialog.setMessage(DIALOG_MSG);
+
+        // Set view for gathering information
+        LinearLayout subView_LnrLay = new LinearLayout(this);
+        subView_LnrLay.setOrientation(LinearLayout.VERTICAL);
+
+        // Set view
+        final EditText item_Edt = new EditText(this);
+        item_Edt.setHint("Gun Model");
+        item_Edt.setText(edittext_Str);
+        item_Edt.setGravity(Gravity.START);
+        item_Edt.setTextColor(Color.BLACK);
+        subView_LnrLay.addView(item_Edt);
+
+        // Add linear layout to alert dialog
+        alertDialog.setView(subView_LnrLay);
+
+        // Set Buttons
+        // Positive Button, Right
+        if (POSITIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+                }
+            });
+        }
+
+        // Neutral Button, Left
+        if (NEUTRAL_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+                }
+            });
+        }
+
+        // Negative Button, Middle
+        if (NEGATIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+                }
+            });
+        }
+
+
+        new Dialog(getApplicationContext());
+        alertDialog.show();
+
+        // Set Buttons
+        if (POSITIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Positive button
+                    GunClass tempGun = gun_Item;
+                    tempGun.setGunModel_Str(item_Edt.getText().toString());
+                    editGunGaugeDialog(tempGun);
+                    alertDialog.dismiss();
+                }
+            });
+        }
+        if (NEUTRAL_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Neutral button
+                    editGunNicknameDialog(gun_Item);
+                    alertDialog.dismiss();
+                }
+            });
+        }
+        if (NEGATIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Negative button
+                }
+            });
+        }
+    }
+
+    private void editGunGaugeDialog(final GunClass gun_Item) {
+        /*******************************************************************************************
+         * Function: editGunGaugeDialog
+         *
+         * Purpose: Function creates dialog and prompts user to enter gun nickname, if adding a gun,
+         *          set gun_Item ID = -1
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+        // Pre-Dialog Processing
+        String dialogTitle_Str = "Add New Gun";
+        String edittext_Str = gun_Item.getGunGauge_Str();
+        final int gunID_Int = gun_Item.getGunID_Int();
+
+        if (gunID_Int != -1) {
+            dialogTitle_Str = "Edit Gun";
+            edittext_Str = db.getGunInDB(gunID_Int).getGunGauge_Str();
+        }
+
+        // Dialog Constants
+        final String DIALOG_TITLE = dialogTitle_Str;
+        final String DIALOG_MSG = "Enter the gauge of the gun.";
+
+        final boolean POSITIVE_BTN = true;  // Right
+        final boolean NEUTRAL_BTN = true;   // Left
+        final boolean NEGATIVE_BTN = false;  // Middle
+
+        final String POSITIVE_BUTTON_TXT = "NEXT";     // Right
+        final String NEUTRAL_BUTTON_TXT = "BACK";   // Left
+        final String NEGATIVE_BUTTON_TXT = "CANCEL";  // Middle
+
+        final int POSITIVE_BTN_COLOR = Color.BLUE;
+        final int NEUTRAL_BTN_COLOR = Color.RED;
+        final int NEGATIVE_BTN_COLOR = Color.RED;
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+        // Set Dialog Title
+        alertDialog.setTitle(DIALOG_TITLE);
+
+        // Set Dialog Message
+        alertDialog.setMessage(DIALOG_MSG);
+
+        // Set view for gathering information
+        LinearLayout subView_LnrLay = new LinearLayout(this);
+        subView_LnrLay.setOrientation(LinearLayout.VERTICAL);
+
+        // Set view
+        final EditText item_Edt = new EditText(this);
+        item_Edt.setHint("Gun Gauge");
+        item_Edt.setText(edittext_Str);
+        item_Edt.setGravity(Gravity.START);
+        item_Edt.setTextColor(Color.BLACK);
+        subView_LnrLay.addView(item_Edt);
+
+        // Add linear layout to alert dialog
+        alertDialog.setView(subView_LnrLay);
+
+        // Set Buttons
+        // Positive Button, Right
+        if (POSITIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+                }
+            });
+        }
+
+        // Neutral Button, Left
+        if (NEUTRAL_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+        }
+
+        // Negative Button, Middle
+        if (NEGATIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+
+                }
+            });
+        }
+
+        new Dialog(getApplicationContext());
+        alertDialog.show();
+
+        // Set Buttons
+        if (POSITIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Positive button
+                    GunClass tempGun = gun_Item;
+                    tempGun.setGunGauge_Str(item_Edt.getText().toString());
+                    editGunNotesDialog(tempGun);
+                    alertDialog.dismiss();
+                }
+            });
+        }
+        if (NEUTRAL_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Neutral button
+                    editGunModelDialog(gun_Item);
+                    alertDialog.dismiss();
+                }
+            });
+        }
+        if (NEGATIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Negative button
+                }
+            });
+        }
+    }
+
+    private void editGunNotesDialog(final GunClass gun_Item) {
+        /*******************************************************************************************
+         * Function: editGunGaugeDialog
+         *
+         * Purpose: Function creates dialog and prompts user to enter gun nickname, if adding a gun,
+         *          set gun_Item ID = -1
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+        // Pre-Dialog Processing
+        String dialogTitle_Str = "Add New Gun";
+        String edittext_Str = gun_Item.getGunNotes_Str();
+        final int gunID_Int = gun_Item.getGunID_Int();
+
+        if (gunID_Int != -1) {
+            dialogTitle_Str = "Edit Gun";
+            edittext_Str = db.getGunInDB(gunID_Int).getGunNotes_Str();
+        }
+
+        // Dialog Constants
+        final String DIALOG_TITLE = dialogTitle_Str;
+        final String DIALOG_MSG = "Enter the notes on the gun.";
+
+        final boolean POSITIVE_BTN = true;  // Right
+        final boolean NEUTRAL_BTN = true;   // Left
+        final boolean NEGATIVE_BTN = false;  // Middle
+
+        final String POSITIVE_BUTTON_TXT = "SAVE";     // Right
+        final String NEUTRAL_BUTTON_TXT = "BACK";   // Left
+        final String NEGATIVE_BUTTON_TXT = "CANCEL";  // Middle
+
+        final int POSITIVE_BTN_COLOR = Color.BLUE;
+        final int NEUTRAL_BTN_COLOR = Color.RED;
+        final int NEGATIVE_BTN_COLOR = Color.RED;
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+        // Set Dialog Title
+        alertDialog.setTitle(DIALOG_TITLE);
+
+        // Set Dialog Message
+        alertDialog.setMessage(DIALOG_MSG);
+
+        // Set view for gathering information
+        LinearLayout subView_LnrLay = new LinearLayout(this);
+        subView_LnrLay.setOrientation(LinearLayout.VERTICAL);
+
+        // Set view
+        final EditText item_Edt = new EditText(this);
+        item_Edt.setHint("Gun Notes");
+        item_Edt.setText(edittext_Str);
+        item_Edt.setGravity(Gravity.START);
+        item_Edt.setTextColor(Color.BLACK);
+        subView_LnrLay.addView(item_Edt);
+
+        // Add linear layout to alert dialog
+        alertDialog.setView(subView_LnrLay);
+
+        // Set Buttons
+        // Positive Button, Right
+        if (POSITIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+
+                }
+            });
+        }
+
+        // Neutral Button, Left
+        if (NEUTRAL_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+                }
+            });
+        }
+
+        // Negative Button, Middle
+        if (NEGATIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+                }
+            });
+        }
+
+
+        new Dialog(getApplicationContext());
+        alertDialog.show();
+
+        // Set Buttons
+        if (POSITIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Positive button
+                    GunClass tempGun = gun_Item;
+                    tempGun.setGunNotes_Str(item_Edt.getText().toString());
+                    tempGun.setGunEmail_Str(mCurrentUserEmail_Str);
+
+                    if (gunID_Int == -1) {
+                        // new gun
+                        Log.d("JRW", "New Gun");
+                        db.insertGunInDB(tempGun);
+                    } else {
+                        // editting gun
+                        Log.d("JRW", "Edit Gun");
+                        db.updateGunInDB(tempGun, gunID_Int);
+                    }
+
+                    Toast.makeText(ArmoryActivity.this, "Gun saved!",
+                            Toast.LENGTH_LONG).show();
+
+                    alertDialog.dismiss();
+
+                    // Refresh gun listview
+                    refreshGunListView();
+                }
+            });
+        }
+        if (NEUTRAL_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Neutral button
+                    editGunGaugeDialog(gun_Item);
+                    alertDialog.dismiss();
+                }
+            });
+        }
+        if (NEGATIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Negative button
+                }
+            });
+        }
+    }
+
+    //************************************ Load Dialog Functions ***********************************
+    private void removeLoadItemDialog(String loadName_Str) {
+        /*******************************************************************************************
+         * Function: removeLoadItemDialog
+         *
+         * Purpose: Function creates dialog and prompts user to remove a load item
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        final String DIALOG_TITLE = "Delete Load";
+        final String DIALOG_MSG = "Are you sure you want to delete this load?";
+
+        final boolean POSITIVE_BTN = true;  // Right
+        final boolean NEUTRAL_BTN = false;   // Left
+        final boolean NEGATIVE_BTN = true;  // Middle
+
+        final String POSITIVE_BUTTON_TXT = "DELETE";
+        final String NEUTRAL_BUTTON_TXT = "";
+        final String NEGATIVE_BUTTON_TXT = "CANCEL";
+
+        final int POSITIVE_BTN_COLOR = Color.BLUE;
+        final int NEUTRAL_BTN_COLOR = Color.RED;
+        final int NEGATIVE_BTN_COLOR = Color.RED;
+
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        final String finalLoadName_Str = loadName_Str;
+
+
+        // Set Dialog Title
+        alertDialog.setTitle(DIALOG_TITLE);
+
+        // Set Dialog Message
+        alertDialog.setMessage(DIALOG_MSG);
+
+        // Set Buttons
+        // Positive Button, Right
+        if (POSITIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Perform Action on Positive button
+                    db.deleteLoadInDB(mCurrentUserEmail_Str, finalLoadName_Str);
+
+                    alertDialog.dismiss();
+
+                    Toast.makeText(ArmoryActivity.this, "Load deleted.",
+                            Toast.LENGTH_LONG).show();
+
+                    // Refresh load listview
+                    refreshLoadListView();
+                }
+            });
+        }
+
+        // Neutral Button, Left
+        if (NEUTRAL_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Perform Action on NEUTRAL Button
+                }
+            });
+        }
+
+        // Negative Button, Middle
+        if (NEGATIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Perform Action on Negative button
+                    alertDialog.dismiss();
+                }
+            });
+        }
+
+
+        new Dialog(getApplicationContext());
+        alertDialog.show();
+
+        // Set Button Colors
+        if (POSITIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
+        }
+        if (NEUTRAL_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
+        }
+        if (NEGATIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
+        }
     }
 
     private void editLoadItemDialog(final int loadID_Int) {
@@ -868,4 +1477,87 @@ public class ArmoryActivity extends AppCompatActivity {
         return (item_Str.contains(DEFAULT_GUN_TEXT) || item_Str.contains(DEFAULT_LOAD_TEXT));
     }
 
+    //************************************** Other Functions ***************************************
+
+    private void DEFAULT_DIALOG() {
+        /*******************************************************************************************
+         * Function: DEFAULT_DIALOG
+         *
+         * Purpose: Function creates dialog and prompts user to remove a gun item
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        final String DIALOG_TITLE = "Delete Gun";
+        final String DIALOG_MSG = "Are you sure you want to delete this gun?";
+
+        final boolean POSITIVE_BTN = true;  // Right
+        final boolean NEUTRAL_BTN = true;   // Left
+        final boolean NEGATIVE_BTN = true;  // Middle
+
+        final String POSITIVE_BUTTON_TXT = "POS";     // Right
+        final String NEUTRAL_BUTTON_TXT = "DELETE";   // Left
+        final String NEGATIVE_BUTTON_TXT = "CANCEL";  // Middle
+
+        final int POSITIVE_BTN_COLOR = Color.RED;
+        final int NEUTRAL_BTN_COLOR = Color.RED;
+        final int NEGATIVE_BTN_COLOR = Color.RED;
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+        // Set Dialog Title
+        alertDialog.setTitle(DIALOG_TITLE);
+
+        // Set Dialog Message
+        alertDialog.setMessage(DIALOG_MSG);
+
+        // Set Buttons
+        // Positive Button, Right
+        if (POSITIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Perform Action on Positive button
+
+                }
+            });
+        }
+
+        // Neutral Button, Left
+        if (NEGATIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Perform Action on NEUTRAL Button
+
+                }
+            });
+        }
+
+        // Negative Button, Middle
+        if (NEGATIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Perform Action on Negative button
+
+                }
+            });
+        }
+
+
+        new Dialog(getApplicationContext());
+        alertDialog.show();
+
+        // Set Button Colors
+        if (POSITIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
+        }
+        if (NEUTRAL_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
+        }
+        if (NEGATIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
+        }
+    }
 }

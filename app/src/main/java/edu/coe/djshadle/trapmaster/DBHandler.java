@@ -770,6 +770,7 @@ public class DBHandler extends SQLiteOpenHelper {
         try {
             Cursor cursor = dbWhole.rawQuery(query, null);
             cursor.moveToFirst();
+            tempGun.setGunID_Int(cursor.getInt(cursor.getColumnIndex(KEY_GUN_ID)));
             tempGun.setGunEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_PROFILE_NAME)));
             tempGun.setGunNickname_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_NICKNAME)));
             tempGun.setGunModel_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_MODEL)));
