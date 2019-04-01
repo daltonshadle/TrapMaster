@@ -641,6 +641,7 @@ public class ArmoryActivity extends AppCompatActivity {
                         } else {
                             gun_Item.setGunNickname_Str(itemEdt_Str);
                             item_Edt.setText(gun_Item.getGunModel_Str());
+                            GUN_DIALOG_STATE = (GUN_DIALOG_STATE + 1);
                         }
 
                         break;
@@ -648,11 +649,13 @@ public class ArmoryActivity extends AppCompatActivity {
                         // Model
                         gun_Item.setGunModel_Str(itemEdt_Str);
                         item_Edt.setText(gun_Item.getGunGauge_Str());
+                        GUN_DIALOG_STATE = (GUN_DIALOG_STATE + 1);
                         break;
                     case 2:
                         // Gauge
                         gun_Item.setGunGauge_Str(itemEdt_Str);
                         item_Edt.setText(gun_Item.getGunNotes_Str());
+                        GUN_DIALOG_STATE = (GUN_DIALOG_STATE + 1);
                         break;
                     case 3:
                         // Notes
@@ -673,10 +676,11 @@ public class ArmoryActivity extends AppCompatActivity {
 
                         // Refresh gun listview
                         refreshGunListView();
+
+                        // Reset state counter
+                        GUN_DIALOG_STATE = 0;
                         break;
                 }
-
-                GUN_DIALOG_STATE = (GUN_DIALOG_STATE + 1) % 4;
 
                 alertDialog.setMessage(GUN_DIALOG_MSG.get(GUN_DIALOG_STATE));
                 item_Edt.setHint(GUN_EDT_HINT.get(GUN_DIALOG_STATE));
@@ -964,27 +968,32 @@ public class ArmoryActivity extends AppCompatActivity {
                         } else {
                             load_Item.setLoadNickname_Str(itemEdt_Str);
                             item_Edt.setText(load_Item.getLoadBrand_Str());
+                            LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
                         }
                         break;
                     case 1:
                         // Brand
                         load_Item.setLoadBrand_Str(itemEdt_Str);
                         item_Edt.setText(load_Item.getLoadGauge_Str());
+                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
                         break;
                     case 2:
                         // Gauge
                         load_Item.setLoadGauge_Str(itemEdt_Str);
                         item_Edt.setText(load_Item.getLoadLength_Str());
+                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
                         break;
                     case 3:
                         // Length
                         load_Item.setLoadLength_Str(itemEdt_Str);
                         item_Edt.setText(load_Item.getLoadGrain_Str());
+                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
                         break;
                     case 4:
                         //Grain
                         load_Item.setLoadGrain_Str(itemEdt_Str);
                         item_Edt.setText(load_Item.getLoadNotes_Str());
+                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
                         break;
                     case 5:
                         // Notes
@@ -1006,10 +1015,10 @@ public class ArmoryActivity extends AppCompatActivity {
                         // Refresh load listview
                         refreshLoadListView();
 
+                        // Reset state counter
+                        LOAD_DIALOG_STATE = 0;
                         break;
                 }
-
-                LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1) % 6;
 
                 alertDialog.setMessage(LOAD_DIALOG_MSG.get(LOAD_DIALOG_STATE));
                 item_Edt.setHint(LOAD_EDT_HINT.get(LOAD_DIALOG_STATE));

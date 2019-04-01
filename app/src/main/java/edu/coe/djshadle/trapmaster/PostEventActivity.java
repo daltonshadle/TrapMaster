@@ -719,6 +719,7 @@ public class PostEventActivity extends AppCompatActivity {
                         } else {
                             event_Item.setEventName_Str(item_Txt);
                             item_Edt.setText(event_Item.getEventLocation_Str());
+                            EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
                         }
 
                         break;
@@ -731,6 +732,8 @@ public class PostEventActivity extends AppCompatActivity {
                         subView_RelLay.removeView(item_Edt);
                         item_Spin.setAdapter(initializeGunSpinnerAdapt());
                         subView_RelLay.addView(item_Spin);
+
+                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
                         break;
                     case 2:
                         // Gun
@@ -743,6 +746,8 @@ public class PostEventActivity extends AppCompatActivity {
                         event_Item.setEventGun_Str(item_Txt);
 
                         item_Spin.setAdapter(initializeLoadSpinnerAdapt());
+
+                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
                         break;
                     case 3:
                         // Load
@@ -756,6 +761,8 @@ public class PostEventActivity extends AppCompatActivity {
 
                         subView_RelLay.removeView(item_Spin);
                         subView_RelLay.addView(item_Date);
+
+                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
                         break;
                     case 4:
                         // Date
@@ -766,6 +773,8 @@ public class PostEventActivity extends AppCompatActivity {
                         subView_RelLay.removeView(item_Date);
                         subView_RelLay.addView(item_Edt);
                         item_Edt.setText(event_Item.getEventWeather_Str());
+
+                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
                         break;
                     case 5:
                         // Weather
@@ -773,6 +782,8 @@ public class PostEventActivity extends AppCompatActivity {
 
                         event_Item.setEventWeather_Str(item_Txt);
                         item_Edt.setText(event_Item.getEventNotes_Str());
+
+                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
                         break;
                     case 6:
                         // Notes
@@ -787,11 +798,13 @@ public class PostEventActivity extends AppCompatActivity {
                         Toast.makeText(PostEventActivity.this, "Event saved!",
                                 Toast.LENGTH_LONG).show();
 
+                        // Refresh event list view
                         refreshEventListView();
+
+                        // Reset state counter
+                        EVENT_DIALOG_STATE = 0;
                         break;
                 }
-
-                EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1) % 7;
 
                 alertDialog.setMessage(EVENT_DIALOG_MSG.get(EVENT_DIALOG_STATE));
                 item_Edt.setHint(EVENT_EDT_HINT.get(EVENT_DIALOG_STATE));
