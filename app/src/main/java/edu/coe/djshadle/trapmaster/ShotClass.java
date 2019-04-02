@@ -16,7 +16,7 @@ package edu.coe.djshadle.trapmaster;
 public class ShotClass {
     // Might be my favorite name for a class, I will try to work this in wherever I can
     //************************************* Private Variables **************************************
-    private String shotID_Str;
+    private int shotID_Int;
     private String shotEmail_Str;
     private String shotEventName_Str;
     private String shotTotalNum_Str;
@@ -37,15 +37,15 @@ public class ShotClass {
          *
          ******************************************************************************************/
 
-        this.shotID_Str = "tempID";
-        this.shotEmail_Str = "tempEmail";
-        this.shotEventName_Str = "tempEventName";
-        this.shotTotalNum_Str = "tempTotalShot";
-        this.shotHitNum_Str = "tempTotalHit";
-        this.shotNotes_Str = "tempNotes";
+        this.shotID_Int = -1;
+        this.shotEmail_Str = "";
+        this.shotEventName_Str = "";
+        this.shotTotalNum_Str = "";
+        this.shotHitNum_Str = "";
+        this.shotNotes_Str = "";
     }
 
-    public ShotClass(String shotID_Str, String shotEmail_Str, String shotEventName_Str,
+    public ShotClass(int shotID_Int, String shotEmail_Str, String shotEventName_Str,
                      String shotTotalNum_Str, String shotHitNum_Str, String shotNotes_Str) {
         /*******************************************************************************************
          * Function: ShotClass
@@ -63,7 +63,7 @@ public class ShotClass {
          *
          ******************************************************************************************/
 
-        this.shotID_Str = shotID_Str;
+        this.shotID_Int = shotID_Int;
         this.shotEmail_Str = shotEmail_Str;
         this.shotEventName_Str = shotEventName_Str;
         this.shotTotalNum_Str = shotTotalNum_Str;
@@ -88,7 +88,7 @@ public class ShotClass {
          *
          ******************************************************************************************/
 
-        this.shotID_Str = "tempID";
+        this.shotID_Int = -1;
         this.shotEmail_Str = shotEmail_Str;
         this.shotEventName_Str = shotEventName_Str;
         this.shotTotalNum_Str = shotTotalNum_Str;
@@ -107,12 +107,12 @@ public class ShotClass {
      * Returns: None
      *
      ******************************************************************************************/
-    public String getShotID_Str() {
-        return shotID_Str;
+    public int getShotID_Int() {
+        return shotID_Int;
     }
 
-    public void setShotID_Str(String shotID_Str) {
-        this.shotID_Str = shotID_Str;
+    public void setShotID_Int(int shotID_Int) {
+        this.shotID_Int = shotID_Int;
     }
 
     public String getShotEmail_Str() {

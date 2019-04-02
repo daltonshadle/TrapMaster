@@ -13,6 +13,7 @@
     <string name="miss_string">MISS</string>
     <string name="shot_string">SHOT</string>
     <string name="current_user_score">current_user_score</string>
+    <string name="default_shot_text">Click add to start a new shoot!</string>
 
     <!--************************************* Login Strings *************************************-->
     <string name="login_activity_title">Sign in</string>

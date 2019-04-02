@@ -736,74 +736,109 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          * Returns: None
          *
          ******************************************************************************************/
+
+        final String DIALOG_TITLE = "Post Event Logger";
+        final String DIALOG_MSG = "Do you want to continue to the post event logger?";
+
+        final boolean POSITIVE_BTN = true;  // Right
+        final boolean NEUTRAL_BTN = false;   // Left
+        final boolean NEGATIVE_BTN = true;  // Middle
+
+        final String POSITIVE_BUTTON_TXT = "YES";
+        final String NEUTRAL_BUTTON_TXT = "";
+        final String NEGATIVE_BUTTON_TXT = "NO";
+
+        final int POSITIVE_BTN_COLOR = Color.BLUE;
+        final int NEUTRAL_BTN_COLOR = Color.RED;
+        final int NEGATIVE_BTN_COLOR = Color.RED;
+
+
         final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        final String NEUTRAL_STR = "CONTINUE";
-        final String NEGATIVE_STR = "CANCEL";
 
         // Set Dialog Title
-        alertDialog.setTitle("Post Event");
+        alertDialog.setTitle(DIALOG_TITLE);
 
         // Set Dialog Message
-        alertDialog.setMessage("Continue to post event logger?");
+        alertDialog.setMessage(DIALOG_MSG);
 
         // Set Buttons
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,NEUTRAL_STR, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // Overwritten by on click listener below
-            }
-        });
+        // Positive Button, Right
+        if (POSITIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed with onClick below
 
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,NEGATIVE_STR, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // Overwritten by on click listener below
-            }
-        });
+                }
+            });
+        }
+
+        // Neutral Button, Left
+        if (NEUTRAL_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed with onClick below
+                }
+            });
+        }
+
+        // Negative Button, Middle
+        if (NEGATIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed with onClick below
+                }
+            });
+        }
+
 
         new Dialog(getApplicationContext());
         alertDialog.show();
 
-        // Set Properties for Neutral Button
-        final Button neutral_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-        LinearLayout.LayoutParams neutralBtn_Params = (LinearLayout.LayoutParams) neutral_Btn.getLayoutParams();
-        neutralBtn_Params.gravity = Gravity.FILL_HORIZONTAL;
-        neutral_Btn.setTextColor(Color.BLUE);
-        neutral_Btn.setLayoutParams(neutralBtn_Params);
-        neutral_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Perform Action on Neutral button
-                // Start Post Event Activity passing score and current user
+        // Set Button Colors
+        if (POSITIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Positive button
 
-                alertDialog.dismiss();
+                    alertDialog.dismiss();
 
-                Intent postEventActivity_Intent = new Intent(NewEventActivity.this, PostEventActivity.class);
-                postEventActivity_Intent.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
-                postEventActivity_Intent.putExtra(getString(R.string.current_user_score), totalHits_Int);
-                startActivity(postEventActivity_Intent);
-            }
-        });
+                    Intent postEventActivity_Intent = new Intent(NewEventActivity.this, PostEventActivity.class);
+                    postEventActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+                    postEventActivity_Intent.putExtra(getString(R.string.current_user_score), totalHits_Int);
+                    startActivity(postEventActivity_Intent);
 
-        // Set Properties for Negative Button
-        final Button negative_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-        LinearLayout.LayoutParams negativeBtn_Params = (LinearLayout.LayoutParams) negative_Btn.getLayoutParams();
-        negativeBtn_Params.gravity = Gravity.FILL_HORIZONTAL;
-        negative_Btn.setTextColor(Color.RED);
-        negative_Btn.setLayoutParams(negativeBtn_Params);
-        negative_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Perform Action on Negative button
-                // Save score to database and return user to home activity
+                }
+            });
+        }
+        if (NEUTRAL_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on NEUTRAL Button
 
-                alertDialog.dismiss();
+                }
+            });
+        }
+        if (NEGATIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Negative button
 
-                saveScoreToDB(mCurrentUserEmail_Str, "", TOTAL_NUM_SHOTS,
-                        totalHits_Int, "");
+                    alertDialog.dismiss();
 
-                Intent homeActivity_Intent = new Intent(NewEventActivity.this, homeActivity.class);
-                homeActivity_Intent.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
-                startActivity(homeActivity_Intent);
-            }
-        });
+                    saveScoreToDB(mCurrentUserEmail_Str, "", TOTAL_NUM_SHOTS,
+                            totalHits_Int, "");
+
+                    Intent homeActivity_Intent = new Intent(NewEventActivity.this, homeActivity.class);
+                    homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+                    startActivity(homeActivity_Intent);
+                }
+            });
+        }
     }
 }

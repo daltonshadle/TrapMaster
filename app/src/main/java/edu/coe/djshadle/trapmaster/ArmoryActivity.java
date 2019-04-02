@@ -198,6 +198,7 @@ public class ArmoryActivity extends AppCompatActivity {
     }
 
     //************************************* Listview Functions *************************************
+    // Gun List
     private ArrayList<String> refreshGunList() {
         /*******************************************************************************************
          * Function: refreshGunList
@@ -231,39 +232,6 @@ public class ArmoryActivity extends AppCompatActivity {
         return currentGunStr_List;
     }
 
-    private ArrayList<String> refreshLoadList() {
-        /*******************************************************************************************
-         * Function: refreshLoadList
-         *
-         * Purpose: Function returns the current list of loads for the current user
-         *
-         * Parameters: None
-         *
-         * Returns: currentLoadStr_List - a string list of loads for current user
-         *
-         ******************************************************************************************/
-
-        mUserLoad_List = db.getAllLoadFromDB(mCurrentUserEmail_Str);
-        ArrayList<String> currentLoadStr_List =  new ArrayList<>();
-
-        for (int i = 0; i < mUserLoad_List.size(); i++) {
-            LoadClass tempLoad = mUserLoad_List.get(i);
-            String loadItem_Str = tempLoad.getLoadNickname_Str() + " - " + tempLoad.getLoadBrand_Str()
-                    + " " + tempLoad.getLoadGauge_Str();
-
-            // TEMP TODO: REMOVE TEMP CODE
-            loadItem_Str = tempLoad.getLoadNickname_Str();
-
-            currentLoadStr_List.add(loadItem_Str);
-        }
-
-        if (currentLoadStr_List.isEmpty()) {
-            currentLoadStr_List.add(DEFAULT_LOAD_TEXT);
-        }
-
-        return currentLoadStr_List;
-    }
-
     private void refreshGunListView() {
         /*******************************************************************************************
          * Function: refreshGunListView
@@ -279,23 +247,6 @@ public class ArmoryActivity extends AppCompatActivity {
         mCurrentGunList_Adapt.clear();
         mCurrentGunList_Adapt.addAll(refreshGunList());
         mCurrentGunList_Adapt.notifyDataSetChanged();
-    }
-
-    private void refreshLoadListView() {
-        /*******************************************************************************************
-         * Function: refreshLoadListView
-         *
-         * Purpose: Function refreshes the load list view with current gun data from database
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        mCurrentLoadList_Adapt.clear();
-        mCurrentLoadList_Adapt.addAll(refreshLoadList());
-        mCurrentLoadList_Adapt.notifyDataSetChanged();
     }
 
     private void initializeGunListView() {
@@ -352,6 +303,57 @@ public class ArmoryActivity extends AppCompatActivity {
 
     }
 
+    // Load List
+    private ArrayList<String> refreshLoadList() {
+        /*******************************************************************************************
+         * Function: refreshLoadList
+         *
+         * Purpose: Function returns the current list of loads for the current user
+         *
+         * Parameters: None
+         *
+         * Returns: currentLoadStr_List - a string list of loads for current user
+         *
+         ******************************************************************************************/
+
+        mUserLoad_List = db.getAllLoadFromDB(mCurrentUserEmail_Str);
+        ArrayList<String> currentLoadStr_List =  new ArrayList<>();
+
+        for (int i = 0; i < mUserLoad_List.size(); i++) {
+            LoadClass tempLoad = mUserLoad_List.get(i);
+            String loadItem_Str = tempLoad.getLoadNickname_Str() + " - " + tempLoad.getLoadBrand_Str()
+                    + " " + tempLoad.getLoadGauge_Str();
+
+            // TEMP TODO: REMOVE TEMP CODE
+            loadItem_Str = tempLoad.getLoadNickname_Str();
+
+            currentLoadStr_List.add(loadItem_Str);
+        }
+
+        if (currentLoadStr_List.isEmpty()) {
+            currentLoadStr_List.add(DEFAULT_LOAD_TEXT);
+        }
+
+        return currentLoadStr_List;
+    }
+
+    private void refreshLoadListView() {
+        /*******************************************************************************************
+         * Function: refreshLoadListView
+         *
+         * Purpose: Function refreshes the load list view with current gun data from database
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        mCurrentLoadList_Adapt.clear();
+        mCurrentLoadList_Adapt.addAll(refreshLoadList());
+        mCurrentLoadList_Adapt.notifyDataSetChanged();
+    }
+
     private void initializeLoadListView() {
         /*******************************************************************************************
          * Function: initializeLoadListView
@@ -405,6 +407,7 @@ public class ArmoryActivity extends AppCompatActivity {
 
     }
 
+    // Both List
     private void setListViewLayoutParams() {
         /*******************************************************************************************
          * Function: setListViewLayoutParams

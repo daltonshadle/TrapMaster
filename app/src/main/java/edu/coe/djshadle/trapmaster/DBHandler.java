@@ -382,6 +382,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         while (cursor.moveToNext()) {
             ShotClass tempShot = new ShotClass();
+            tempShot.setShotID_Int(cursor.getInt(cursor.getColumnIndex(KEY_SHOT_ID)));
             tempShot.setShotEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_PROFILE_NAME)));
             tempShot.setShotEventName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_EVENT_NAME)));
             tempShot.setShotTotalNum_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_NUMBER)));
@@ -393,6 +394,95 @@ public class DBHandler extends SQLiteOpenHelper {
 
         dbWhole.close();
         return tempShot_List;
+    }
+
+    public void deleteShotInDB (String email, int shotID_int) {
+        /*******************************************************************************************
+         * Function: deleteShotInDB
+         *
+         * Purpose: Function deletes item from database based on email and shotID_Int
+         *
+         * Parameters: email (IN) - email to remove gun from
+         *             shotID_int (IN) - ID number fo shot
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getWritableDatabase();
+
+        String whereClause_Str = "(" + KEY_SHOT_PROFILE_NAME + " = '" + email + "' AND "
+                + KEY_SHOT_ID + " = '" + shotID_int + "')";
+        try {
+            dbWhole.delete(TABLE_SHOT, whereClause_Str, null);
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        dbWhole.close();
+    }
+
+    public ShotClass getShotInDB (int shotID_Int) {
+        /*******************************************************************************************
+         * Function: getShotInDB
+         *
+         * Purpose: Function returns the ID number of a shot in the database
+         *
+         * Parameters: shotID_Int (IN) - ID of the shot information to return
+         *
+         * Returns: temp_Shot - Information of the shot stored at shotID_Int
+         *
+         ******************************************************************************************/
+
+        ShotClass temp_Shot = new ShotClass();
+        String query = "SELECT * FROM " + TABLE_SHOT + " WHERE "
+                + KEY_SHOT_ID + " = " + Integer.toString(shotID_Int);
+
+        dbWhole = this.getReadableDatabase();
+
+        try {
+            Cursor cursor = dbWhole.rawQuery(query, null);
+            cursor.moveToFirst();
+            temp_Shot.setShotID_Int(cursor.getInt(cursor.getColumnIndex(KEY_SHOT_ID)));
+            temp_Shot.setShotEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_PROFILE_NAME)));
+            temp_Shot.setShotEventName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_EVENT_NAME)));
+            temp_Shot.setShotHitNum_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_HIT_MISS)));
+            temp_Shot.setShotTotalNum_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_NUMBER)));
+            temp_Shot.setShotNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_NOTES)));
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        dbWhole.close();
+
+        return temp_Shot;
+    }
+
+    public void updateShotInDB (ShotClass s) {
+        /*******************************************************************************************
+         * Function: updateShotInDB
+         *
+         * Purpose: Function updates item from database based on database ID
+         *
+         * Parameters: s (IN) - object that holds information for updating item in the database
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_SHOT_PROFILE_NAME, s.getShotEmail_Str());
+        values.put(KEY_SHOT_EVENT_NAME, s.getShotEventName_Str());
+        values.put(KEY_SHOT_NUMBER, s.getShotTotalNum_Str());
+        values.put(KEY_SHOT_HIT_MISS, s.getShotHitNum_Str());
+        values.put(KEY_SHOT_NOTES, s.getShotNotes_Str());
+
+        String whereClaus = KEY_SHOT_ID + " = " + Integer.toString(s.getShotID_Int());
+
+        dbWhole.update(TABLE_SHOT, values, whereClaus, null);
+        dbWhole.close();
     }
 
     //*************************************** Load Functions ***************************************
@@ -967,7 +1057,7 @@ public class DBHandler extends SQLiteOpenHelper {
          ******************************************************************************************/
 
         int eventID_Int = -1;
-        String query = "SELECT " + KEY_EVENT_NAME + " FROM " + TABLE_EVENTS + " WHERE "
+        String query = "SELECT " + KEY_EVENT_ID + " FROM " + TABLE_EVENTS + " WHERE "
                 + KEY_EVENT_PROFILE_NAME + " = '" + email + "' AND " + KEY_EVENT_NAME + " = '"
                 + eventName + "'";
 
@@ -978,7 +1068,7 @@ public class DBHandler extends SQLiteOpenHelper {
             cursor.moveToFirst();
             eventID_Int = cursor.getInt(cursor.getColumnIndex(KEY_EVENT_ID));
         } catch (Exception e) {
-            Log.d("JRW", e.toString());
+            Log.d("JRW", "getIDforEvent: " + e.toString());
         }
 
         dbWhole.close();
@@ -1018,7 +1108,7 @@ public class DBHandler extends SQLiteOpenHelper {
             tempEvent.setEventWeather_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_WEATHER)));
             tempEvent.setEventNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_NOTES)));
         } catch (Exception e) {
-            Log.d("JRW", e.toString());
+            Log.d("JRW", "getEventInDB: " + e.toString());
         }
 
         dbWhole.close();
