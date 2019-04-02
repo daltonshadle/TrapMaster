@@ -33,10 +33,10 @@ import com.google.firebase.auth.FirebaseUser;
 public class homeActivity extends AppCompatActivity implements View.OnClickListener {
     //********************************* Variables and Constants ************************************
     //General Constants
-    final String CURRENT_USER_KEY = "USER_KEY";
+    private final String CURRENT_USER_KEY = getString(R.string.current_user_key);
 
     //General Variables
-    private String mCurrentUserEmail_Str = "tempEmail";
+    private String mCurrentUserEmail_Str = "********";
 
     // UI References
 
@@ -70,7 +70,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         if (savedInstanceState != null) {
             mCurrentUserEmail_Str = savedInstanceState.getString(CURRENT_USER_KEY);
         } else {
-            mCurrentUserEmail_Str = getIntent().getStringExtra(getString(R.string.current_user_email));
+            mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
         }
 
         initializeViews();
@@ -196,27 +196,27 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.btnHomeNewEvent:
                 i = new Intent(this, NewEventActivity.class);
-                i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+                i.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
                 startActivity(i);
                 break;
             case R.id.btnHomeArmory:
                 i = new Intent(this, ArmoryActivity.class);
-                i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+                i.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
                 startActivity(i);
                 break;
             case R.id.btnHomeEventHistory:
                 i = new Intent(this, EventHistoryActivity.class);
-                i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+                i.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
                 startActivity(i);
                 break;
             case R.id.btnHomeProfiles:
                 i = new Intent(this, ProfilesActivity.class);
-                i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+                i.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
                 startActivity(i);
                 break;
             case R.id.btnHomeTeams:
                 i = new Intent(this, TeamsActivity.class);
-                i.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+                i.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
                 startActivity(i);
                 break;
         }

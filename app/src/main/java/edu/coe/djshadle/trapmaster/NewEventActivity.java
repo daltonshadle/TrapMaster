@@ -56,6 +56,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     //********************************** Variables and Constants ***********************************
     // General Constants
+    private final String ACTIVITY_TITLE = getString(R.string.new_event_activity_title);
+    private final String CURRENT_USER_KEY = getString(R.string.current_user_key);
     private final boolean PORTRAIT_ORIENTATION = false; // Allow portrait orientation, landscape
                                                         // is the default TODO: Support Portrait
     private final int HIT = 0, MISS = 1, NEUTRAL = 2;
@@ -117,7 +119,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             setTrapCounterStates(trapCounterState_Array);
 
         } else {
-            mCurrentUserEmail_Str = getIntent().getStringExtra(getString(R.string.current_user_email));
+            mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
             quickEventFlag_Bool = getIntent().getBooleanExtra(getString(R.string.quick_event_flag_key), false);
         }
     }
@@ -224,7 +226,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         if (id == R.id.newEventCancel_MenuItem) {
             // Cancel shoot, return to home
             Intent homeActivity_Intent = new Intent(this, homeActivity.class);
-            homeActivity_Intent.putExtra(getString(R.string.current_user_email), mCurrentUserEmail_Str);
+            homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
             startActivity(homeActivity_Intent);
             return true;
         }
@@ -293,7 +295,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         // Set action bar title
         try {
-            setTitle("New Event");
+            setTitle(ACTIVITY_TITLE);
         } catch (Exception e) {
             // Didn't work.
         }

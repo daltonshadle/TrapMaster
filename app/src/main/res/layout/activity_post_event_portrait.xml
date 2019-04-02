@@ -60,10 +60,9 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/postEventAddEvent_Btn"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_width="@dimen/CirclePlusAddButtonDim"
+        android:layout_height="@dimen/CirclePlusAddButtonDim"
+        android:layout_margin="5dp"
         android:clickable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/postEvent_List"

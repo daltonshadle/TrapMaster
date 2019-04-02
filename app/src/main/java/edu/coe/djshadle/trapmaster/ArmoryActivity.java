@@ -42,13 +42,15 @@ import java.util.Arrays;
 public class ArmoryActivity extends AppCompatActivity {
     //********************************** Variables and Constants ***********************************
     // General Constants
-    private final String DEFAULT_GUN_TEXT = "Click add for a new gun!";
-    private final String DEFAULT_LOAD_TEXT = "Click add for a new load!";
+    private final String DEFAULT_GUN_TEXT = getString(R.string.default_gun_list_text);
+    private final String DEFAULT_LOAD_TEXT = getString(R.string.default_load_list_text);
+    private final String ACTIVITY_TITLE = getString(R.string.armory_activity_title);
+    private final String CURRENT_USER_KEY = getString(R.string.current_user_key);
 
     // General Variables
     private String mCurrentUserEmail_Str = "********";
     private DBHandler db;
-    private boolean isPortait = true;
+    private boolean isPortrait = true;
     // Gun
     private ArrayAdapter<String> mCurrentGunList_Adapt;
     private ArrayList<GunClass> mUserGun_List;
@@ -82,16 +84,16 @@ public class ArmoryActivity extends AppCompatActivity {
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_armory_portrait);
-            isPortait = true;
+            isPortrait = true;
         } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             setContentView(R.layout.activity_armory_landscape);
-            isPortait = false;
+            isPortrait = false;
         }
 
         if (savedInstanceState != null) {
 
         } else {
-            mCurrentUserEmail_Str = getIntent().getStringExtra(getString(R.string.current_user_email));
+            mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
         }
 
         initializeViews();
@@ -113,10 +115,10 @@ public class ArmoryActivity extends AppCompatActivity {
 
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_armory_portrait);
-            isPortait = true;
+            isPortrait = true;
         } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             setContentView(R.layout.activity_armory_landscape);
-            isPortait = false;
+            isPortrait = false;
         }
 
         initializeViews();
@@ -172,7 +174,7 @@ public class ArmoryActivity extends AppCompatActivity {
         initializeLoadListView();
 
         // Setting title of activity
-        setTitle("Armory");
+        setTitle(ACTIVITY_TITLE);
     }
 
     //************************************* Listview Functions *************************************
@@ -401,7 +403,7 @@ public class ArmoryActivity extends AppCompatActivity {
 
         LinearLayout.LayoutParams params;
 
-        if (isPortait) {
+        if (isPortrait) {
             scaleFactor_Dbl = 3.5;
         } else {
             scaleFactor_Dbl = 2.0;
@@ -626,7 +628,7 @@ public class ArmoryActivity extends AppCompatActivity {
 
                 switch (GUN_DIALOG_STATE){
                     case 0:
-                        // Nickname
+                        // Nickname to Model
                         boolean isGunNicknameEmpty = itemEdt_Str.equals("");
                         boolean isGunNicknameInDB = db.isGunNicknameInDB(mCurrentUserEmail_Str, itemEdt_Str, gun_Item.getGunID_Int());
 
@@ -646,19 +648,19 @@ public class ArmoryActivity extends AppCompatActivity {
 
                         break;
                     case 1:
-                        // Model
+                        // Model to Gauge
                         gun_Item.setGunModel_Str(itemEdt_Str);
                         item_Edt.setText(gun_Item.getGunGauge_Str());
                         GUN_DIALOG_STATE = (GUN_DIALOG_STATE + 1);
                         break;
                     case 2:
-                        // Gauge
+                        // Gauge to Notes
                         gun_Item.setGunGauge_Str(itemEdt_Str);
                         item_Edt.setText(gun_Item.getGunNotes_Str());
                         GUN_DIALOG_STATE = (GUN_DIALOG_STATE + 1);
                         break;
                     case 3:
-                        // Notes
+                        // Notes to save gun and close dialog
                         gun_Item.setGunNotes_Str(itemEdt_Str);
 
                         if (gun_Item.getGunID_Int() == -1) {
@@ -697,21 +699,21 @@ public class ArmoryActivity extends AppCompatActivity {
 
                 switch (GUN_DIALOG_STATE){
                     case 0:
-                        // Nickname
+                        // Nickname to cancel new gun and close dialog
                         alertDialog.dismiss();
                         break;
                     case 1:
-                        // Model
+                        // Model to Nickname
                         item_Edt.setText(gun_Item.getGunNickname_Str());
                         GUN_DIALOG_STATE = (GUN_DIALOG_STATE - 1);
                         break;
                     case 2:
-                        // Gauge
+                        // Gauge to Model
                         item_Edt.setText(gun_Item.getGunModel_Str());
                         GUN_DIALOG_STATE = (GUN_DIALOG_STATE - 1);
                         break;
                     case 3:
-                        // Notes
+                        // Notes to Gauge
                         item_Edt.setText(gun_Item.getGunGauge_Str());
                         GUN_DIALOG_STATE = (GUN_DIALOG_STATE - 1);
                         break;
@@ -951,7 +953,7 @@ public class ArmoryActivity extends AppCompatActivity {
 
                 switch (LOAD_DIALOG_STATE){
                     case 0:
-                        // Nickname
+                        // Nickname to Brand
                         boolean isLoadNicknameEmpty = itemEdt_Str.equals("");
                         boolean isLoadNicknameInDB = db.isLoadNicknameInDB(mCurrentUserEmail_Str,
                                 itemEdt_Str, load_Item.getLoadID_Int());
@@ -972,31 +974,31 @@ public class ArmoryActivity extends AppCompatActivity {
                         }
                         break;
                     case 1:
-                        // Brand
+                        // Brand to Gauge
                         load_Item.setLoadBrand_Str(itemEdt_Str);
                         item_Edt.setText(load_Item.getLoadGauge_Str());
                         LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
                         break;
                     case 2:
-                        // Gauge
+                        // Gauge to Length
                         load_Item.setLoadGauge_Str(itemEdt_Str);
                         item_Edt.setText(load_Item.getLoadLength_Str());
                         LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
                         break;
                     case 3:
-                        // Length
+                        // Length to Grain
                         load_Item.setLoadLength_Str(itemEdt_Str);
                         item_Edt.setText(load_Item.getLoadGrain_Str());
                         LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
                         break;
                     case 4:
-                        //Grain
+                        // Grain to Notes
                         load_Item.setLoadGrain_Str(itemEdt_Str);
                         item_Edt.setText(load_Item.getLoadNotes_Str());
                         LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
                         break;
                     case 5:
-                        // Notes
+                        // Notes to save load and close dialog
                         load_Item.setLoadNotes_Str(itemEdt_Str);
 
                         if (load_Item.getLoadID_Int() == -1) {
@@ -1035,31 +1037,31 @@ public class ArmoryActivity extends AppCompatActivity {
 
                 switch (LOAD_DIALOG_STATE){
                     case 0:
-                        // Nickname
+                        // Nickname to cancel load and close dialog
                         alertDialog.dismiss();
                         break;
                     case 1:
-                        // Brand
+                        // Brand to Nickname
                         item_Edt.setText(load_Item.getLoadNickname_Str());
                         LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE - 1);
                         break;
                     case 2:
-                        // Gauge
+                        // Gauge to Brand
                         item_Edt.setText(load_Item.getLoadBrand_Str());
                         LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE - 1);
                         break;
                     case 3:
-                        // Length
+                        // Length to Gauge
                         item_Edt.setText(load_Item.getLoadGauge_Str());
                         LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE - 1);
                         break;
                     case 4:
-                        // Grain
+                        // Grain to Length
                         item_Edt.setText(load_Item.getLoadLength_Str());
                         LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE - 1);
                         break;
                     case 5:
-                        // Notes
+                        // Notes to Grain
                         item_Edt.setText(load_Item.getLoadGrain_Str());
                         LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE - 1);
                         break;

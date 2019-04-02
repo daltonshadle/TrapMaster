@@ -10,10 +10,23 @@
     <dimen name="QuickEventTextWidth">250dp</dimen>
 
     <!-- Armory Dimensions -->
-    <dimen name="ArmoryAddButtonDim">55dp</dimen>
+
+    <!-- New Event Dimensions -->
+
+    <!-- Event History Dimensions -->
+
+    <!-- Profile Dimensions -->
+
+    <!-- Team Dimensions -->
+
+    <!-- Login Dimensions -->
 
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- General Dimensions -->
+    <dimen name="CirclePlusAddButtonDim">55dp</dimen>
+
 
 </resources>

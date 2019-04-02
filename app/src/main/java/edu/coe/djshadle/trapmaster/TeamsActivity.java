@@ -22,8 +22,12 @@ public class TeamsActivity extends AppCompatActivity {
 
     //********************************** Variables and Constants ***********************************
     // General Constants
+    private final String ACTIVITY_TITLE = getString(R.string.profile_activity_title);
+    private final String CURRENT_USER_KEY = getString(R.string.current_user_key);
 
     // General Variables
+    private String mCurrentUserEmail_Str = "********";
+    private DBHandler db;
 
     // UI References
 
@@ -43,11 +47,18 @@ public class TeamsActivity extends AppCompatActivity {
          ******************************************************************************************/
 
         super.onCreate(savedInstanceState);
+
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             setContentView(R.layout.activity_teams_landscape);
         }
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
             setContentView(R.layout.activity_teams_portrait);
+        }
+
+        if (savedInstanceState != null) {
+
+        } else {
+            mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
         }
 
         initializeViews();
@@ -88,7 +99,7 @@ public class TeamsActivity extends AppCompatActivity {
          ******************************************************************************************/
 
         // Setting title of activity
-        setTitle("Teams");
+        setTitle(ACTIVITY_TITLE);
     }
 
 }

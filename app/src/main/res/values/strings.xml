@@ -1,11 +1,21 @@
 <resources>
     <!--********************************** General App Strings **********************************-->
     <string name="app_name">Trap Master</string>
-    <string name="title_activity_login">Sign in</string>
+    <string name="under_construction_string">This feature is currently under construction.
+        Check back after the next update to see if it was added!</string>
+
+    <string name="current_user_key">USER_KEY</string>
+    <string name="current_pass_key">PASS_KEY</string>
     <string name="current_user_email">current_user_email</string>
 
+    <!--************************************* Score Strings *************************************-->
+    <string name="hit_string">HIT</string>
+    <string name="miss_string">MISS</string>
+    <string name="shot_string">SHOT</string>
+    <string name="current_user_score">current_user_score</string>
 
     <!--************************************* Login Strings *************************************-->
+    <string name="login_activity_title">Sign in</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>
@@ -21,29 +31,35 @@
     <!--Both-->
     <string name="error_field_required">This field is required</string>
 
-
-    <!--************************************* Score Strings *************************************-->
-    <string name="hit_string">HIT</string>
-    <string name="miss_string">MISS</string>
-    <string name="shot_string">SHOT</string>
-    <string name="current_user_score">current_user_score</string>
-
-
     <!--********************************** Quick Event Strings **********************************-->
     <string name="quick_event_flag_key">new_event_flag</string>
     <string name="quick_event_login">Login</string>
     <string name="quick_event_cancel">Cancel</string>
 
-
-    <!--************************************ Armory Strings *************************************-->
-    <string name="error_armory_gun_already_exists">Gun nickname already exists</string>
-    <string name="error_armory_load_already_exists">Load nickname already exists</string>
+    <!--*********************************** New Event Strings ***********************************-->
+    <string name="new_event_activity_title">New Event</string>
 
     <!--********************************** Post Event Strings ***********************************-->
+    <string name="post_event_activity_title">Post Event</string>
     <string name="error_event_already_exists">Event name already exists</string>
+    <string name="default_event_text">Click to add a new event!</string>
+    <string name="post_event_default_gun_text">Add guns in the armory!</string>
+    <string name="post_event_default_load_text">"Add loads in the armory!"</string>
 
-    <!--********************************* Construction Strings **********************************-->
-    <string name="under_construction_string">This feature is currently under construction.
-        Check back after the next update to see if it was added!</string>
+    <!--********************************* Event History Strings *********************************-->
+    <string name="event_history_activity_title">Event History</string>
+
+    <!--************************************ Armory Strings *************************************-->
+    <string name="armory_activity_title">Armory</string>
+    <string name="error_armory_gun_already_exists">Gun nickname already exists</string>
+    <string name="error_armory_load_already_exists">Load nickname already exists</string>
+    <string name="default_gun_list_text">Click add for a new gun!</string>
+    <string name="default_load_list_text">Click add for a new load!</string>
+
+    <!--************************************** Team Strings *************************************-->
+    <string name="team_activity_title">Team</string>
+
+    <!--************************************ Profile Strings ************************************-->
+    <string name="profile_activity_title">Profile</string>
 
 </resources>

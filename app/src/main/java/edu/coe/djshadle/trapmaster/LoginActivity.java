@@ -42,13 +42,15 @@ public class LoginActivity extends AppCompatActivity {
 
     //********************************* Variables and Constants ************************************
     //General Constants
+    private final String ACTIVITY_TITLE = getString(R.string.login_activity_title);
+    private final String CURRENT_USER_KEY = getString(R.string.current_user_key);
+    private final String CURRENT_PASS_KEY = getString(R.string.current_pass_key);
     private final int MIN_PASS_LENGTH = 7;
     private final String TAG = "JRW";
 
     //General Variables
-    private String mEmail_Str = "SAVED_EMAIL";
-    private String mPassword_Str = "SAVED_PASS";
     DBHandler db;
+    private String mEmail_Str;
 
     // UI References
     private EditText mEmail_View;
@@ -98,8 +100,8 @@ public class LoginActivity extends AppCompatActivity {
         // Save UI state changes to the savedInstanceState.
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
-        savedInstanceState.putString(mEmail_Str, mEmail_View.getText().toString());
-        savedInstanceState.putString(mPassword_Str, mPassword_View.getText().toString());
+        savedInstanceState.putString(CURRENT_USER_KEY, mEmail_View.getText().toString());
+        savedInstanceState.putString(CURRENT_PASS_KEY, mPassword_View.getText().toString());
     }
 
     @Override
@@ -118,8 +120,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         // Restore UI state from the savedInstanceState.
         // This bundle has also been passed to onCreate.
-        String tempEmail_Str = savedInstanceState.getString(mEmail_Str);
-        String tempPass_Str = savedInstanceState.getString(mPassword_Str);
+        String tempEmail_Str = savedInstanceState.getString(CURRENT_USER_KEY);
+        String tempPass_Str = savedInstanceState.getString(CURRENT_PASS_KEY);
 
         mEmail_View.setText(tempEmail_Str);
         mPassword_View.setText(tempPass_Str);
@@ -185,10 +187,13 @@ public class LoginActivity extends AppCompatActivity {
         if (auth.getCurrentUser() != null) {
             mEmail_Str = auth.getCurrentUser().getEmail();
             Intent homeActivity_Intent = new Intent(LoginActivity.this, homeActivity.class);
-            homeActivity_Intent.putExtra(getString(R.string.current_user_email), mEmail_Str);
+            homeActivity_Intent.putExtra(CURRENT_USER_KEY, mEmail_Str);
             startActivity(homeActivity_Intent);
             finish();
         }
+
+        // Set activity title
+        setTitle(ACTIVITY_TITLE);
     }
 
     //************************************** Login Functions ***************************************
@@ -372,7 +377,7 @@ public class LoginActivity extends AppCompatActivity {
                             db.insertProfileInDB(p);
 
                             Intent homeActivity_Intent = new Intent(LoginActivity.this, homeActivity.class);
-                            homeActivity_Intent.putExtra(getString(R.string.current_user_email), email);
+                            homeActivity_Intent.putExtra(CURRENT_USER_KEY, email);
                             startActivity(homeActivity_Intent);
                             finish();
                         }
@@ -410,7 +415,7 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             //Login was successful; continue to next activity
                             Intent homeActivity_Intent = new Intent(LoginActivity.this, homeActivity.class);
-                            homeActivity_Intent.putExtra(getString(R.string.current_user_email), email);
+                            homeActivity_Intent.putExtra(CURRENT_USER_KEY, email);
                             startActivity(homeActivity_Intent);
                             finish();
                         }
