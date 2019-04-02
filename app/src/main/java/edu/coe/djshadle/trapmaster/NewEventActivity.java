@@ -56,8 +56,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     //********************************** Variables and Constants ***********************************
     // General Constants
-    private final String ACTIVITY_TITLE = getString(R.string.new_event_activity_title);
-    private final String CURRENT_USER_KEY = getString(R.string.current_user_key);
+    private String ACTIVITY_TITLE;
+    private String CURRENT_USER_KEY;
     private final boolean PORTRAIT_ORIENTATION = false; // Allow portrait orientation, landscape
                                                         // is the default TODO: Support Portrait
     private final int HIT = 0, MISS = 1, NEUTRAL = 2;
@@ -103,6 +103,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          ******************************************************************************************/
 
         super.onCreate(savedInstanceState);
+
+        initializeConstants();
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT && PORTRAIT_ORIENTATION) {
             setContentView(R.layout.activity_new_event_portrait);
@@ -232,6 +234,22 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void initializeConstants() {
+        /*******************************************************************************************
+         * Function: initializeConstants
+         *
+         * Purpose: When activity is started, function initializes the activity with constants
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        ACTIVITY_TITLE = getString(R.string.new_event_activity_title);
+        CURRENT_USER_KEY = getString(R.string.current_user_key);
     }
 
     //************************************* UI View Functions **************************************

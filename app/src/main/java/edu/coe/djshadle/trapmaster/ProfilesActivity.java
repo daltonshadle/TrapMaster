@@ -30,8 +30,8 @@ public class ProfilesActivity extends AppCompatActivity {
 
     //********************************** Variables and Constants ***********************************
     // General Constants
-    private final String ACTIVITY_TITLE = getString(R.string.profile_activity_title);
-    private final String CURRENT_USER_KEY = getString(R.string.current_user_key);
+    private String ACTIVITY_TITLE;
+    private String CURRENT_USER_KEY;
 
     // General Variables
     private String mCurrentUserEmail_Str = "********";
@@ -55,6 +55,8 @@ public class ProfilesActivity extends AppCompatActivity {
          ******************************************************************************************/
 
         super.onCreate(savedInstanceState);
+
+        initializeConstants();
 
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             setContentView(R.layout.activity_profiles_landscape);
@@ -92,6 +94,22 @@ public class ProfilesActivity extends AppCompatActivity {
             setContentView(R.layout.activity_profiles_landscape);
         }
 
+    }
+
+    private void initializeConstants() {
+        /*******************************************************************************************
+         * Function: initializeConstants
+         *
+         * Purpose: When activity is started, function initializes the activity with constants
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        ACTIVITY_TITLE = getString(R.string.profile_activity_title);
+        CURRENT_USER_KEY = getString(R.string.current_user_key);
     }
 
     private void initializeViews() {

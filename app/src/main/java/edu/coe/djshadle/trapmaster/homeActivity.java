@@ -33,7 +33,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class homeActivity extends AppCompatActivity implements View.OnClickListener {
     //********************************* Variables and Constants ************************************
     //General Constants
-    private final String CURRENT_USER_KEY = getString(R.string.current_user_key);
+    private String CURRENT_USER_KEY;
 
     //General Variables
     private String mCurrentUserEmail_Str = "********";
@@ -59,6 +59,8 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
          ******************************************************************************************/
 
         super.onCreate(savedInstanceState);
+
+        initializeConstants();
 
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             setContentView(R.layout.activity_home_landscape);
@@ -220,6 +222,21 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(i);
                 break;
         }
+    }
+
+    private void initializeConstants() {
+        /*******************************************************************************************
+         * Function: initializeConstants
+         *
+         * Purpose: When activity is started, function initializes the activity with constants
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        CURRENT_USER_KEY = getString(R.string.current_user_key);
     }
 
     private void initializeViews(){

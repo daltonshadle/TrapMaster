@@ -42,10 +42,10 @@ import java.util.Arrays;
 public class ArmoryActivity extends AppCompatActivity {
     //********************************** Variables and Constants ***********************************
     // General Constants
-    private final String DEFAULT_GUN_TEXT = getString(R.string.default_gun_list_text);
-    private final String DEFAULT_LOAD_TEXT = getString(R.string.default_load_list_text);
-    private final String ACTIVITY_TITLE = getString(R.string.armory_activity_title);
-    private final String CURRENT_USER_KEY = getString(R.string.current_user_key);
+    private String DEFAULT_GUN_TEXT;
+    private String DEFAULT_LOAD_TEXT;
+    private String ACTIVITY_TITLE;
+    private String CURRENT_USER_KEY;
 
     // General Variables
     private String mCurrentUserEmail_Str = "********";
@@ -81,6 +81,8 @@ public class ArmoryActivity extends AppCompatActivity {
          ******************************************************************************************/
 
         super.onCreate(savedInstanceState);
+
+        initializeConstants();
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_armory_portrait);
@@ -122,6 +124,24 @@ public class ArmoryActivity extends AppCompatActivity {
         }
 
         initializeViews();
+    }
+
+    private void initializeConstants() {
+        /*******************************************************************************************
+         * Function: initializeConstants
+         *
+         * Purpose: When activity is started, function initializes the activity with constants
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        DEFAULT_GUN_TEXT = getString(R.string.default_gun_list_text);
+        DEFAULT_LOAD_TEXT = getString(R.string.default_load_list_text);
+        ACTIVITY_TITLE = getString(R.string.armory_activity_title);
+        CURRENT_USER_KEY = getString(R.string.current_user_key);
     }
 
     private void initializeViews() {

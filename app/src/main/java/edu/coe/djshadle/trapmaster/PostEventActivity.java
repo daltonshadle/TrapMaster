@@ -49,11 +49,11 @@ import java.util.Calendar;
 public class PostEventActivity extends AppCompatActivity {
     //********************************** Variables and Constants ***********************************
     // General Constants
-    private final String ACTIVITY_TITLE = getString(R.string.post_event_activity_title);
-    private final String CURRENT_USER_KEY = getString(R.string.current_user_key);
-    private final String DEFAULT_EVENT_TEXT = getString(R.string.default_event_text);
-    private final String DEFAULT_GUN_TEXT = getString(R.string.post_event_default_gun_text);
-    private final String DEFAULT_LOAD_TEXT = getString(R.string.post_event_default_load_text);
+    private String ACTIVITY_TITLE;
+    private String CURRENT_USER_KEY;
+    private String DEFAULT_EVENT_TEXT;
+    private String DEFAULT_GUN_TEXT;
+    private String DEFAULT_LOAD_TEXT;
     private final String TAG = "JRW";
     private final int TOTAL_NUM_SHOTS = 25;
 
@@ -93,6 +93,8 @@ public class PostEventActivity extends AppCompatActivity {
          ******************************************************************************************/
 
         super.onCreate(savedInstanceState);
+
+        initializeConstants();
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_post_event_portrait);
@@ -138,6 +140,25 @@ public class PostEventActivity extends AppCompatActivity {
 
         initializeViews();
 
+    }
+
+    private void initializeConstants() {
+        /*******************************************************************************************
+         * Function: initializeConstants
+         *
+         * Purpose: When activity is started, function initializes the activity with constants
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        ACTIVITY_TITLE = getString(R.string.post_event_activity_title);
+        CURRENT_USER_KEY = getString(R.string.current_user_key);
+        DEFAULT_EVENT_TEXT = getString(R.string.default_event_text);
+        DEFAULT_GUN_TEXT = getString(R.string.post_event_default_gun_text);
+        DEFAULT_LOAD_TEXT = getString(R.string.post_event_default_load_text);
     }
 
     //************************************* UI View Functions **************************************

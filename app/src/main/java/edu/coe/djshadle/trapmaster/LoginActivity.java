@@ -42,9 +42,9 @@ public class LoginActivity extends AppCompatActivity {
 
     //********************************* Variables and Constants ************************************
     //General Constants
-    private final String ACTIVITY_TITLE = getString(R.string.login_activity_title);
-    private final String CURRENT_USER_KEY = getString(R.string.current_user_key);
-    private final String CURRENT_PASS_KEY = getString(R.string.current_pass_key);
+    private String ACTIVITY_TITLE;
+    private String CURRENT_USER_KEY;
+    private String CURRENT_PASS_KEY;
     private final int MIN_PASS_LENGTH = 7;
     private final String TAG = "JRW";
 
@@ -75,6 +75,9 @@ public class LoginActivity extends AppCompatActivity {
          ******************************************************************************************/
 
         super.onCreate(savedInstanceState);
+
+        initializeConstants();
+
         setContentView(R.layout.activity_login);
 
         db = new DBHandler(this);
@@ -125,6 +128,23 @@ public class LoginActivity extends AppCompatActivity {
 
         mEmail_View.setText(tempEmail_Str);
         mPassword_View.setText(tempPass_Str);
+    }
+
+    private void initializeConstants() {
+        /*******************************************************************************************
+         * Function: initializeConstants
+         *
+         * Purpose: When activity is started, function initializes the activity with constants
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        ACTIVITY_TITLE = getString(R.string.login_activity_title);
+        CURRENT_USER_KEY = getString(R.string.current_user_key);
+        CURRENT_PASS_KEY = getString(R.string.current_pass_key);
     }
 
     //************************************* UI View Functions **************************************
