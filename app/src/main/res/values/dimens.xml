@@ -21,12 +21,19 @@
 
     <!-- Login Dimensions -->
 
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
+    <!-- List Item Dimensions -->
+    <dimen name="ListItemImage">60dp</dimen>
+    <dimen name="ListItemButton">40dp</dimen>
+    <dimen name="ListItemMainTextSize">20sp</dimen>
+    <dimen name="ListItemSecondTextSize">13sp</dimen>
+    <dimen name="ListItemMargin">5dp</dimen>
 
     <!-- General Dimensions -->
     <dimen name="CirclePlusAddButtonDim">55dp</dimen>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
 
 
 </resources>

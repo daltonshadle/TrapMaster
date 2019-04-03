@@ -53,6 +53,8 @@ public class EventHistoryActivity extends AppCompatActivity {
     private String DEFAULT_EVENT_TEXT;
     private String DEFAULT_GUN_TEXT;
     private String DEFAULT_LOAD_TEXT;
+    private final int SHOT_LIST_TAG = 1;
+    private final int EVENT_LIST_TAG = 2;
 
     // General Variables
     private String mCurrentUserEmail_Str = "********";
@@ -172,6 +174,10 @@ public class EventHistoryActivity extends AppCompatActivity {
         // Initializing list view
         mShotList_View = findViewById(R.id.eventHistoryScore_List);
         mEventList_View = findViewById(R.id.eventHistoryEvent_List);
+
+        // Setting tags for list views
+        mShotList_View.setTag(SHOT_LIST_TAG);
+        mEventList_View.setTag(EVENT_LIST_TAG);
 
         setListViewLayoutParams();
 

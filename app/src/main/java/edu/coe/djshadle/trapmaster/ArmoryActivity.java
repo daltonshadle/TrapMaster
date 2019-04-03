@@ -46,12 +46,15 @@ public class ArmoryActivity extends AppCompatActivity {
     private String DEFAULT_LOAD_TEXT;
     private String ACTIVITY_TITLE;
     private String CURRENT_USER_KEY;
+    private final int GUN_LIST_TAG = 3;
+    private final int LOAD_LIST_TAG = 4;
 
     // General Variables
     private String mCurrentUserEmail_Str = "********";
     private DBHandler db;
     private boolean isPortrait = true;
     // Gun
+    private TrapMasterListArrayAdapter mCustomGunList_Adapt;
     private ArrayAdapter<String> mCurrentGunList_Adapt;
     private ArrayList<GunClass> mUserGun_List;
     private int GUN_DIALOG_STATE = 0;
@@ -188,9 +191,14 @@ public class ArmoryActivity extends AppCompatActivity {
         mGunList_View = findViewById(R.id.armoryGun_List);
         mLoadList_View = findViewById(R.id.armoryLoad_List);
 
+        // Setting tags for list views
+        mGunList_View.setTag(GUN_LIST_TAG);
+        mLoadList_View.setTag(LOAD_LIST_TAG);
+
         setListViewLayoutParams();
 
-        initializeGunListView();
+        //initializeGunListView();
+        New_initializeGunListView();
         initializeLoadListView();
 
         // Setting title of activity
@@ -296,6 +304,69 @@ public class ArmoryActivity extends AppCompatActivity {
                     return true;
                 }
             });
+
+        } catch (Exception e){
+            Log.d("JRW", "no guns in db for this user");
+        }
+
+    }
+
+    private ArrayList<GunClass> New_refreshGunList() {
+        /*******************************************************************************************
+         * Function: refreshGunList
+         *
+         * Purpose: Function returns the current list of guns for the current user
+         *
+         * Parameters: None
+         *
+         * Returns: currentGunStr_List - a string list of guns for current user
+         *
+         ******************************************************************************************/
+
+        mUserGun_List = db.getAllGunFromDB(mCurrentUserEmail_Str);
+
+        GunClass temp_Gun = new GunClass();
+        temp_Gun.setGunNickname_Str("No guns");
+        temp_Gun.setGunNotes_Str("Click the add button for a new gun!");
+
+        if (mUserGun_List.isEmpty()) {
+            mUserGun_List.add(temp_Gun);
+        }
+
+        return mUserGun_List;
+    }
+
+    private void New_refreshGunListView() {
+        /*******************************************************************************************
+         * Function: refreshGunListView
+         *
+         * Purpose: Function refreshes the gun list view with current gun data from database
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+    }
+
+    private void New_initializeGunListView() {
+        /*******************************************************************************************
+         * Function: initializeGunListView
+         *
+         * Purpose: Function initializes the gun list view
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        try {
+            mCustomGunList_Adapt = new TrapMasterListArrayAdapter(this,
+                    (ArrayList<Object>)(ArrayList<?>)(New_refreshGunList()));
+
+            mGunList_View.setAdapter(mCustomGunList_Adapt);
 
         } catch (Exception e){
             Log.d("JRW", "no guns in db for this user");

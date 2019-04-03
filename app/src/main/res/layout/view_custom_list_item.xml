@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/listItem_ConLay"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/listItem_Img"
+        android:layout_width="@dimen/ListItemImage"
+        android:layout_height="@dimen/ListItemImage"
+        android:layout_margin="@dimen/ListItemMargin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/add_image_icon" />
+
+    <TextView
+        android:id="@+id/listItemMain_Txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/ListItemMargin"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="ListItemMain"
+        android:textSize="@dimen/ListItemMainTextSize"
+        app:layout_constraintStart_toEndOf="@+id/listItem_Img"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/listItemSecond_Txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/ListItemMargin"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="ListItemSecond"
+        android:textSize="@dimen/ListItemSecondTextSize"
+        app:layout_constraintStart_toEndOf="@+id/listItem_Img"
+        app:layout_constraintTop_toBottomOf="@+id/listItemMain_Txt" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/listItemEdit_Btn"
+        android:layout_width="@dimen/ListItemButton"
+        android:layout_height="@dimen/ListItemButton"
+        android:layout_margin="@dimen/ListItemMargin"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/listItemDelete_Btn"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/edit_icon" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/listItemDelete_Btn"
+        android:layout_width="@dimen/ListItemButton"
+        android:layout_height="@dimen/ListItemButton"
+        android:layout_margin="@dimen/ListItemMargin"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/delete_icon" />
+</android.support.constraint.ConstraintLayout>
