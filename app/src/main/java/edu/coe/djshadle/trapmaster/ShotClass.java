@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,7 @@ public class ShotClass {
     private String shotNotes_Str;
 
     // Dialog variables
+    private final String TAG = "JRW";
     private int SHOT_DIALOG_STATE = 0;
     private ArrayList<String> SHOT_DIALOG_MSG, SHOT_POS_BTN_TXT, SHOT_NEU_BTN_TXT, SHOT_EDT_HINT;
 
@@ -218,7 +220,8 @@ public class ShotClass {
         int NEUTRAL_BTN_COLOR = Color.RED;
 
         // Dialog Variables
-        final DBHandler db = new DBHandler(context);
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+        final DBHandler db = new DBHandler(currentContext.getContext());
 
         // Pre-Dialog Processing
         if (getShotID_Int() != -1) {
@@ -308,7 +311,14 @@ public class ShotClass {
                         break;
                     case 1:
                         // Event to Notes
-                        item_Txt = item_Spin.toString();
+                        item_Txt = item_Spin.getSelectedItem().toString();
+
+                        Log.d(TAG, item_Txt);
+
+                        // Check if the text is the default text for events
+                        if (item_Txt.equals(context.getString(R.string.add_event_text))) {
+                            item_Txt = context.getString(R.string.no_shot_main_text);
+                        }
 
                         setShotEventName_Str(item_Txt);
 
@@ -404,7 +414,9 @@ public class ShotClass {
         ArrayAdapter<String> tempEvent_Adapt;
         ArrayList<EventClass> tempEvent_List;
         ArrayList<String> tempEventStr_List = new ArrayList<>();
-        DBHandler db = new DBHandler(context);
+
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+        final DBHandler db = new DBHandler(currentContext.getContext());
 
         tempEvent_List = db.getAllEventFromDB(getShotEmail_Str());
 
@@ -455,7 +467,8 @@ public class ShotClass {
 
         final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
 
-        final DBHandler db = new DBHandler(context);
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+        final DBHandler db = new DBHandler(currentContext.getContext());
 
         // Set Dialog Title
         alertDialog.setTitle(DIALOG_TITLE);

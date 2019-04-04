@@ -205,8 +205,9 @@ public class LoadClass {
 
         final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
 
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
         final int finalLoadID_Int = this.loadID_Int;
-        final DBHandler db = new DBHandler(context);
+        final DBHandler db = new DBHandler(currentContext.getContext());
 
         // Set Dialog Title
         alertDialog.setTitle(DIALOG_TITLE);
@@ -340,7 +341,8 @@ public class LoadClass {
         int NEUTRAL_BTN_COLOR = Color.RED;
 
         // Dialog Variables
-        final DBHandler db = new DBHandler(context);
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+        final DBHandler db = new DBHandler(currentContext.getContext());
 
         // Pre-Dialog Processing
         if (getLoadID_Int() != -1) {

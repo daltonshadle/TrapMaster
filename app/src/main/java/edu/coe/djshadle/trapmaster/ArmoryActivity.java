@@ -150,7 +150,7 @@ public class ArmoryActivity extends AppCompatActivity {
          ******************************************************************************************/
 
         // Initializing database variable
-        db = new DBHandler(this);
+        db = new DBHandler(getApplicationContext());
 
         // Initializing buttons
         FloatingActionButton mAddGun = findViewById(R.id.armoryAddGun_Btn);

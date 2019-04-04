@@ -74,7 +74,8 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
     public View getView(int position, @Nullable View convertView, @NonNull final ViewGroup parent) {
         View listItem = convertView;
         final Context parentContext = parent.getContext();
-        final DBHandler db = new DBHandler(parentContext);
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+        final DBHandler db = new DBHandler(currentContext.getContext());
 
         if (listItem == null)
             listItem = LayoutInflater.from(mCurrentContext).inflate(R.layout.view_custom_list_item,
@@ -83,6 +84,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
         ImageView listItem_Img = listItem.findViewById(R.id.listItem_Img);
         TextView listItemMain_Txt = listItem.findViewById(R.id.listItemMain_Txt);
         TextView listItemSecond_Txt = listItem.findViewById(R.id.listItemSecond_Txt);
+        TextView listItemScore_Txt = listItem.findViewById(R.id.listItemScore_Txt);
         ImageButton listItemEdit_Btn = listItem.findViewById(R.id.listItemEdit_Btn);
         ImageButton listItemDelete_Btn = listItem.findViewById(R.id.listItemDelete_Btn);
         ConstraintLayout listItem_Layout = listItem.findViewById(R.id.listItem_ConLay);
@@ -101,6 +103,13 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                     listItem_Img.setVisibility(View.INVISIBLE);
                     listItemEdit_Btn.setVisibility(View.INVISIBLE);
                     listItemDelete_Btn.setVisibility(View.INVISIBLE);
+                } else {
+                    // Not a default item, set score
+                    listItemScore_Txt.setText(current_Shot.getShotHitNum_Str());
+                    listItemScore_Txt.setVisibility(View.VISIBLE);
+                    listItemEdit_Btn.setVisibility(View.VISIBLE);
+                    listItemDelete_Btn.setVisibility(View.VISIBLE);
+                    listItem_Img.setVisibility(View.INVISIBLE);
                 }
 
                 // Set tag of list view item to be database ID
@@ -157,6 +166,11 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                     listItem_Img.setVisibility(View.INVISIBLE);
                     listItemEdit_Btn.setVisibility(View.INVISIBLE);
                     listItemDelete_Btn.setVisibility(View.INVISIBLE);
+                } else {
+                    // Make necessary views visible
+                    listItem_Img.setVisibility(View.VISIBLE);
+                    listItemEdit_Btn.setVisibility(View.VISIBLE);
+                    listItemDelete_Btn.setVisibility(View.VISIBLE);
                 }
 
                 // Set tag of list view item to be database ID
@@ -213,6 +227,11 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                     listItem_Img.setVisibility(View.INVISIBLE);
                     listItemEdit_Btn.setVisibility(View.INVISIBLE);
                     listItemDelete_Btn.setVisibility(View.INVISIBLE);
+                } else {
+                    // Make necessary views visible
+                    listItem_Img.setVisibility(View.VISIBLE);
+                    listItemEdit_Btn.setVisibility(View.VISIBLE);
+                    listItemDelete_Btn.setVisibility(View.VISIBLE);
                 }
 
                 // Set tag of list view item to be database ID
@@ -269,6 +288,11 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                     listItem_Img.setVisibility(View.INVISIBLE);
                     listItemEdit_Btn.setVisibility(View.INVISIBLE);
                     listItemDelete_Btn.setVisibility(View.INVISIBLE);
+                } else {
+                    // Make necessary views visible
+                    listItem_Img.setVisibility(View.VISIBLE);
+                    listItemEdit_Btn.setVisibility(View.VISIBLE);
+                    listItemDelete_Btn.setVisibility(View.VISIBLE);
                 }
 
                 // Set tag of list view item to be database ID

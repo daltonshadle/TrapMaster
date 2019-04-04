@@ -27,6 +27,7 @@
     <dimen name="ListItemMainTextSize">20sp</dimen>
     <dimen name="ListItemSecondTextSize">13sp</dimen>
     <dimen name="ListItemMargin">5dp</dimen>
+    <dimen name="ListItemScoreTextSize">45sp</dimen>
 
     <!-- General Dimensions -->
     <dimen name="CirclePlusAddButtonDim">55dp</dimen>

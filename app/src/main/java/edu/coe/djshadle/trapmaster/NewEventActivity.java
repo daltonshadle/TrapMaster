@@ -303,7 +303,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         trapCounterState_Array = new ArrayList<Integer>(trapCounterChildCount_Int);
 
         // Initializing database variable
-        db = new DBHandler(this);
+        db = new DBHandler(getApplicationContext());
 
         // Resizing buttons and text
         scaleHitMissViews(WIDTH_SF, HEIGHT_SF);
@@ -562,7 +562,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          ******************************************************************************************/
 
-        DBHandler db = new DBHandler(this);
+        DBHandler db = new DBHandler(getApplicationContext());
 
         ShotClass temp_Shot = new ShotClass(email_Str, eventName_Str, Integer.toString(totalShot_Int),
                 Integer.toString(totalHit_Int), notes_Str);

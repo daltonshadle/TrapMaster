@@ -80,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
-        db = new DBHandler(this);
+        db = new DBHandler(getApplicationContext());
 
         // Set up the login form.
         initializeViews();

@@ -155,7 +155,7 @@ public class EventHistoryActivity extends AppCompatActivity {
          ******************************************************************************************/
 
         // Initializing list and database variables
-        db = new DBHandler(this);
+        db = new DBHandler(getApplicationContext());
 
         // Initializing list view
         mShotList_View = findViewById(R.id.eventHistoryScore_List);

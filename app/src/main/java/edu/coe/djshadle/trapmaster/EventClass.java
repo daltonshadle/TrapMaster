@@ -258,7 +258,8 @@ public class EventClass {
         int NEUTRAL_BTN_COLOR = Color.RED;
 
         // Dialog Variables
-        final DBHandler db = new DBHandler(context);
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+        final DBHandler db = new DBHandler(currentContext.getContext());
 
         // Pre-Dialog Processing
         if (getEventID_Int() != -1) {
@@ -365,10 +366,10 @@ public class EventClass {
                         break;
                     case 2:
                         // Gun to Load
-                        item_Txt = item_Spin.toString();
+                        item_Txt = item_Spin.getSelectedItem().toString();
 
                         if (item_Txt.equals(context.getString(R.string.add_gun_text))) {
-                            item_Txt = "";
+                            item_Txt = context.getString(R.string.no_gun_main_text);
                         }
 
                         setEventGun_Str(item_Txt);
@@ -379,10 +380,10 @@ public class EventClass {
                         break;
                     case 3:
                         // Load to Date
-                        item_Txt = item_Spin.toString();
+                        item_Txt = item_Spin.getSelectedItem().toString();
 
                         if (item_Txt.equals(context.getString(R.string.add_load_text))) {
-                            item_Txt = "";
+                            item_Txt = context.getString(R.string.no_load_main_text);
                         }
 
                         setEventLoad_Str(item_Txt);
@@ -525,7 +526,8 @@ public class EventClass {
         ArrayList<GunClass> tempGun_List;
         ArrayList<String> tempGunStr_List = new ArrayList<>();
 
-        DBHandler db = new DBHandler(context);
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+        final DBHandler db = new DBHandler(currentContext.getContext());
 
         tempGun_List = db.getAllGunFromDB(getEventEmail_Str());
 
@@ -561,7 +563,8 @@ public class EventClass {
         ArrayList<LoadClass> tempLoad_List;
         ArrayList<String> tempLoadStr_List = new ArrayList<>();
 
-        DBHandler db = new DBHandler(context);
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+        final DBHandler db = new DBHandler(currentContext.getContext());
 
         tempLoad_List = db.getAllLoadFromDB(getEventEmail_Str());
 
@@ -611,7 +614,8 @@ public class EventClass {
 
         final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
 
-        final DBHandler db = new DBHandler(context);
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+        final DBHandler db = new DBHandler(currentContext.getContext());
 
         // Set Dialog Title
         alertDialog.setTitle(DIALOG_TITLE);

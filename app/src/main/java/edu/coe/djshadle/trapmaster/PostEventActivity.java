@@ -167,7 +167,7 @@ public class PostEventActivity extends AppCompatActivity {
          ******************************************************************************************/
 
         // Initializing database variable
-        db = new DBHandler(this);
+        db = new DBHandler(getApplicationContext());
 
         // Set action bar title
         try {
