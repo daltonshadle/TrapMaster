@@ -14,8 +14,24 @@
 
 package edu.coe.djshadle.trapmaster;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class LoadClass {
     //************************************* Private Variables **************************************
+    // Object variables
     private int loadID_Int;
     private String loadEmail_Str;
     private String loadNickname_Str;
@@ -24,6 +40,10 @@ public class LoadClass {
     private String loadLength_Str;
     private String loadGrain_Str;
     private String loadNotes_Str;
+
+    // Dialog variables
+    private int LOAD_DIALOG_STATE = 0;
+    private ArrayList<String> LOAD_DIALOG_MSG, LOAD_POS_BTN_TXT, LOAD_NEU_BTN_TXT, LOAD_EDT_HINT;
 
     //************************************* Public Functions ***************************************
     // Constructors
@@ -153,4 +173,355 @@ public class LoadClass {
     public void setLoadID_Int(int loadID_Str) {
         this.loadID_Int = loadID_Str;
     }
+
+    //*************************************** Other Functions **************************************
+    public void removeLoadItemDialog(final Context context) {
+        /*******************************************************************************************
+         * Function: removeLoadItemDialog
+         *
+         * Purpose: Function creates dialog and prompts user to remove a load item
+         *
+         * Parameters: context (IN) - activity context to display dialog
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        final String DIALOG_TITLE = "Delete Load";
+        final String DIALOG_MSG = "Are you sure you want to delete this load?";
+
+        final boolean POSITIVE_BTN = true;  // Right
+        final boolean NEUTRAL_BTN = false;   // Left
+        final boolean NEGATIVE_BTN = true;  // Middle
+
+        final String POSITIVE_BUTTON_TXT = "DELETE";
+        final String NEUTRAL_BUTTON_TXT = "";
+        final String NEGATIVE_BUTTON_TXT = "CANCEL";
+
+        final int POSITIVE_BTN_COLOR = Color.BLUE;
+        final int NEUTRAL_BTN_COLOR = Color.RED;
+        final int NEGATIVE_BTN_COLOR = Color.RED;
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+
+        final int finalLoadID_Int = this.loadID_Int;
+        final DBHandler db = new DBHandler(context);
+
+        // Set Dialog Title
+        alertDialog.setTitle(DIALOG_TITLE);
+
+        // Set Dialog Message
+        alertDialog.setMessage(DIALOG_MSG);
+
+        // Set Buttons
+        // Positive Button, Right
+        if (POSITIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed with onClick below
+
+                }
+            });
+        }
+
+        // Neutral Button, Left
+        if (NEUTRAL_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed with onClick below
+                }
+            });
+        }
+
+        // Negative Button, Middle
+        if (NEGATIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed with onClick below
+                }
+            });
+        }
+
+
+        new Dialog(context);
+        alertDialog.show();
+
+        // Set Button Colors
+        if (POSITIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Positive button
+                    db.deleteLoadInDB(finalLoadID_Int);
+
+                    alertDialog.dismiss();
+
+                    Toast.makeText(context, "Load deleted.",
+                            Toast.LENGTH_LONG).show();
+
+                    // Refresh load listview
+                    // TODO: find a way to refresh the load list view
+                }
+            });
+        }
+        if (NEUTRAL_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on NEUTRAL Button
+
+                }
+            });
+        }
+        if (NEGATIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Negative button
+                    alertDialog.dismiss();
+                }
+            });
+        }
+    }
+
+    private void initializeLoadDialogStrings() {
+        LOAD_DIALOG_MSG = new ArrayList<String>(Arrays.asList(
+                "Enter a nickname for this load.",
+                "Enter the brand for this load.",
+                "Enter the gauge for this load.",
+                "Enter the length for this load.",
+                "Enter the grain for this load.",
+                "Enter any notes for this load."));
+        LOAD_POS_BTN_TXT = new ArrayList<String>(Arrays.asList(
+                "NEXT",
+                "NEXT",
+                "NEXT",
+                "NEXT",
+                "NEXT",
+                "SAVE"));
+        LOAD_NEU_BTN_TXT = new ArrayList<String>(Arrays.asList(
+                "CANCEL",
+                "BACK",
+                "BACK",
+                "BACK",
+                "BACK",
+                "BACK",
+                "BACK"));
+        LOAD_EDT_HINT = new ArrayList<String>(Arrays.asList(
+                "i.e. MyLoad",
+                "i.e. Remington",
+                "i.e. 12",
+                "i.e. 3 inch",
+                "i.e. 30 grain",
+                "i.e. This is a good load!"));
+    }
+
+    public void editLoadDialog(final Context context) {
+        /*******************************************************************************************
+         * Function: editLoadDialog
+         *
+         * Purpose: Function creates dialog and prompts user to add or edit a load item, if adding
+         *          an item, ID = -1 and email = current user email
+         *
+         * Parameters: context (IN) - activity context to display dialog
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Dialog Constants
+        String DIALOG_TITLE = "Add New Load";;
+        int POSITIVE_BTN_COLOR = Color.BLUE;
+        int NEUTRAL_BTN_COLOR = Color.RED;
+
+        // Dialog Variables
+        final DBHandler db = new DBHandler(context);
+
+        // Pre-Dialog Processing
+        if (getLoadID_Int() != -1) {
+            DIALOG_TITLE = "Edit Load";
+        }
+        initializeLoadDialogStrings();
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+
+        // Set Dialog Title
+        alertDialog.setTitle(DIALOG_TITLE);
+
+        // Set Dialog Message
+        alertDialog.setMessage(LOAD_DIALOG_MSG.get(LOAD_DIALOG_STATE));
+
+        // Set view for gathering information
+        LinearLayout subView_LnrLay = new LinearLayout(context);
+        subView_LnrLay.setOrientation(LinearLayout.VERTICAL);
+
+        // Set view
+        final EditText item_Edt = new EditText(context);
+        item_Edt.setHint(LOAD_EDT_HINT.get(LOAD_DIALOG_STATE));
+        item_Edt.setText(getLoadNickname_Str());
+        item_Edt.setGravity(Gravity.START);
+        item_Edt.setTextColor(Color.BLACK);
+        subView_LnrLay.addView(item_Edt);
+
+        // Add linear layout to alert dialog
+        alertDialog.setView(subView_LnrLay);
+
+        // Set Buttons
+        // Positive Button, Right
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, LOAD_POS_BTN_TXT.get(LOAD_DIALOG_STATE), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Processed by onClick below
+            }
+        });
+
+        // Neutral Button, Left
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, LOAD_NEU_BTN_TXT.get(LOAD_DIALOG_STATE), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Processed by onClick below
+            }
+        });
+
+
+        new Dialog(context);
+        alertDialog.show();
+
+        // Set Buttons
+        final Button pos_Btn = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        final Button neu_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+
+        pos_Btn.setTextColor(POSITIVE_BTN_COLOR);
+        pos_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Positive button
+                String itemEdt_Str = item_Edt.getText().toString();
+
+                switch (LOAD_DIALOG_STATE){
+                    case 0:
+                        // Nickname to Brand
+                        boolean isLoadNicknameEmpty = itemEdt_Str.equals("");
+                        boolean isLoadNicknameInDB = db.isLoadNicknameInDB(getLoadEmail_Str(),
+                                itemEdt_Str, getLoadID_Int());
+
+                        if (isLoadNicknameEmpty) {
+                            // Check if the load nickname is empty
+                            item_Edt.setError(context.getString(R.string.error_field_required));
+                            item_Edt.requestFocus();
+                        } else if (isLoadNicknameInDB) {
+                            // Check if the load nickname is already used in the database, user
+                            // cannot have 2 loads with same name
+                            item_Edt.setError(context.getString(R.string.error_armory_load_already_exists));
+                            item_Edt.requestFocus();
+                        } else {
+                            setLoadNickname_Str(itemEdt_Str);
+                            item_Edt.setText(getLoadBrand_Str());
+                            LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
+                        }
+                        break;
+                    case 1:
+                        // Brand to Gauge
+                        setLoadBrand_Str(itemEdt_Str);
+                        item_Edt.setText(getLoadGauge_Str());
+                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
+                        break;
+                    case 2:
+                        // Gauge to Length
+                        setLoadGauge_Str(itemEdt_Str);
+                        item_Edt.setText(getLoadLength_Str());
+                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
+                        break;
+                    case 3:
+                        // Length to Grain
+                        setLoadLength_Str(itemEdt_Str);
+                        item_Edt.setText(getLoadGrain_Str());
+                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
+                        break;
+                    case 4:
+                        // Grain to Notes
+                        setLoadGrain_Str(itemEdt_Str);
+                        item_Edt.setText(getLoadNotes_Str());
+                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
+                        break;
+                    case 5:
+                        // Notes to save load and close dialog
+                        setLoadNotes_Str(itemEdt_Str);
+
+                        if (getLoadID_Int() == -1) {
+                            // User is ADDING a load item
+                            db.insertLoadInDB(LoadClass.this);
+                        } else {
+                            // User is EDITING a load item
+                            db.updateLoadInDB(LoadClass.this, getLoadID_Int());
+                        }
+
+                        alertDialog.dismiss();
+
+                        Toast.makeText(context, "Load saved!",
+                                Toast.LENGTH_LONG).show();
+
+                        // Refresh load listview
+                        // TODO: find a way to refresh load listview
+
+                        // Reset state counter
+                        LOAD_DIALOG_STATE = 0;
+                        break;
+                }
+
+                alertDialog.setMessage(LOAD_DIALOG_MSG.get(LOAD_DIALOG_STATE));
+                item_Edt.setHint(LOAD_EDT_HINT.get(LOAD_DIALOG_STATE));
+                pos_Btn.setText(LOAD_POS_BTN_TXT.get(LOAD_DIALOG_STATE));
+                neu_Btn.setText(LOAD_NEU_BTN_TXT.get(LOAD_DIALOG_STATE));
+            }
+        });
+
+        neu_Btn.setTextColor(NEUTRAL_BTN_COLOR);
+        neu_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Neutral button
+
+                switch (LOAD_DIALOG_STATE){
+                    case 0:
+                        // Nickname to cancel load and close dialog
+                        alertDialog.dismiss();
+                        break;
+                    case 1:
+                        // Brand to Nickname
+                        item_Edt.setText(getLoadNickname_Str());
+                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE - 1);
+                        break;
+                    case 2:
+                        // Gauge to Brand
+                        item_Edt.setText(getLoadBrand_Str());
+                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE - 1);
+                        break;
+                    case 3:
+                        // Length to Gauge
+                        item_Edt.setText(getLoadGauge_Str());
+                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE - 1);
+                        break;
+                    case 4:
+                        // Grain to Length
+                        item_Edt.setText(getLoadLength_Str());
+                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE - 1);
+                        break;
+                    case 5:
+                        // Notes to Grain
+                        item_Edt.setText(getLoadGrain_Str());
+                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE - 1);
+                        break;
+                }
+
+                alertDialog.setMessage(LOAD_DIALOG_MSG.get(LOAD_DIALOG_STATE));
+                item_Edt.setHint(LOAD_EDT_HINT.get(LOAD_DIALOG_STATE));
+                pos_Btn.setText(LOAD_POS_BTN_TXT.get(LOAD_DIALOG_STATE));
+                neu_Btn.setText(LOAD_NEU_BTN_TXT.get(LOAD_DIALOG_STATE));
+            }
+
+        });
+    }
+
 }

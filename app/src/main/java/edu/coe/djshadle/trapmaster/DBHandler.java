@@ -422,6 +422,30 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole.close();
     }
 
+    public void deleteShotInDB (int shotID_int) {
+        /*******************************************************************************************
+         * Function: deleteShotInDB
+         *
+         * Purpose: Function deletes item from database based on email and shotID_Int
+         *
+         * Parameters: shotID_int (IN) - ID number fo shot
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getWritableDatabase();
+
+        String whereClause_Str = "(" + KEY_SHOT_ID + " = '" + shotID_int + "')";
+        try {
+            dbWhole.delete(TABLE_SHOT, whereClause_Str, null);
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        dbWhole.close();
+    }
+
     public ShotClass getShotInDB (int shotID_Int) {
         /*******************************************************************************************
          * Function: getShotInDB
@@ -568,6 +592,30 @@ public class DBHandler extends SQLiteOpenHelper {
 
         String whereClause_Str = "(" + KEY_LOAD_PROFILE_NAME + " = '" + email + "' AND "
                 + KEY_LOAD_NICKNAME + " = '" + loadName + "')";
+        try {
+            dbWhole.delete(TABLE_LOADS, whereClause_Str, null);
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        dbWhole.close();
+    }
+
+    public void deleteLoadInDB (int loadID_Int) {
+        /*******************************************************************************************
+         * Function: deleteLoadInDB
+         *
+         * Purpose: Function deletes item from database based on load ID
+         *
+         * Parameters: loadID_Int (IN) - ID of load to remove
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getWritableDatabase();
+
+        String whereClause_Str = "(" + KEY_LOAD_ID + " = '" + Integer.toString(loadID_Int) + "')";
         try {
             dbWhole.delete(TABLE_LOADS, whereClause_Str, null);
         } catch (Exception e) {
@@ -807,6 +855,30 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole.close();
     }
 
+    public void deleteGunInDB (int gunID_Int) {
+        /*******************************************************************************************
+         * Function: deleteGunInDB
+         *
+         * Purpose: Function deletes item from database based on gun ID
+         *
+         * Parameters: gunID_Int (IN) - ID of gun to delete
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getWritableDatabase();
+
+        String whereClause_Str = "(" + KEY_GUN_ID + " = '" + Integer.toString(gunID_Int) + "')";
+        try {
+            dbWhole.delete(TABLE_GUNS, whereClause_Str, null);
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        dbWhole.close();
+    }
+
     public int getIDforGun (String email, String gunName) {
         /*******************************************************************************************
          * Function: getIDforGun
@@ -1034,6 +1106,30 @@ public class DBHandler extends SQLiteOpenHelper {
 
         String whereClause_Str = "(" + KEY_EVENT_PROFILE_NAME + " = '" + email + "' AND "
                 + KEY_EVENT_NAME + " = '" + eventName + "')";
+        try {
+            dbWhole.delete(TABLE_EVENTS, whereClause_Str, null);
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        dbWhole.close();
+    }
+
+    public void deleteEventInDB (int eventID_Int) {
+        /*******************************************************************************************
+         * Function: deleteEventInDB
+         *
+         * Purpose: Function deletes item from database based on event ID
+         *
+         * Parameters: eventID_Int (IN) - ID of event to remove
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getWritableDatabase();
+
+        String whereClause_Str = "(" + KEY_EVENT_ID + " = '" + Integer.toString(eventID_Int) + "')";
         try {
             dbWhole.delete(TABLE_EVENTS, whereClause_Str, null);
         } catch (Exception e) {

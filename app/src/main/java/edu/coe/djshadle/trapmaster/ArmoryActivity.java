@@ -42,6 +42,7 @@ import java.util.Arrays;
 public class ArmoryActivity extends AppCompatActivity {
     //********************************** Variables and Constants ***********************************
     // General Constants
+    private String TAG = "JRW";
     private String DEFAULT_GUN_TEXT;
     private String DEFAULT_LOAD_TEXT;
     private String ACTIVITY_TITLE;
@@ -55,12 +56,9 @@ public class ArmoryActivity extends AppCompatActivity {
     private boolean isPortrait = true;
     // Gun
     private TrapMasterListArrayAdapter mCustomGunList_Adapt;
-    private ArrayAdapter<String> mCurrentGunList_Adapt;
     private ArrayList<GunClass> mUserGun_List;
-    private int GUN_DIALOG_STATE = 0;
-    private ArrayList<String> GUN_DIALOG_MSG, GUN_POS_BTN_TXT, GUN_NEU_BTN_TXT, GUN_EDT_HINT;
     // Load
-    private ArrayAdapter<String> mCurrentLoadList_Adapt;
+    private TrapMasterListArrayAdapter mCustomLoadList_Adapt;
     private ArrayList<LoadClass> mUserLoad_List;
     private int LOAD_DIALOG_STATE = 0;
     private ArrayList<String> LOAD_DIALOG_MSG, LOAD_POS_BTN_TXT, LOAD_NEU_BTN_TXT, LOAD_EDT_HINT;
@@ -169,20 +167,24 @@ public class ArmoryActivity extends AppCompatActivity {
         mAddGun.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Display add gun dialog box for user input, -1 = adding a new gun
+                // Display add gun dialog box for user input, ID = -1 and email = current email for
+                // adding a new gun
                 GunClass temp_Gun = new GunClass();
                 temp_Gun.setGunID_Int(-1);
-                editGunDialog(temp_Gun);
+                temp_Gun.setGunEmail_Str(mCurrentUserEmail_Str);
+                temp_Gun.editGunDialog(ArmoryActivity.this);
             }
         });
 
         mAddLoad.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Display add load dialog box for user input, -1 = adding a new load
+                // Display add load dialog box for user input, ID = -1 and email = current email for
+                // adding a new load
                 LoadClass temp_Load = new LoadClass();
                 temp_Load.setLoadID_Int(-1);
-                editLoadDialog(temp_Load);
+                temp_Load.setLoadEmail_Str(mCurrentUserEmail_Str);
+                temp_Load.editLoadDialog(ArmoryActivity.this);
             }
         });
 
@@ -197,8 +199,7 @@ public class ArmoryActivity extends AppCompatActivity {
 
         setListViewLayoutParams();
 
-        //initializeGunListView();
-        New_initializeGunListView();
+        initializeGunListView();
         initializeLoadListView();
 
         // Setting title of activity
@@ -207,7 +208,7 @@ public class ArmoryActivity extends AppCompatActivity {
 
     //************************************* Listview Functions *************************************
     // Gun List
-    private ArrayList<String> refreshGunList() {
+    private ArrayList<GunClass> refreshGunList() {
         /*******************************************************************************************
          * Function: refreshGunList
          *
@@ -215,111 +216,7 @@ public class ArmoryActivity extends AppCompatActivity {
          *
          * Parameters: None
          *
-         * Returns: currentGunStr_List - a string list of guns for current user
-         *
-         ******************************************************************************************/
-
-        mUserGun_List = db.getAllGunFromDB(mCurrentUserEmail_Str);
-        ArrayList<String> currentGunStr_List =  new ArrayList<>();
-
-        for (int i = 0; i < mUserGun_List.size(); i++) {
-            GunClass tempGun = mUserGun_List.get(i);
-            String gunListItem_Str = tempGun.getGunNickname_Str() + " - " + tempGun.getGunModel_Str()
-                    + " " + tempGun.getGunGauge_Str();
-
-            // TEMP TODO: REMOVE TEMP CODE
-            gunListItem_Str = tempGun.getGunNickname_Str();
-
-            currentGunStr_List.add(gunListItem_Str);
-        }
-
-        if (currentGunStr_List.isEmpty()) {
-            currentGunStr_List.add(DEFAULT_GUN_TEXT);
-        }
-
-        return currentGunStr_List;
-    }
-
-    private void refreshGunListView() {
-        /*******************************************************************************************
-         * Function: refreshGunListView
-         *
-         * Purpose: Function refreshes the gun list view with current gun data from database
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        mCurrentGunList_Adapt.clear();
-        mCurrentGunList_Adapt.addAll(refreshGunList());
-        mCurrentGunList_Adapt.notifyDataSetChanged();
-    }
-
-    private void initializeGunListView() {
-        /*******************************************************************************************
-         * Function: initializeGunListView
-         *
-         * Purpose: Function initializes the gun list view
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        try {
-            ArrayList<String> currentGunStr_List =  refreshGunList();
-
-            mCurrentGunList_Adapt = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, currentGunStr_List);
-
-            mGunList_View.setAdapter(mCurrentGunList_Adapt);
-            mGunList_View.setLongClickable(true);
-
-            mGunList_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    // TODO: for editing gun list item
-                    String gunName_Str = (String) adapterView.getItemAtPosition(i);
-                    Log.d("JRW", "OnItemClick for gun is here: " + gunName_Str);
-
-                    if (!isDefaultItemText(gunName_Str)) {
-                        GunClass temp_Gun = db.getGunInDB(db.getIDforGun(mCurrentUserEmail_Str, gunName_Str));
-                        editGunDialog(temp_Gun);
-                    }
-                }
-            });
-
-            mGunList_View.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                @Override
-                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    // TODO: for deleting gun list item
-                    String gunName_Str = (String) adapterView.getItemAtPosition(i);
-                    Log.d("JRW", "OnItemLongClick for gun is here: " + gunName_Str);
-
-                    if (!isDefaultItemText(gunName_Str)) {
-                        removeGunItemDialog(gunName_Str);
-                    }
-                    return true;
-                }
-            });
-
-        } catch (Exception e){
-            Log.d("JRW", "no guns in db for this user");
-        }
-
-    }
-
-    private ArrayList<GunClass> New_refreshGunList() {
-        /*******************************************************************************************
-         * Function: refreshGunList
-         *
-         * Purpose: Function returns the current list of guns for the current user
-         *
-         * Parameters: None
-         *
-         * Returns: currentGunStr_List - a string list of guns for current user
+         * Returns: mUserGunList - a list of guns for current user
          *
          ******************************************************************************************/
 
@@ -336,7 +233,7 @@ public class ArmoryActivity extends AppCompatActivity {
         return mUserGun_List;
     }
 
-    private void New_refreshGunListView() {
+    private void refreshGunListView() {
         /*******************************************************************************************
          * Function: refreshGunListView
          *
@@ -348,9 +245,12 @@ public class ArmoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
+        mCustomGunList_Adapt.clear();
+        mCustomGunList_Adapt.addAll(refreshGunList());
+        mCustomGunList_Adapt.notifyDataSetChanged();
     }
 
-    private void New_initializeGunListView() {
+    private void initializeGunListView() {
         /*******************************************************************************************
          * Function: initializeGunListView
          *
@@ -364,9 +264,17 @@ public class ArmoryActivity extends AppCompatActivity {
 
         try {
             mCustomGunList_Adapt = new TrapMasterListArrayAdapter(this,
-                    (ArrayList<Object>)(ArrayList<?>)(New_refreshGunList()));
+                    (ArrayList<Object>)(ArrayList<?>)(refreshGunList()));
 
             mGunList_View.setAdapter(mCustomGunList_Adapt);
+
+            mGunList_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    int tempGunID_Int = (int) view.getTag();
+                    Log.d(TAG, "OnItemClick for gun ID is here: " + tempGunID_Int + " for " + mCurrentUserEmail_Str);
+                }
+            });
 
         } catch (Exception e){
             Log.d("JRW", "no guns in db for this user");
@@ -375,7 +283,7 @@ public class ArmoryActivity extends AppCompatActivity {
     }
 
     // Load List
-    private ArrayList<String> refreshLoadList() {
+    private ArrayList<LoadClass> refreshLoadList() {
         /*******************************************************************************************
          * Function: refreshLoadList
          *
@@ -383,36 +291,28 @@ public class ArmoryActivity extends AppCompatActivity {
          *
          * Parameters: None
          *
-         * Returns: currentLoadStr_List - a string list of loads for current user
+         * Returns: mUserLoad_List - a list of loads for current user
          *
          ******************************************************************************************/
 
         mUserLoad_List = db.getAllLoadFromDB(mCurrentUserEmail_Str);
-        ArrayList<String> currentLoadStr_List =  new ArrayList<>();
 
-        for (int i = 0; i < mUserLoad_List.size(); i++) {
-            LoadClass tempLoad = mUserLoad_List.get(i);
-            String loadItem_Str = tempLoad.getLoadNickname_Str() + " - " + tempLoad.getLoadBrand_Str()
-                    + " " + tempLoad.getLoadGauge_Str();
+        LoadClass temp_Load = new LoadClass();
+        temp_Load.setLoadNickname_Str("No loads");
+        temp_Load.setLoadNotes_Str("Click the add button for a new load!");
 
-            // TEMP TODO: REMOVE TEMP CODE
-            loadItem_Str = tempLoad.getLoadNickname_Str();
-
-            currentLoadStr_List.add(loadItem_Str);
+        if (mUserLoad_List.isEmpty()) {
+            mUserLoad_List.add(temp_Load);
         }
 
-        if (currentLoadStr_List.isEmpty()) {
-            currentLoadStr_List.add(DEFAULT_LOAD_TEXT);
-        }
-
-        return currentLoadStr_List;
+        return mUserLoad_List;
     }
 
     private void refreshLoadListView() {
         /*******************************************************************************************
          * Function: refreshLoadListView
          *
-         * Purpose: Function refreshes the load list view with current gun data from database
+         * Purpose: Function refreshes the load list view with current load data from database
          *
          * Parameters: None
          *
@@ -420,9 +320,9 @@ public class ArmoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
-        mCurrentLoadList_Adapt.clear();
-        mCurrentLoadList_Adapt.addAll(refreshLoadList());
-        mCurrentLoadList_Adapt.notifyDataSetChanged();
+        mCustomLoadList_Adapt.clear();
+        mCustomLoadList_Adapt.addAll(refreshLoadList());
+        mCustomLoadList_Adapt.notifyDataSetChanged();
     }
 
     private void initializeLoadListView() {
@@ -438,44 +338,14 @@ public class ArmoryActivity extends AppCompatActivity {
          ******************************************************************************************/
 
         try {
-            ArrayList<String> currentLoadStr_List =  refreshLoadList();
+            mCustomLoadList_Adapt = new TrapMasterListArrayAdapter(this,
+                    (ArrayList<Object>)(ArrayList<?>)(refreshLoadList()));
 
-            mCurrentLoadList_Adapt = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, currentLoadStr_List);
-
-            mLoadList_View.setAdapter(mCurrentLoadList_Adapt);
-            mLoadList_View.setLongClickable(true);
-
-            mLoadList_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    String loadName_Str = (String) adapterView.getItemAtPosition(i);
-                    Log.d("JRW", "OnItemClick for load is here: " + loadName_Str);
-
-                    if (!isDefaultItemText(loadName_Str)) {
-                        LoadClass temp_Load = db.getLoadInDB(db.getIDforLoad(mCurrentUserEmail_Str, loadName_Str));
-                        editLoadDialog(temp_Load);
-                    }
-
-                }
-            });
-
-            mLoadList_View.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                @Override
-                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    String loadName_Str = (String) adapterView.getItemAtPosition(i);
-                    Log.d("JRW", "OnItemLongClick for load is here: " + loadName_Str);
-
-                    if (!isDefaultItemText(loadName_Str)) {
-                        removeLoadItemDialog(loadName_Str);
-                    }
-                    return true;
-                }
-            });
+            mLoadList_View.setAdapter(mCustomLoadList_Adapt);
 
         } catch (Exception e){
             Log.d("JRW", "no loads in db for this user");
         }
-
     }
 
     // Both List
@@ -507,672 +377,6 @@ public class ArmoryActivity extends AppCompatActivity {
 
         mGunList_View.setLayoutParams(params);
         mLoadList_View.setLayoutParams(params);
-    }
-
-    //************************************ Gun Dialog Functions ************************************
-    private void removeGunItemDialog(String gunName_Str) {
-        /*******************************************************************************************
-         * Function: removeGunItemDialog
-         *
-         * Purpose: Function creates dialog and prompts user to remove a gun item
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        final String DIALOG_TITLE = "Delete Gun";
-        final String DIALOG_MSG = "Are you sure you want to delete this gun?";
-
-        final boolean POSITIVE_BTN = true;  // Right
-        final boolean NEUTRAL_BTN = false;   // Left
-        final boolean NEGATIVE_BTN = true;  // Middle
-
-        final String POSITIVE_BUTTON_TXT = "DELETE";
-        final String NEUTRAL_BUTTON_TXT = "";
-        final String NEGATIVE_BUTTON_TXT = "CANCEL";
-
-        final int POSITIVE_BTN_COLOR = Color.BLUE;
-        final int NEUTRAL_BTN_COLOR = Color.RED;
-        final int NEGATIVE_BTN_COLOR = Color.RED;
-
-
-        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        final String finalGunName_Str = gunName_Str;
-
-        // Set Dialog Title
-        alertDialog.setTitle(DIALOG_TITLE);
-
-        // Set Dialog Message
-        alertDialog.setMessage(DIALOG_MSG);
-
-        // Set Buttons
-        // Positive Button, Right
-        if (POSITIVE_BTN) {
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    // Processed by onClick below
-                    }
-            });
-        }
-
-        // Neutral Button, Left
-        if (NEUTRAL_BTN) {
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    // Processed by onClick below
-                }
-            });
-        }
-
-        // Negative Button, Middle
-        if (NEGATIVE_BTN) {
-            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    // Processed by onClick below
-                }
-            });
-        }
-
-
-        new Dialog(getApplicationContext());
-        alertDialog.show();
-
-        // Set Buttons
-        if (POSITIVE_BTN) {
-            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
-            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Perform Action on Positive button
-                    db.deleteGunInDB(mCurrentUserEmail_Str, finalGunName_Str);
-
-                    alertDialog.dismiss();
-
-                    Toast.makeText(ArmoryActivity.this, "Gun deleted.",
-                            Toast.LENGTH_LONG).show();
-
-                    // Refresh gun listview
-                    refreshGunListView();
-                }
-            });
-        }
-        if (NEUTRAL_BTN) {
-            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
-            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Perform Action on Neutral button
-                }
-            });
-        }
-        if (NEGATIVE_BTN) {
-            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
-            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Perfrom Action on Negative button
-                    alertDialog.dismiss();
-                }
-            });
-        }
-    }
-
-    private void initializeGunDialogStrings() {
-        GUN_DIALOG_MSG = new ArrayList<String>(Arrays.asList(
-                "Enter a nickname for this gun.",
-                "Enter the model for this gun.",
-                "Enter the gauge for this gun.",
-                "Enter any notes for this gun."));
-        GUN_POS_BTN_TXT = new ArrayList<String>(Arrays.asList(
-                "NEXT",
-                "NEXT",
-                "NEXT",
-                "SAVE"));
-        GUN_NEU_BTN_TXT = new ArrayList<String>(Arrays.asList(
-                "CANCEL",
-                "BACK",
-                "BACK",
-                "BACK"));
-        GUN_EDT_HINT = new ArrayList<String>(Arrays.asList(
-                "i.e. MyGun",
-                "i.e. Remington Model 870 ",
-                "i.e. 12",
-                "i.e. This is a good gun!"));
-    }
-
-    private void editGunDialog(final GunClass gun_Item) {
-        /*******************************************************************************************
-         * Function: editGunDialog
-         *
-         * Purpose: Function creates dialog and prompts user to add or edit a gun item
-         *
-         * Parameters: gun_Item (IN) - object to edit or add, if adding object, gunID = -1
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-        initializeGunDialogStrings();
-        gun_Item.setGunEmail_Str(mCurrentUserEmail_Str);
-
-        // Dialog Constants
-        String DIALOG_TITLE = "Add New Gun";;
-
-        int POSITIVE_BTN_COLOR = Color.BLUE;
-        int NEUTRAL_BTN_COLOR = Color.RED;
-
-        // Pre-Dialog Processing
-        if (gun_Item.getGunID_Int() != -1) {
-            DIALOG_TITLE = "Edit Gun";
-        }
-
-        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-
-        // Set Dialog Title
-        alertDialog.setTitle(DIALOG_TITLE);
-
-        // Set Dialog Message
-        alertDialog.setMessage(GUN_DIALOG_MSG.get(GUN_DIALOG_STATE));
-
-        // Set view for gathering information
-        LinearLayout subView_LnrLay = new LinearLayout(this);
-        subView_LnrLay.setOrientation(LinearLayout.VERTICAL);
-
-        // Set view
-        final EditText item_Edt = new EditText(this);
-        item_Edt.setHint(GUN_EDT_HINT.get(GUN_DIALOG_STATE));
-        item_Edt.setText(gun_Item.getGunNickname_Str());
-        item_Edt.setGravity(Gravity.START);
-        item_Edt.setTextColor(Color.BLACK);
-        subView_LnrLay.addView(item_Edt);
-
-        // Add linear layout to alert dialog
-        alertDialog.setView(subView_LnrLay);
-
-        // Set Buttons
-        // Positive Button, Right
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, GUN_POS_BTN_TXT.get(GUN_DIALOG_STATE), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // Processed by onClick below
-            }
-        });
-
-        // Neutral Button, Left
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, GUN_NEU_BTN_TXT.get(GUN_DIALOG_STATE), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // Processed by onClick below
-            }
-        });
-
-
-        new Dialog(getApplicationContext());
-        alertDialog.show();
-
-        // Set Buttons
-        final Button pos_Btn = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        final Button neu_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-
-        pos_Btn.setTextColor(POSITIVE_BTN_COLOR);
-        pos_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Perform Action on Positive button
-                String itemEdt_Str = item_Edt.getText().toString();
-
-                switch (GUN_DIALOG_STATE){
-                    case 0:
-                        // Nickname to Model
-                        boolean isGunNicknameEmpty = itemEdt_Str.equals("");
-                        boolean isGunNicknameInDB = db.isGunNicknameInDB(mCurrentUserEmail_Str, itemEdt_Str, gun_Item.getGunID_Int());
-
-                        if (isGunNicknameEmpty) {
-                            // Check if the gun nickname is empty
-                            item_Edt.setError(getString(R.string.error_field_required));
-                            item_Edt.requestFocus();
-                        } else if (isGunNicknameInDB) {
-                            // Check if the gun nickname is already used in the database, uer cannot have 2 guns with same name
-                            item_Edt.setError(getString(R.string.error_armory_gun_already_exists));
-                            item_Edt.requestFocus();
-                        } else {
-                            gun_Item.setGunNickname_Str(itemEdt_Str);
-                            item_Edt.setText(gun_Item.getGunModel_Str());
-                            GUN_DIALOG_STATE = (GUN_DIALOG_STATE + 1);
-                        }
-
-                        break;
-                    case 1:
-                        // Model to Gauge
-                        gun_Item.setGunModel_Str(itemEdt_Str);
-                        item_Edt.setText(gun_Item.getGunGauge_Str());
-                        GUN_DIALOG_STATE = (GUN_DIALOG_STATE + 1);
-                        break;
-                    case 2:
-                        // Gauge to Notes
-                        gun_Item.setGunGauge_Str(itemEdt_Str);
-                        item_Edt.setText(gun_Item.getGunNotes_Str());
-                        GUN_DIALOG_STATE = (GUN_DIALOG_STATE + 1);
-                        break;
-                    case 3:
-                        // Notes to save gun and close dialog
-                        gun_Item.setGunNotes_Str(itemEdt_Str);
-
-                        if (gun_Item.getGunID_Int() == -1) {
-                            // User is ADDING a gun item
-                            db.insertGunInDB(gun_Item);
-                        } else {
-                            // User is EDITING a gun item
-                            db.updateGunInDB(gun_Item, gun_Item.getGunID_Int());
-                        }
-
-                        alertDialog.dismiss();
-
-                        Toast.makeText(ArmoryActivity.this, "Gun saved!",
-                                Toast.LENGTH_LONG).show();
-
-                        // Refresh gun listview
-                        refreshGunListView();
-
-                        // Reset state counter
-                        GUN_DIALOG_STATE = 0;
-                        break;
-                }
-
-                alertDialog.setMessage(GUN_DIALOG_MSG.get(GUN_DIALOG_STATE));
-                item_Edt.setHint(GUN_EDT_HINT.get(GUN_DIALOG_STATE));
-                pos_Btn.setText(GUN_POS_BTN_TXT.get(GUN_DIALOG_STATE));
-                neu_Btn.setText(GUN_NEU_BTN_TXT.get(GUN_DIALOG_STATE));
-            }
-        });
-
-        neu_Btn.setTextColor(NEUTRAL_BTN_COLOR);
-        neu_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Perform Action on Neutral button
-
-                switch (GUN_DIALOG_STATE){
-                    case 0:
-                        // Nickname to cancel new gun and close dialog
-                        alertDialog.dismiss();
-                        break;
-                    case 1:
-                        // Model to Nickname
-                        item_Edt.setText(gun_Item.getGunNickname_Str());
-                        GUN_DIALOG_STATE = (GUN_DIALOG_STATE - 1);
-                        break;
-                    case 2:
-                        // Gauge to Model
-                        item_Edt.setText(gun_Item.getGunModel_Str());
-                        GUN_DIALOG_STATE = (GUN_DIALOG_STATE - 1);
-                        break;
-                    case 3:
-                        // Notes to Gauge
-                        item_Edt.setText(gun_Item.getGunGauge_Str());
-                        GUN_DIALOG_STATE = (GUN_DIALOG_STATE - 1);
-                        break;
-                }
-
-                alertDialog.setMessage(GUN_DIALOG_MSG.get(GUN_DIALOG_STATE));
-                item_Edt.setHint(GUN_EDT_HINT.get(GUN_DIALOG_STATE));
-                pos_Btn.setText(GUN_POS_BTN_TXT.get(GUN_DIALOG_STATE));
-                neu_Btn.setText(GUN_NEU_BTN_TXT.get(GUN_DIALOG_STATE));
-            }
-
-        });
-    }
-
-    //************************************ Load Dialog Functions ***********************************
-    private void removeLoadItemDialog(String loadName_Str) {
-        /*******************************************************************************************
-         * Function: removeLoadItemDialog
-         *
-         * Purpose: Function creates dialog and prompts user to remove a load item
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        final String DIALOG_TITLE = "Delete Load";
-        final String DIALOG_MSG = "Are you sure you want to delete this load?";
-
-        final boolean POSITIVE_BTN = true;  // Right
-        final boolean NEUTRAL_BTN = false;   // Left
-        final boolean NEGATIVE_BTN = true;  // Middle
-
-        final String POSITIVE_BUTTON_TXT = "DELETE";
-        final String NEUTRAL_BUTTON_TXT = "";
-        final String NEGATIVE_BUTTON_TXT = "CANCEL";
-
-        final int POSITIVE_BTN_COLOR = Color.BLUE;
-        final int NEUTRAL_BTN_COLOR = Color.RED;
-        final int NEGATIVE_BTN_COLOR = Color.RED;
-
-
-        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        final String finalLoadName_Str = loadName_Str;
-
-
-        // Set Dialog Title
-        alertDialog.setTitle(DIALOG_TITLE);
-
-        // Set Dialog Message
-        alertDialog.setMessage(DIALOG_MSG);
-
-        // Set Buttons
-        // Positive Button, Right
-        if (POSITIVE_BTN) {
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    // Processed with onClick below
-
-                }
-            });
-        }
-
-        // Neutral Button, Left
-        if (NEUTRAL_BTN) {
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    // Processed with onClick below
-                }
-            });
-        }
-
-        // Negative Button, Middle
-        if (NEGATIVE_BTN) {
-            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    // Processed with onClick below
-                }
-            });
-        }
-
-
-        new Dialog(getApplicationContext());
-        alertDialog.show();
-
-        // Set Button Colors
-        if (POSITIVE_BTN) {
-            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
-            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Perform Action on Positive button
-                    db.deleteLoadInDB(mCurrentUserEmail_Str, finalLoadName_Str);
-
-                    alertDialog.dismiss();
-
-                    Toast.makeText(ArmoryActivity.this, "Load deleted.",
-                            Toast.LENGTH_LONG).show();
-
-                    // Refresh load listview
-                    refreshLoadListView();
-                }
-            });
-        }
-        if (NEUTRAL_BTN) {
-            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
-            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Perform Action on NEUTRAL Button
-
-                }
-            });
-        }
-        if (NEGATIVE_BTN) {
-            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
-            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Perform Action on Negative button
-                    alertDialog.dismiss();
-                }
-            });
-        }
-    }
-
-    private void initializeLoadDialogStrings() {
-        LOAD_DIALOG_MSG = new ArrayList<String>(Arrays.asList(
-                "Enter a nickname for this load.",
-                "Enter the brand for this load.",
-                "Enter the gauge for this load.",
-                "Enter the length for this load.",
-                "Enter the grain for this load.",
-                "Enter any notes for this load."));
-        LOAD_POS_BTN_TXT = new ArrayList<String>(Arrays.asList(
-                "NEXT",
-                "NEXT",
-                "NEXT",
-                "NEXT",
-                "NEXT",
-                "SAVE"));
-        LOAD_NEU_BTN_TXT = new ArrayList<String>(Arrays.asList(
-                "CANCEL",
-                "BACK",
-                "BACK",
-                "BACK",
-                "BACK",
-                "BACK",
-                "BACK"));
-        LOAD_EDT_HINT = new ArrayList<String>(Arrays.asList(
-                "i.e. MyLoad",
-                "i.e. Remington",
-                "i.e. 12",
-                "i.e. 3 inch",
-                "i.e. 30 grain",
-                "i.e. This is a good load!"));
-    }
-
-    private void editLoadDialog(final LoadClass load_Item) {
-        /*******************************************************************************************
-         * Function: editLoadDialog
-         *
-         * Purpose: Function creates dialog and prompts user to add or edit a load item
-         *
-         * Parameters: load_Item (IN) - object to edit or add, if adding object, loadID = -1
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-        initializeLoadDialogStrings();
-        load_Item.setLoadEmail_Str(mCurrentUserEmail_Str);
-
-        // Dialog Constants
-        String DIALOG_TITLE = "Add New Load";;
-
-        int POSITIVE_BTN_COLOR = Color.BLUE;
-        int NEUTRAL_BTN_COLOR = Color.RED;
-
-        // Pre-Dialog Processing
-        if (load_Item.getLoadID_Int() != -1) {
-            DIALOG_TITLE = "Edit Load";
-        }
-
-        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-
-        // Set Dialog Title
-        alertDialog.setTitle(DIALOG_TITLE);
-
-        // Set Dialog Message
-        alertDialog.setMessage(LOAD_DIALOG_MSG.get(LOAD_DIALOG_STATE));
-
-        // Set view for gathering information
-        LinearLayout subView_LnrLay = new LinearLayout(this);
-        subView_LnrLay.setOrientation(LinearLayout.VERTICAL);
-
-        // Set view
-        final EditText item_Edt = new EditText(this);
-        item_Edt.setHint(LOAD_EDT_HINT.get(LOAD_DIALOG_STATE));
-        item_Edt.setText(load_Item.getLoadNickname_Str());
-        item_Edt.setGravity(Gravity.START);
-        item_Edt.setTextColor(Color.BLACK);
-        subView_LnrLay.addView(item_Edt);
-
-        // Add linear layout to alert dialog
-        alertDialog.setView(subView_LnrLay);
-
-        // Set Buttons
-        // Positive Button, Right
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, LOAD_POS_BTN_TXT.get(LOAD_DIALOG_STATE), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // Processed by onClick below
-            }
-        });
-
-        // Neutral Button, Left
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, LOAD_NEU_BTN_TXT.get(LOAD_DIALOG_STATE), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // Processed by onClick below
-            }
-        });
-
-
-        new Dialog(getApplicationContext());
-        alertDialog.show();
-
-        // Set Buttons
-        final Button pos_Btn = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        final Button neu_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-
-        pos_Btn.setTextColor(POSITIVE_BTN_COLOR);
-        pos_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Perform Action on Positive button
-                String itemEdt_Str = item_Edt.getText().toString();
-
-                switch (LOAD_DIALOG_STATE){
-                    case 0:
-                        // Nickname to Brand
-                        boolean isLoadNicknameEmpty = itemEdt_Str.equals("");
-                        boolean isLoadNicknameInDB = db.isLoadNicknameInDB(mCurrentUserEmail_Str,
-                                itemEdt_Str, load_Item.getLoadID_Int());
-
-                        if (isLoadNicknameEmpty) {
-                            // Check if the load nickname is empty
-                            item_Edt.setError(getString(R.string.error_field_required));
-                            item_Edt.requestFocus();
-                        } else if (isLoadNicknameInDB) {
-                            // Check if the load nickname is already used in the database, user
-                            // cannot have 2 loads with same name
-                            item_Edt.setError(getString(R.string.error_armory_load_already_exists));
-                            item_Edt.requestFocus();
-                        } else {
-                            load_Item.setLoadNickname_Str(itemEdt_Str);
-                            item_Edt.setText(load_Item.getLoadBrand_Str());
-                            LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
-                        }
-                        break;
-                    case 1:
-                        // Brand to Gauge
-                        load_Item.setLoadBrand_Str(itemEdt_Str);
-                        item_Edt.setText(load_Item.getLoadGauge_Str());
-                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
-                        break;
-                    case 2:
-                        // Gauge to Length
-                        load_Item.setLoadGauge_Str(itemEdt_Str);
-                        item_Edt.setText(load_Item.getLoadLength_Str());
-                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
-                        break;
-                    case 3:
-                        // Length to Grain
-                        load_Item.setLoadLength_Str(itemEdt_Str);
-                        item_Edt.setText(load_Item.getLoadGrain_Str());
-                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
-                        break;
-                    case 4:
-                        // Grain to Notes
-                        load_Item.setLoadGrain_Str(itemEdt_Str);
-                        item_Edt.setText(load_Item.getLoadNotes_Str());
-                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE + 1);
-                        break;
-                    case 5:
-                        // Notes to save load and close dialog
-                        load_Item.setLoadNotes_Str(itemEdt_Str);
-
-                        if (load_Item.getLoadID_Int() == -1) {
-                            // User is ADDING a load item
-                            db.insertLoadInDB(load_Item);
-                        } else {
-                            // User is EDITING a load item
-                            db.updateLoadInDB(load_Item, load_Item.getLoadID_Int());
-                        }
-
-                        alertDialog.dismiss();
-
-                        Toast.makeText(ArmoryActivity.this, "Load saved!",
-                                Toast.LENGTH_LONG).show();
-
-                        // Refresh load listview
-                        refreshLoadListView();
-
-                        // Reset state counter
-                        LOAD_DIALOG_STATE = 0;
-                        break;
-                }
-
-                alertDialog.setMessage(LOAD_DIALOG_MSG.get(LOAD_DIALOG_STATE));
-                item_Edt.setHint(LOAD_EDT_HINT.get(LOAD_DIALOG_STATE));
-                pos_Btn.setText(LOAD_POS_BTN_TXT.get(LOAD_DIALOG_STATE));
-                neu_Btn.setText(LOAD_NEU_BTN_TXT.get(LOAD_DIALOG_STATE));
-            }
-        });
-
-        neu_Btn.setTextColor(NEUTRAL_BTN_COLOR);
-        neu_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Perform Action on Neutral button
-
-                switch (LOAD_DIALOG_STATE){
-                    case 0:
-                        // Nickname to cancel load and close dialog
-                        alertDialog.dismiss();
-                        break;
-                    case 1:
-                        // Brand to Nickname
-                        item_Edt.setText(load_Item.getLoadNickname_Str());
-                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE - 1);
-                        break;
-                    case 2:
-                        // Gauge to Brand
-                        item_Edt.setText(load_Item.getLoadBrand_Str());
-                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE - 1);
-                        break;
-                    case 3:
-                        // Length to Gauge
-                        item_Edt.setText(load_Item.getLoadGauge_Str());
-                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE - 1);
-                        break;
-                    case 4:
-                        // Grain to Length
-                        item_Edt.setText(load_Item.getLoadLength_Str());
-                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE - 1);
-                        break;
-                    case 5:
-                        // Notes to Grain
-                        item_Edt.setText(load_Item.getLoadGrain_Str());
-                        LOAD_DIALOG_STATE = (LOAD_DIALOG_STATE - 1);
-                        break;
-                }
-
-                alertDialog.setMessage(LOAD_DIALOG_MSG.get(LOAD_DIALOG_STATE));
-                item_Edt.setHint(LOAD_EDT_HINT.get(LOAD_DIALOG_STATE));
-                pos_Btn.setText(LOAD_POS_BTN_TXT.get(LOAD_DIALOG_STATE));
-                neu_Btn.setText(LOAD_NEU_BTN_TXT.get(LOAD_DIALOG_STATE));
-            }
-
-        });
-    }
-
-    //************************************** Other Functions ***************************************
-    private boolean isDefaultItemText(String item_Str) {
-        return (item_Str.contains(DEFAULT_GUN_TEXT) || item_Str.contains(DEFAULT_LOAD_TEXT));
     }
 
 }

@@ -10,7 +10,7 @@
         android:id="@+id/listItem_Img"
         android:layout_width="@dimen/ListItemImage"
         android:layout_height="@dimen/ListItemImage"
-        android:layout_margin="@dimen/ListItemMargin"
+        android:padding="@dimen/ListItemMargin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/add_image_icon" />
@@ -25,7 +25,10 @@
         android:text="ListItemMain"
         android:textSize="@dimen/ListItemMainTextSize"
         app:layout_constraintStart_toEndOf="@+id/listItem_Img"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:focusableInTouchMode="false"
+        android:clickable="false"
+        android:focusable="false"/>
 
     <TextView
         android:id="@+id/listItemSecond_Txt"
@@ -37,9 +40,12 @@
         android:text="ListItemSecond"
         android:textSize="@dimen/ListItemSecondTextSize"
         app:layout_constraintStart_toEndOf="@+id/listItem_Img"
-        app:layout_constraintTop_toBottomOf="@+id/listItemMain_Txt" />
+        app:layout_constraintTop_toBottomOf="@+id/listItemMain_Txt"
+        android:focusableInTouchMode="false"
+        android:clickable="false"
+        android:focusable="false"/>
 
-    <android.support.design.widget.FloatingActionButton
+    <ImageButton
         android:id="@+id/listItemEdit_Btn"
         android:layout_width="@dimen/ListItemButton"
         android:layout_height="@dimen/ListItemButton"
@@ -47,13 +53,15 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="8dp"
-        android:clickable="true"
+        android:backgroundTint="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/listItemDelete_Btn"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/edit_icon" />
+        android:src="@drawable/edit_icon"
+        android:scaleType="fitCenter"
+        />
 
-    <android.support.design.widget.FloatingActionButton
+    <ImageButton
         android:id="@+id/listItemDelete_Btn"
         android:layout_width="@dimen/ListItemButton"
         android:layout_height="@dimen/ListItemButton"
@@ -61,9 +69,10 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:clickable="true"
+        android:backgroundTint="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/delete_icon" />
+        android:src="@drawable/delete_icon"
+        android:scaleType="fitCenter"/>
 </android.support.constraint.ConstraintLayout>

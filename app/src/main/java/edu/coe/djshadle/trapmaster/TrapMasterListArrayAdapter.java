@@ -3,11 +3,13 @@ package edu.coe.djshadle.trapmaster;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,6 +19,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
 
     //************************************* Private Variables **************************************
     // Constants
+    private final String TAG = "JRW";
     private final int SHOT_LIST_TAG = 1;
     private final int EVENT_LIST_TAG = 2;
     private final int GUN_LIST_TAG = 3;
@@ -68,16 +71,17 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View listItem = convertView;
+        final Context parentContext = parent.getContext();
 
-        if(listItem == null)
+        if (listItem == null)
             listItem = LayoutInflater.from(mCurrentContext).inflate(R.layout.view_custom_list_item,
                     parent,false);
 
         ImageView listItem_Img = listItem.findViewById(R.id.listItem_Img);
         TextView listItemMain_Txt = listItem.findViewById(R.id.listItemMain_Txt);
         TextView listItemSecond_Txt = listItem.findViewById(R.id.listItemSecond_Txt);
-        Button listItemEdit_Btn = listItem.findViewById(R.id.listItemEdit_Btn);
-        Button listItemDelete_Btn = listItem.findViewById(R.id.listItemDelete_Btn);
+        ImageButton listItemEdit_Btn = listItem.findViewById(R.id.listItemEdit_Btn);
+        ImageButton listItemDelete_Btn = listItem.findViewById(R.id.listItemDelete_Btn);
 
         switch ((int) parent.getTag()) {
             case SHOT_LIST_TAG:
@@ -86,6 +90,9 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
 
                 String main_Str = current_Shot.getShotEventName_Str();
                 String second_Str = current_Shot.getShotNotes_Str();
+
+                // Set tag of list view item to be database ID
+                listItem.setTag(current_Shot.getShotID_Int());
 
                 if (main_Str.equals("")) {
                     main_Str = "No event for shoot.";
@@ -108,6 +115,9 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                 main_Str = current_Event.getEventName_Str();
                 second_Str = current_Event.getEventNotes_Str();
 
+                // Set tag of list view item to be database ID
+                listItem.setTag(current_Event.getEventID_Int());
+
                 if (main_Str.equals("")) {
                     main_Str = "No name for event.";
                 }
@@ -124,10 +134,13 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                 break;
             case GUN_LIST_TAG:
                 // Item is a gun class object
-                GunClass current_Gun = gunClass_List.get(position);
+                final GunClass current_Gun = gunClass_List.get(position);
 
                 main_Str = current_Gun.getGunNickname_Str();
                 second_Str = current_Gun.getGunNotes_Str();
+
+                // Set tag of list view item to be database ID
+                listItem.setTag(current_Gun.getGunID_Int());
 
                 if (main_Str.equals("")) {
                     main_Str = "No nickname for gun.";
@@ -142,13 +155,40 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                 listItemMain_Txt.setText(main_Str);
                 listItemSecond_Txt.setText(second_Str);
 
+                // Set on click for whole view
+                listItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d(TAG, Integer.toString(current_Gun.getGunID_Int()));
+                    }
+                });
+
+                // Set on click for edit button
+                listItemEdit_Btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        current_Gun.editGunDialog(parentContext);
+                    }
+                });
+
+                // Set on click for delete button
+                listItemDelete_Btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        current_Gun.removeGunDialog(parentContext);
+                    }
+                });
+
                 break;
             case LOAD_LIST_TAG:
                 // Item is a load class object
-                LoadClass current_Load = loadClass_List.get(position);
+                final LoadClass current_Load = loadClass_List.get(position);
 
                 main_Str = current_Load.getLoadNickname_Str();
                 second_Str = current_Load.getLoadNotes_Str();
+
+                // Set tag of list view item to be database ID
+                listItem.setTag(current_Load.getLoadID_Int());
 
                 if (main_Str.equals("")) {
                     main_Str = "No nickname for load.";
@@ -162,6 +202,30 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
 
                 listItemMain_Txt.setText(main_Str);
                 listItemSecond_Txt.setText(second_Str);
+
+                // Set on click for whole view
+                listItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d(TAG, Integer.toString(current_Load.getLoadID_Int()));
+                    }
+                });
+
+                // Set on click for edit button
+                listItemEdit_Btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        current_Load.editLoadDialog(parentContext);
+                    }
+                });
+
+                // Set on click for delete button
+                listItemDelete_Btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        current_Load.removeLoadItemDialog(parentContext);
+                    }
+                });
 
                 break;
             default:
