@@ -13,7 +13,21 @@
     <string name="miss_string">MISS</string>
     <string name="shot_string">SHOT</string>
     <string name="current_user_score">current_user_score</string>
-    <string name="default_shot_text">Click add to start a new shoot!</string>
+
+    <!--********************************** Default Text Strings *********************************-->
+    <string name="no_event_second_text">Click add for a new event!</string>
+    <string name="no_event_main_text">No events</string>
+    <string name="no_shot_second_text">Click add to start a new shoot!</string>
+    <string name="no_shot_main_text">No shoots</string>
+    <string name="no_gun_second_text">Click add for a new gun!</string>
+    <string name="no_gun_main_text">No guns</string>
+    <string name="no_load_second_text">Click add for a new load!</string>
+    <string name="no_load_main_text">No loads</string>
+
+    <string name="add_event_text">Add events in event history!</string>
+    <string name="add_shot_text">Add shoot with a new event!</string>
+    <string name="add_gun_text">Add guns in the armory!</string>
+    <string name="add_load_text">Add loads in the armory!</string>
 
     <!--************************************* Login Strings *************************************-->
     <string name="login_activity_title">Sign in</string>
@@ -43,7 +57,6 @@
     <!--********************************** Post Event Strings ***********************************-->
     <string name="post_event_activity_title">Post Event</string>
     <string name="error_event_already_exists">Event name already exists</string>
-    <string name="default_event_text">Click to add a new event!</string>
     <string name="post_event_default_gun_text">Add guns in the armory!</string>
     <string name="post_event_default_load_text">"Add loads in the armory!"</string>
 
@@ -54,8 +67,6 @@
     <string name="armory_activity_title">Armory</string>
     <string name="error_armory_gun_already_exists">Gun nickname already exists</string>
     <string name="error_armory_load_already_exists">Load nickname already exists</string>
-    <string name="default_gun_list_text">Click add for a new gun!</string>
-    <string name="default_load_list_text">Click add for a new load!</string>
 
     <!--************************************** Team Strings *************************************-->
     <string name="team_activity_title">Team</string>

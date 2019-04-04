@@ -149,13 +149,14 @@ public class GunClass {
     }
 
     //*************************************** Other Functions **************************************
-    public void removeGunDialog(final Context context) {
+    public void removeGunDialog(final Context context, final TrapMasterListArrayAdapter adapter) {
         /*******************************************************************************************
          * Function: removeGunItemDialog
          *
          * Purpose: Function creates dialog and prompts user to remove a gun item
          *
          * Parameters: context (IN) - Supplies the activity context to display dialog to
+         *             adapter (IN) - Array adapter to refresh when complete
          *
          * Returns: None
          *
@@ -234,7 +235,7 @@ public class GunClass {
                             Toast.LENGTH_LONG).show();
 
                     // Refresh gun listview
-                    // TODO: Find a way to refresh the gun list, maybe just refresh when button pressed?
+                    adapter.refreshGunArrayAdapter(db.getAllGunFromDB(getGunEmail_Str()));
                 }
             });
         }
@@ -282,7 +283,7 @@ public class GunClass {
                 "i.e. This is a good gun!"));
     }
 
-    public void editGunDialog(final Context context) {
+    public void editGunDialog(final Context context, final TrapMasterListArrayAdapter adapter) {
         /*******************************************************************************************
          * Function: editGunDialog
          *
@@ -290,6 +291,7 @@ public class GunClass {
          *          an item, ID = -1 and email = current user email
          *
          * Parameters: context (IN) - Supplies the activity context to display dialog to
+         *             adapter (IN) - Array adapter to refresh when complete
          *
          * Returns: None
          *
@@ -413,7 +415,7 @@ public class GunClass {
                                 Toast.LENGTH_LONG).show();
 
                         // Refresh gun listview
-                        // TODO: find a way to refresh list view
+                        adapter.refreshGunArrayAdapter(db.getAllGunFromDB(getGunEmail_Str()));
 
                         // Reset state counter
                         GUN_DIALOG_STATE = 0;

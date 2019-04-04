@@ -198,7 +198,7 @@ public class ShotClass {
                 "i.e. This was a good event!"));
     }
 
-    public void editShotDialog(final Context context) {
+    public void editShotDialog(final Context context, final TrapMasterListArrayAdapter adapter) {
         /*******************************************************************************************
          * Function: editShotDialog
          *
@@ -206,6 +206,7 @@ public class ShotClass {
          *          an item, ID = -1 and email = current user email
          *
          * Parameters: context (IN) - Supplies the activity context to display dialog to
+         *             adapter (IN) - Array adapter to refresh when complete
          *
          * Returns: None
          *
@@ -337,7 +338,7 @@ public class ShotClass {
                                 Toast.LENGTH_LONG).show();
 
                         // Refresh shot list view
-                        // TODO: find a way to refresh shot list
+                        adapter.refreshShotArrayAdapter(db.getAllShotFromDB(getShotEmail_Str()));
 
                         // Reset state counter
                         SHOT_DIALOG_STATE = 0;
@@ -415,7 +416,7 @@ public class ShotClass {
         }
 
         if (tempEventStr_List.isEmpty()) {
-            tempEventStr_List.add(context.getString(R.string.default_shot_text));
+            tempEventStr_List.add(context.getString(R.string.add_event_text));
         }
 
         tempEvent_Adapt = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, tempEventStr_List);
@@ -423,13 +424,14 @@ public class ShotClass {
         return tempEvent_Adapt;
     }
 
-    public void removeShotItemDialog(final Context context) {
+    public void removeShotItemDialog(final Context context, final TrapMasterListArrayAdapter adapter) {
         /*******************************************************************************************
          * Function: removeShotItemDialog
          *
          * Purpose: Function creates dialog and prompts user to remove a shoot item
          *
          * Parameters: context (IN) - Supplies the activity context to display dialog to
+         *             adapter (IN) - Array adapter to refresh when complete
          *
          * Returns: None
          *
@@ -508,7 +510,7 @@ public class ShotClass {
                             Toast.LENGTH_LONG).show();
 
                     // Refresh shoot list view
-                    // TODO: find a way to refresh shot list view
+                    adapter.refreshShotArrayAdapter(db.getAllShotFromDB(getShotEmail_Str()));
                 }
             });
         }

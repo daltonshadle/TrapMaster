@@ -49,10 +49,6 @@ public class EventHistoryActivity extends AppCompatActivity {
     private final String TAG = "JRW";
     private String ACTIVITY_TITLE;
     private String CURRENT_USER_KEY;
-    private String DEFAULT_SHOT_TEXT;
-    private String DEFAULT_EVENT_TEXT;
-    private String DEFAULT_GUN_TEXT;
-    private String DEFAULT_LOAD_TEXT;
     private final int SHOT_LIST_TAG = 1;
     private final int EVENT_LIST_TAG = 2;
 
@@ -64,8 +60,6 @@ public class EventHistoryActivity extends AppCompatActivity {
     private TrapMasterListArrayAdapter mCustomShotList_Adapt;
 
     // Event
-    private ArrayList<EventClass> mUserEvent_List;
-    private ArrayAdapter<String> mCurrentEventList_Adapt;
     private TrapMasterListArrayAdapter mCustomEventList_Adapt;
 
     // UI References
@@ -146,10 +140,6 @@ public class EventHistoryActivity extends AppCompatActivity {
 
         ACTIVITY_TITLE = getString(R.string.event_history_activity_title);
         CURRENT_USER_KEY = getString(R.string.current_user_key);
-        DEFAULT_SHOT_TEXT = getString(R.string.default_shot_text);
-        DEFAULT_EVENT_TEXT = getString(R.string.default_event_text);
-        DEFAULT_GUN_TEXT = getString(R.string.post_event_default_gun_text);
-        DEFAULT_LOAD_TEXT = getString(R.string.post_event_default_load_text);
     }
 
     private void initializeViews() {
@@ -201,7 +191,7 @@ public class EventHistoryActivity extends AppCompatActivity {
                 EventClass temp_Event = new EventClass();
                 temp_Event.setEventID_Int(-1);
                 temp_Event.setEventEmail_Str(mCurrentUserEmail_Str);
-                temp_Event.editEventDialog(EventHistoryActivity.this);
+                temp_Event.editEventDialog(EventHistoryActivity.this, mCustomEventList_Adapt);
             }
         });
 
@@ -226,8 +216,8 @@ public class EventHistoryActivity extends AppCompatActivity {
         ArrayList<ShotClass> currentShotStr_List = db.getAllShotFromDB(mCurrentUserEmail_Str);
 
         ShotClass temp_Shot = new ShotClass();
-        temp_Shot.setShotEventName_Str("No event listed for shoot");
-        temp_Shot.setShotNotes_Str("Click the add button to start a new shoot!");
+        temp_Shot.setShotEventName_Str(getString(R.string.no_shot_main_text));
+        temp_Shot.setShotNotes_Str(getString(R.string.no_shot_second_text));
 
         if (currentShotStr_List.isEmpty()) {
             Log.d(TAG, "Shot list empty.");
@@ -235,23 +225,6 @@ public class EventHistoryActivity extends AppCompatActivity {
         }
 
         return currentShotStr_List;
-    }
-
-    private void refreshShotListView() {
-        /*******************************************************************************************
-         * Function: refreshShotListView
-         *
-         * Purpose: Function refreshes the shot list view with current shot data from database
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        mCustomShotList_Adapt.clear();
-        mCustomShotList_Adapt.addAll(refreshShotList());
-        mCustomShotList_Adapt.notifyDataSetChanged();
     }
 
     private void initializeShotListView() {
@@ -294,8 +267,8 @@ public class EventHistoryActivity extends AppCompatActivity {
         ArrayList<EventClass> userEvent_List = db.getAllEventFromDB(mCurrentUserEmail_Str);
 
         EventClass temp_Event = new EventClass();
-        temp_Event.setEventName_Str("No events");
-        temp_Event.setEventNotes_Str(getString(R.string.default_event_text));
+        temp_Event.setEventName_Str(getString(R.string.no_event_main_text));
+        temp_Event.setEventNotes_Str(getString(R.string.no_event_second_text));
 
         if (userEvent_List.isEmpty()) {
             Log.d(TAG, "Event list empty.");
@@ -303,23 +276,6 @@ public class EventHistoryActivity extends AppCompatActivity {
         }
 
         return userEvent_List;
-    }
-
-    private void refreshEventListView() {
-        /*******************************************************************************************
-         * Function: refreshEventListView
-         *
-         * Purpose: Function refreshes the event list view with current event data from database
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        mCustomEventList_Adapt.clear();
-        mCustomEventList_Adapt.addAll(refreshEventList());
-        mCustomEventList_Adapt.notifyDataSetChanged();
     }
 
     private void initializeEventListView() {

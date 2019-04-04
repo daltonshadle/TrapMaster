@@ -175,13 +175,14 @@ public class LoadClass {
     }
 
     //*************************************** Other Functions **************************************
-    public void removeLoadItemDialog(final Context context) {
+    public void removeLoadItemDialog(final Context context, final TrapMasterListArrayAdapter adapter) {
         /*******************************************************************************************
          * Function: removeLoadItemDialog
          *
          * Purpose: Function creates dialog and prompts user to remove a load item
          *
          * Parameters: context (IN) - activity context to display dialog
+         *             adapter (IN) - Array adapter to refresh when complete
          *
          * Returns: None
          *
@@ -261,7 +262,7 @@ public class LoadClass {
                             Toast.LENGTH_LONG).show();
 
                     // Refresh load listview
-                    // TODO: find a way to refresh the load list view
+                    adapter.refreshLoadArrayAdapter(db.getAllLoadFromDB(getLoadEmail_Str()));
                 }
             });
         }
@@ -319,7 +320,7 @@ public class LoadClass {
                 "i.e. This is a good load!"));
     }
 
-    public void editLoadDialog(final Context context) {
+    public void editLoadDialog(final Context context, final TrapMasterListArrayAdapter adapter) {
         /*******************************************************************************************
          * Function: editLoadDialog
          *
@@ -327,6 +328,7 @@ public class LoadClass {
          *          an item, ID = -1 and email = current user email
          *
          * Parameters: context (IN) - activity context to display dialog
+         *             adapter (IN) - Array adapter to refresh when complete
          *
          * Returns: None
          *
@@ -463,7 +465,7 @@ public class LoadClass {
                                 Toast.LENGTH_LONG).show();
 
                         // Refresh load listview
-                        // TODO: find a way to refresh load listview
+                        adapter.refreshLoadArrayAdapter(db.getAllLoadFromDB(getLoadEmail_Str()));
 
                         // Reset state counter
                         LOAD_DIALOG_STATE = 0;

@@ -738,7 +738,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          ******************************************************************************************/
 
         final String DIALOG_TITLE = "Post Event Logger";
-        final String DIALOG_MSG = "Do you want to continue to the post event logger?";
+        final String DIALOG_MSG = "Do you want to continue to the post event logger? " +
+                "(This let's you add notes and tag an event)";
 
         final boolean POSITIVE_BTN = true;  // Right
         final boolean NEUTRAL_BTN = false;   // Left

@@ -51,22 +51,17 @@ public class PostEventActivity extends AppCompatActivity {
     // General Constants
     private String ACTIVITY_TITLE;
     private String CURRENT_USER_KEY;
-    private String DEFAULT_EVENT_TEXT;
-    private String DEFAULT_GUN_TEXT;
-    private String DEFAULT_LOAD_TEXT;
     private final String TAG = "JRW";
     private final int TOTAL_NUM_SHOTS = 25;
+    private final int EVENT_LIST_TAG = 2;
 
     // General Variables
     DBHandler db;
     private boolean isPortrait = true;
     private String mCurrentUserEmail_Str = "*********";
     // event
-    private ArrayList<EventClass> mUserEvent_List;
-    private ArrayAdapter<String> mCurrentEventList_Adapt;
+    private TrapMasterListArrayAdapter mCustomEventList_Adapt;
     private String mEventName_Str = "";
-    private int EVENT_DIALOG_STATE = 0;
-    private ArrayList<String> EVENT_DIALOG_MSG, EVENT_POS_BTN_TXT, EVENT_NEU_BTN_TXT, EVENT_EDT_HINT;
     // shot
     private String mShotNotes_Str = "";
     private int mShotScore_Int = 0;
@@ -156,9 +151,6 @@ public class PostEventActivity extends AppCompatActivity {
 
         ACTIVITY_TITLE = getString(R.string.post_event_activity_title);
         CURRENT_USER_KEY = getString(R.string.current_user_key);
-        DEFAULT_EVENT_TEXT = getString(R.string.default_event_text);
-        DEFAULT_GUN_TEXT = getString(R.string.post_event_default_gun_text);
-        DEFAULT_LOAD_TEXT = getString(R.string.post_event_default_load_text);
     }
 
     //************************************* UI View Functions **************************************
@@ -197,11 +189,10 @@ public class PostEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Add event action
-                //addNewEventDialog();
-
                 EventClass temp_Event = new EventClass();
                 temp_Event.setEventID_Int(-1);
-                editEventDialog(temp_Event);
+                temp_Event.setEventEmail_Str(mCurrentUserEmail_Str);
+                temp_Event.editEventDialog(PostEventActivity.this, mCustomEventList_Adapt);
             }
         });
 
@@ -241,8 +232,9 @@ public class PostEventActivity extends AppCompatActivity {
             }
         });
 
-        // Initializing Listview
+        // Initializing List view
         mEventList_View = findViewById(R.id.postEvent_List);
+        mEventList_View.setTag(EVENT_LIST_TAG);
         setListViewLayoutParams();
         initializeEventListView();
     }
@@ -278,7 +270,7 @@ public class PostEventActivity extends AppCompatActivity {
     }
 
     //************************************** Event Functions ***************************************
-    private ArrayList<String> refreshEventList() {
+    private ArrayList<EventClass> refreshEventList() {
         /*******************************************************************************************
          * Function: refreshEventList
          *
@@ -290,38 +282,18 @@ public class PostEventActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
-        mUserEvent_List = db.getAllEventFromDB(mCurrentUserEmail_Str);
-        ArrayList<String> currentEventStr_List =  new ArrayList<>();
+        ArrayList<EventClass> userEvent_List = db.getAllEventFromDB(mCurrentUserEmail_Str);
 
-        for (int i = 0; i < mUserEvent_List.size(); i++) {
-            EventClass tempEvent = mUserEvent_List.get(i);
-            String gunListItem_Str = tempEvent.getEventName_Str();
+        EventClass temp_Event = new EventClass();
+        temp_Event.setEventName_Str(getString(R.string.no_event_main_text));
+        temp_Event.setEventNotes_Str(getString(R.string.no_event_second_text));
 
-            currentEventStr_List.add(gunListItem_Str);
+        if (userEvent_List.isEmpty()) {
+            Log.d(TAG, "Event list empty.");
+            userEvent_List.add(temp_Event);
         }
 
-        if (currentEventStr_List.isEmpty()) {
-            currentEventStr_List.add(DEFAULT_EVENT_TEXT);
-        }
-
-        return currentEventStr_List;
-    }
-
-    private void refreshEventListView() {
-        /*******************************************************************************************
-         * Function: refreshEventListView
-         *
-         * Purpose: Function refreshes the event list view with current event data from database
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        mCurrentEventList_Adapt.clear();
-        mCurrentEventList_Adapt.addAll(refreshEventList());
-        mCurrentEventList_Adapt.notifyDataSetChanged();
+        return userEvent_List;
     }
 
     private void initializeEventListView() {
@@ -337,394 +309,15 @@ public class PostEventActivity extends AppCompatActivity {
          ******************************************************************************************/
 
         try {
-            ArrayList<String> currentEventStr_List = refreshEventList();
 
-            mCurrentEventList_Adapt = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, currentEventStr_List);
-            mEventList_View.setAdapter(mCurrentEventList_Adapt);
+            mCustomEventList_Adapt = new TrapMasterListArrayAdapter(this,
+                    (ArrayList<Object>)(ArrayList<?>)(refreshEventList()));
 
-            mEventList_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    String eventName_Str = (String) adapterView.getItemAtPosition(i);
-                    Log.d(TAG, "OnItemClick for event is here: " + eventName_Str);
-
-                    if (!isDefaultItemText(eventName_Str)) {
-                        // event selected
-                        mEventName_Str = eventName_Str;
-                    }
-                }
-            });
+            mEventList_View.setAdapter(mCustomEventList_Adapt);
 
         } catch (Exception e){
-            Log.d(TAG, "no events in db for this user");
+            Log.d(TAG, "no events in db for this user: " + e.toString());
         }
-
-    }
-
-    //********************************* New Event Dialog Functions *********************************
-    private void initializeEventDialogStrings() {
-        EVENT_DIALOG_MSG = new ArrayList<String>(Arrays.asList(
-                "Enter a name for this event.",
-                "Enter the location for this event.",
-                "Choose the gun used for this event.",
-                "Choose the load used for this event.",
-                "Choose the date this event took place.",
-                "Enter a weather description for this event.",
-                "Enter any notes for this event."));
-        EVENT_POS_BTN_TXT = new ArrayList<String>(Arrays.asList(
-                "NEXT",
-                "NEXT",
-                "NEXT",
-                "NEXT",
-                "NEXT",
-                "NEXT",
-                "SAVE"));
-        EVENT_NEU_BTN_TXT = new ArrayList<String>(Arrays.asList(
-                "CANCEL",
-                "BACK",
-                "BACK",
-                "BACK",
-                "BACK",
-                "BACK",
-                "BACK"));
-        EVENT_EDT_HINT = new ArrayList<String>(Arrays.asList(
-                "i.e. MyEvent",
-                "i.e. Shooting Star Gun Club",
-                "",
-                "",
-                "",
-                "i.e. Warm, Sunny, Windy",
-                "i.e. This was a good event!"));
-    }
-
-    private void editEventDialog(final EventClass event_Item) {
-        /*******************************************************************************************
-         * Function: editEventDialog
-         *
-         * Purpose: Function creates dialog and prompts user to add or edit an event item
-         *
-         * Parameters: event_Item (IN) - object to edit or add, if adding object, eventID = -1
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-        initializeEventDialogStrings();
-        event_Item.setEventEmail_Str(mCurrentUserEmail_Str);
-
-        // Dialog Constants
-        String DIALOG_TITLE = "Add New Event";;
-
-        int POSITIVE_BTN_COLOR = Color.BLUE;
-        int NEUTRAL_BTN_COLOR = Color.RED;
-
-        // Pre-Dialog Processing
-        if (event_Item.getEventID_Int() != -1) {
-            DIALOG_TITLE = "Edit Event";
-        }
-
-        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-
-        // Set Dialog Title
-        alertDialog.setTitle(DIALOG_TITLE);
-
-        // Set Dialog Message
-        alertDialog.setMessage(EVENT_DIALOG_MSG.get(EVENT_DIALOG_STATE));
-
-        // Set layout for gathering information
-        final RelativeLayout subView_RelLay = new RelativeLayout(this);
-
-        // Set views
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        final EditText item_Edt = new EditText(this);
-        item_Edt.setHint(EVENT_EDT_HINT.get(EVENT_DIALOG_STATE));
-        item_Edt.setText(event_Item.getEventName_Str());
-        item_Edt.setGravity(Gravity.START);
-        item_Edt.setTextColor(Color.BLACK);
-        item_Edt.setLayoutParams(params);
-        subView_RelLay.addView(item_Edt);
-
-        final Spinner item_Spin = new Spinner(this);
-        item_Spin.setGravity(Gravity.START);
-        item_Spin.setLayoutParams(params);
-
-        final DatePicker item_Date = new DatePicker(this);
-
-
-        // Add linear layout to alert dialog
-        alertDialog.setView(subView_RelLay);
-
-        // Set Buttons
-        // Positive Button, Right
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, EVENT_POS_BTN_TXT.get(EVENT_DIALOG_STATE), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // Processed by onClick below
-            }
-        });
-
-        // Neutral Button, Left
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, EVENT_NEU_BTN_TXT.get(EVENT_DIALOG_STATE), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // Processed by onClick below
-            }
-        });
-
-
-        new Dialog(getApplicationContext());
-        alertDialog.show();
-
-        // Set Buttons
-        final Button pos_Btn = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        final Button neu_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-
-        pos_Btn.setTextColor(POSITIVE_BTN_COLOR);
-        pos_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Perform Action on Positive button
-                switch (EVENT_DIALOG_STATE){
-                    case 0:
-                        // Name to location
-                        String item_Txt = item_Edt.getText().toString();
-
-                        boolean isEventNameEmpty = item_Txt.equals("");
-                        boolean isEventNameInDB = db.isEventNameInDB(mCurrentUserEmail_Str, item_Txt, event_Item.getEventID_Int());
-
-                        if (isEventNameEmpty) {
-                            // Check if the event name is empty
-                            item_Edt.setError(getString(R.string.error_field_required));
-                            item_Edt.requestFocus();
-                        } else if (isEventNameInDB) {
-                            // Check if the event name is already used in the database,
-                            // user cannot have 2 events with same name
-                            item_Edt.setError(getString(R.string.error_event_already_exists));
-                            item_Edt.requestFocus();
-                        } else {
-                            event_Item.setEventName_Str(item_Txt);
-                            item_Edt.setText(event_Item.getEventLocation_Str());
-                            EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
-                        }
-
-                        break;
-                    case 1:
-                        // Location to Gun
-                        item_Txt = item_Edt.getText().toString();
-
-                        event_Item.setEventLocation_Str(item_Txt);
-
-                        subView_RelLay.removeView(item_Edt);
-                        item_Spin.setAdapter(initializeGunSpinnerAdapt());
-                        subView_RelLay.addView(item_Spin);
-
-                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
-                        break;
-                    case 2:
-                        // Gun to Load
-                        item_Txt = item_Spin.toString();
-
-                        if (item_Txt.equals(DEFAULT_GUN_TEXT)) {
-                            item_Txt = "";
-                        }
-
-                        event_Item.setEventGun_Str(item_Txt);
-
-                        item_Spin.setAdapter(initializeLoadSpinnerAdapt());
-
-                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
-                        break;
-                    case 3:
-                        // Load to Date
-                        item_Txt = item_Spin.toString();
-
-                        if (item_Txt.equals(DEFAULT_LOAD_TEXT)) {
-                            item_Txt = "";
-                        }
-
-                        event_Item.setEventLoad_Str(item_Txt);
-
-                        subView_RelLay.removeView(item_Spin);
-                        subView_RelLay.addView(item_Date);
-
-                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
-                        break;
-                    case 4:
-                        // Date to Weather
-                        item_Txt = item_Date.toString();
-
-                        event_Item.setEventDate_Str(item_Txt);
-
-                        subView_RelLay.removeView(item_Date);
-                        subView_RelLay.addView(item_Edt);
-                        item_Edt.setText(event_Item.getEventWeather_Str());
-
-                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
-                        break;
-                    case 5:
-                        // Weather to Notes
-                        item_Txt = item_Edt.getText().toString();
-
-                        event_Item.setEventWeather_Str(item_Txt);
-                        item_Edt.setText(event_Item.getEventNotes_Str());
-
-                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
-                        break;
-                    case 6:
-                        // Notes to Saving event and closing dialog
-                        item_Txt = item_Edt.getText().toString();
-
-                        event_Item.setEventNotes_Str(item_Txt);
-
-                        saveEventToDB(event_Item);
-
-                        alertDialog.dismiss();
-
-                        Toast.makeText(PostEventActivity.this, "Event saved!",
-                                Toast.LENGTH_LONG).show();
-
-                        // Refresh event list view
-                        refreshEventListView();
-
-                        // Reset state counter
-                        EVENT_DIALOG_STATE = 0;
-                        break;
-                }
-
-                alertDialog.setMessage(EVENT_DIALOG_MSG.get(EVENT_DIALOG_STATE));
-                item_Edt.setHint(EVENT_EDT_HINT.get(EVENT_DIALOG_STATE));
-                pos_Btn.setText(EVENT_POS_BTN_TXT.get(EVENT_DIALOG_STATE));
-                neu_Btn.setText(EVENT_NEU_BTN_TXT.get(EVENT_DIALOG_STATE));
-            }
-        });
-
-        neu_Btn.setTextColor(NEUTRAL_BTN_COLOR);
-        neu_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Perform Action on Neutral button
-
-                switch (EVENT_DIALOG_STATE){
-                    case 0:
-                        // Name to cancel and close dialog
-                        alertDialog.dismiss();
-                        break;
-                    case 1:
-                        // Location to Name
-                        item_Edt.setText(event_Item.getEventName_Str());
-                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
-                        break;
-                    case 2:
-                        // Gun to Location
-                        item_Edt.setText(event_Item.getEventLocation_Str());
-
-                        subView_RelLay.removeView(item_Spin);
-                        subView_RelLay.addView(item_Edt);
-
-                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
-                        break;
-                    case 3:
-                        // Load to Gun
-                        item_Spin.setAdapter(initializeGunSpinnerAdapt());
-                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
-                        break;
-                    case 4:
-                        // Date to Load
-                        item_Spin.setAdapter(initializeLoadSpinnerAdapt());
-
-                        subView_RelLay.removeView(item_Date);
-                        subView_RelLay.addView(item_Spin);
-
-                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
-                        break;
-                    case 5:
-                        // Weather to Date
-                        subView_RelLay.removeView(item_Edt);
-                        subView_RelLay.addView(item_Date);
-
-                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
-                        break;
-                    case 6:
-                        // Notes to Weather
-                        item_Edt.setText(event_Item.getEventWeather_Str());
-                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
-                        break;
-                }
-
-                alertDialog.setMessage(EVENT_DIALOG_MSG.get(EVENT_DIALOG_STATE));
-                item_Edt.setHint(EVENT_EDT_HINT.get(EVENT_DIALOG_STATE));
-                pos_Btn.setText(EVENT_POS_BTN_TXT.get(EVENT_DIALOG_STATE));
-                neu_Btn.setText(EVENT_NEU_BTN_TXT.get(EVENT_DIALOG_STATE));
-            }
-
-        });
-    }
-
-    private ArrayAdapter<String> initializeGunSpinnerAdapt() {
-        /*******************************************************************************************
-         * Function: initializeGunSpinnerAdapt
-         *
-         * Purpose: Function initializes gun spinner for adding a new event
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        ArrayAdapter<String> tempGun_Adapt;
-        ArrayList<GunClass> tempGun_List;
-        ArrayList<String> tempGunStr_List = new ArrayList<>();
-
-        tempGun_List = db.getAllGunFromDB(mCurrentUserEmail_Str);
-
-        for (int i = 0; i < tempGun_List.size(); i++) {
-            GunClass tempGun = tempGun_List.get(i);
-            String gunItem_Str = tempGun.getGunNickname_Str();
-
-            tempGunStr_List.add(gunItem_Str);
-        }
-
-        if (tempGunStr_List.isEmpty()) {
-            tempGunStr_List.add(DEFAULT_GUN_TEXT);
-        }
-
-        tempGun_Adapt = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, tempGunStr_List);
-
-        return tempGun_Adapt;
-    }
-
-    private ArrayAdapter<String> initializeLoadSpinnerAdapt() {
-        /*******************************************************************************************
-         * Function: initializeLoadSpinnerAdapt
-         *
-         * Purpose: Function initializes load spinner for adding a new event
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        ArrayAdapter<String> tempLoad_Adapt;
-        ArrayList<LoadClass> tempLoad_List;
-        ArrayList<String> tempLoadStr_List = new ArrayList<>();
-
-        tempLoad_List = db.getAllLoadFromDB(mCurrentUserEmail_Str);
-
-        for (int i = 0; i < tempLoad_List.size(); i++) {
-            LoadClass tempLoad = tempLoad_List.get(i);
-            String loadItem_Str = tempLoad.getLoadNickname_Str();
-
-            tempLoadStr_List.add(loadItem_Str);
-        }
-
-        if (tempLoadStr_List.isEmpty()) {
-            tempLoadStr_List.add(DEFAULT_LOAD_TEXT);
-        }
-
-        tempLoad_Adapt = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, tempLoadStr_List);
-
-        return tempLoad_Adapt;
     }
 
     //************************************ Database Functions **************************************
@@ -750,26 +343,5 @@ public class PostEventActivity extends AppCompatActivity {
 
         db.insertShotInDB(temp_Shot);
     }
-
-    private void saveEventToDB(EventClass e){
-        /*******************************************************************************************
-         * Function: saveEventToDB
-         *
-         * Purpose: Function takes info necessary to save event to database
-         *
-         * Parameters: e (IN) - event object to save
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        db.insertEventInDB(e);
-    }
-
-    //************************************** Other Functions ***************************************
-    private Boolean isDefaultItemText(String Event) {
-        return (Event.equals(DEFAULT_EVENT_TEXT));
-    }
-
 
 }

@@ -238,7 +238,7 @@ public class EventClass {
                 "i.e. This was a good event!"));
     }
 
-    public void editEventDialog(final Context context) {
+    public void editEventDialog(final Context context, final TrapMasterListArrayAdapter adapter) {
         /*******************************************************************************************
          * Function: editEventDialog
          *
@@ -246,6 +246,7 @@ public class EventClass {
          *          an item, ID = -1 and email = current user email
          *
          * Parameters: context (IN) - Supplies the activity context to display dialog to
+         *             adapter (IN) - Array adapter to refresh when complete
          *
          * Returns: None
          *
@@ -366,7 +367,7 @@ public class EventClass {
                         // Gun to Load
                         item_Txt = item_Spin.toString();
 
-                        if (item_Txt.equals(context.getString(R.string.default_shot_text))) {
+                        if (item_Txt.equals(context.getString(R.string.add_gun_text))) {
                             item_Txt = "";
                         }
 
@@ -380,7 +381,7 @@ public class EventClass {
                         // Load to Date
                         item_Txt = item_Spin.toString();
 
-                        if (item_Txt.equals(context.getString(R.string.default_load_list_text))) {
+                        if (item_Txt.equals(context.getString(R.string.add_load_text))) {
                             item_Txt = "";
                         }
 
@@ -432,7 +433,7 @@ public class EventClass {
                                 Toast.LENGTH_LONG).show();
 
                         // Refresh event list view
-                        // TODO: find a way to refresh event list
+                        adapter.refreshEventArrayAdapter(db.getAllEventFromDB(getEventEmail_Str()));
 
                         // Reset state counter
                         EVENT_DIALOG_STATE = 0;
@@ -536,7 +537,7 @@ public class EventClass {
         }
 
         if (tempGunStr_List.isEmpty()) {
-            tempGunStr_List.add(context.getString(R.string.default_shot_text));
+            tempGunStr_List.add(context.getString(R.string.add_gun_text));
         }
 
         tempGun_Adapt = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, tempGunStr_List);
@@ -572,7 +573,7 @@ public class EventClass {
         }
 
         if (tempLoadStr_List.isEmpty()) {
-            tempLoadStr_List.add(context.getString(R.string.default_load_list_text));
+            tempLoadStr_List.add(context.getString(R.string.add_load_text));
         }
 
         tempLoad_Adapt = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, tempLoadStr_List);
@@ -580,13 +581,14 @@ public class EventClass {
         return tempLoad_Adapt;
     }
 
-    public void removeEventItemDialog(final Context context) {
+    public void removeEventItemDialog(final Context context, final TrapMasterListArrayAdapter adapter) {
         /*******************************************************************************************
          * Function: removeEventItemDialog
          *
          * Purpose: Function creates dialog and prompts user to remove a event item
          *
          * Parameters: context (IN) - Supplies the activity context to display dialog to
+         *             adapter (IN) - Array adapter to refresh when complete
          *
          * Returns: None
          *
@@ -664,7 +666,7 @@ public class EventClass {
                             Toast.LENGTH_LONG).show();
 
                     // Refresh event listview
-                    // TODO: find a way to refresh event list view
+                    adapter.refreshEventArrayAdapter(db.getAllEventFromDB(getEventEmail_Str()));
                 }
             });
         }

@@ -43,8 +43,6 @@ public class ArmoryActivity extends AppCompatActivity {
     //********************************** Variables and Constants ***********************************
     // General Constants
     private String TAG = "JRW";
-    private String DEFAULT_GUN_TEXT;
-    private String DEFAULT_LOAD_TEXT;
     private String ACTIVITY_TITLE;
     private String CURRENT_USER_KEY;
     private final int GUN_LIST_TAG = 3;
@@ -135,8 +133,6 @@ public class ArmoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
-        DEFAULT_GUN_TEXT = getString(R.string.default_gun_list_text);
-        DEFAULT_LOAD_TEXT = getString(R.string.default_load_list_text);
         ACTIVITY_TITLE = getString(R.string.armory_activity_title);
         CURRENT_USER_KEY = getString(R.string.current_user_key);
     }
@@ -168,7 +164,7 @@ public class ArmoryActivity extends AppCompatActivity {
                 GunClass temp_Gun = new GunClass();
                 temp_Gun.setGunID_Int(-1);
                 temp_Gun.setGunEmail_Str(mCurrentUserEmail_Str);
-                temp_Gun.editGunDialog(ArmoryActivity.this);
+                temp_Gun.editGunDialog(ArmoryActivity.this, mCustomGunList_Adapt);
             }
         });
 
@@ -180,7 +176,7 @@ public class ArmoryActivity extends AppCompatActivity {
                 LoadClass temp_Load = new LoadClass();
                 temp_Load.setLoadID_Int(-1);
                 temp_Load.setLoadEmail_Str(mCurrentUserEmail_Str);
-                temp_Load.editLoadDialog(ArmoryActivity.this);
+                temp_Load.editLoadDialog(ArmoryActivity.this, mCustomLoadList_Adapt);
             }
         });
 
@@ -219,31 +215,14 @@ public class ArmoryActivity extends AppCompatActivity {
         ArrayList<GunClass> userGun_List = db.getAllGunFromDB(mCurrentUserEmail_Str);
 
         GunClass temp_Gun = new GunClass();
-        temp_Gun.setGunNickname_Str("No guns");
-        temp_Gun.setGunNotes_Str("Click the add button for a new gun!");
+        temp_Gun.setGunNickname_Str(getString(R.string.no_gun_main_text));
+        temp_Gun.setGunNotes_Str(getString(R.string.no_gun_second_text));
 
         if (userGun_List.isEmpty()) {
             userGun_List.add(temp_Gun);
         }
 
         return userGun_List;
-    }
-
-    private void refreshGunListView() {
-        /*******************************************************************************************
-         * Function: refreshGunListView
-         *
-         * Purpose: Function refreshes the gun list view with current gun data from database
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        mCustomGunList_Adapt.clear();
-        mCustomGunList_Adapt.addAll(refreshGunList());
-        mCustomGunList_Adapt.notifyDataSetChanged();
     }
 
     private void initializeGunListView() {
@@ -286,31 +265,14 @@ public class ArmoryActivity extends AppCompatActivity {
         ArrayList<LoadClass> userLoad_List = db.getAllLoadFromDB(mCurrentUserEmail_Str);
 
         LoadClass temp_Load = new LoadClass();
-        temp_Load.setLoadNickname_Str("No loads");
-        temp_Load.setLoadNotes_Str("Click the add button for a new load!");
+        temp_Load.setLoadNickname_Str(getString(R.string.no_load_main_text));
+        temp_Load.setLoadNotes_Str(getString(R.string.no_load_second_text));
 
         if (userLoad_List.isEmpty()) {
             userLoad_List.add(temp_Load);
         }
 
         return userLoad_List;
-    }
-
-    private void refreshLoadListView() {
-        /*******************************************************************************************
-         * Function: refreshLoadListView
-         *
-         * Purpose: Function refreshes the load list view with current load data from database
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        mCustomLoadList_Adapt.clear();
-        mCustomLoadList_Adapt.addAll(refreshLoadList());
-        mCustomLoadList_Adapt.notifyDataSetChanged();
     }
 
     private void initializeLoadListView() {
