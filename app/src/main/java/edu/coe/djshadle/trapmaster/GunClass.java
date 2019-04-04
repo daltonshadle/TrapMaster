@@ -286,7 +286,7 @@ public class GunClass {
         /*******************************************************************************************
          * Function: editGunDialog
          *
-         * Purpose: Function creates dialog and prompts user to add or edit a gun item if adding
+         * Purpose: Function creates dialog and prompts user to add or edit a gun item, if adding
          *          an item, ID = -1 and email = current user email
          *
          * Parameters: context (IN) - Supplies the activity context to display dialog to

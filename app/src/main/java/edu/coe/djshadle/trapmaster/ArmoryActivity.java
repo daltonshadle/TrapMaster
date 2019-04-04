@@ -56,12 +56,8 @@ public class ArmoryActivity extends AppCompatActivity {
     private boolean isPortrait = true;
     // Gun
     private TrapMasterListArrayAdapter mCustomGunList_Adapt;
-    private ArrayList<GunClass> mUserGun_List;
     // Load
     private TrapMasterListArrayAdapter mCustomLoadList_Adapt;
-    private ArrayList<LoadClass> mUserLoad_List;
-    private int LOAD_DIALOG_STATE = 0;
-    private ArrayList<String> LOAD_DIALOG_MSG, LOAD_POS_BTN_TXT, LOAD_NEU_BTN_TXT, LOAD_EDT_HINT;
 
     // UI References
     private ListView mGunList_View, mLoadList_View;
@@ -216,21 +212,21 @@ public class ArmoryActivity extends AppCompatActivity {
          *
          * Parameters: None
          *
-         * Returns: mUserGunList - a list of guns for current user
+         * Returns: userGun_List - a list of guns for current user
          *
          ******************************************************************************************/
 
-        mUserGun_List = db.getAllGunFromDB(mCurrentUserEmail_Str);
+        ArrayList<GunClass> userGun_List = db.getAllGunFromDB(mCurrentUserEmail_Str);
 
         GunClass temp_Gun = new GunClass();
         temp_Gun.setGunNickname_Str("No guns");
         temp_Gun.setGunNotes_Str("Click the add button for a new gun!");
 
-        if (mUserGun_List.isEmpty()) {
-            mUserGun_List.add(temp_Gun);
+        if (userGun_List.isEmpty()) {
+            userGun_List.add(temp_Gun);
         }
 
-        return mUserGun_List;
+        return userGun_List;
     }
 
     private void refreshGunListView() {
@@ -268,14 +264,6 @@ public class ArmoryActivity extends AppCompatActivity {
 
             mGunList_View.setAdapter(mCustomGunList_Adapt);
 
-            mGunList_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    int tempGunID_Int = (int) view.getTag();
-                    Log.d(TAG, "OnItemClick for gun ID is here: " + tempGunID_Int + " for " + mCurrentUserEmail_Str);
-                }
-            });
-
         } catch (Exception e){
             Log.d("JRW", "no guns in db for this user");
         }
@@ -291,21 +279,21 @@ public class ArmoryActivity extends AppCompatActivity {
          *
          * Parameters: None
          *
-         * Returns: mUserLoad_List - a list of loads for current user
+         * Returns: userLoad_List - a list of loads for current user
          *
          ******************************************************************************************/
 
-        mUserLoad_List = db.getAllLoadFromDB(mCurrentUserEmail_Str);
+        ArrayList<LoadClass> userLoad_List = db.getAllLoadFromDB(mCurrentUserEmail_Str);
 
         LoadClass temp_Load = new LoadClass();
         temp_Load.setLoadNickname_Str("No loads");
         temp_Load.setLoadNotes_Str("Click the add button for a new load!");
 
-        if (mUserLoad_List.isEmpty()) {
-            mUserLoad_List.add(temp_Load);
+        if (userLoad_List.isEmpty()) {
+            userLoad_List.add(temp_Load);
         }
 
-        return mUserLoad_List;
+        return userLoad_List;
     }
 
     private void refreshLoadListView() {

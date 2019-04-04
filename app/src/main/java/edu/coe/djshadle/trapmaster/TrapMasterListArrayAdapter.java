@@ -86,7 +86,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
         switch ((int) parent.getTag()) {
             case SHOT_LIST_TAG:
                 // Item is a shot class object
-                ShotClass current_Shot = shotClass_List.get(position);
+                final ShotClass current_Shot = shotClass_List.get(position);
 
                 String main_Str = current_Shot.getShotEventName_Str();
                 String second_Str = current_Shot.getShotNotes_Str();
@@ -107,10 +107,34 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                 listItemMain_Txt.setText(main_Str);
                 listItemSecond_Txt.setText(second_Str);
 
+                // Set on click for whole view
+                listItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d(TAG, Integer.toString(current_Shot.getShotID_Int()));
+                    }
+                });
+
+                // Set on click for edit button
+                listItemEdit_Btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        current_Shot.editShotDialog(parentContext);
+                    }
+                });
+
+                // Set on click for delete button
+                listItemDelete_Btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        current_Shot.removeShotItemDialog(parentContext);
+                    }
+                });
+
                 break;
             case EVENT_LIST_TAG:
                 // Item is an event class object
-                EventClass current_Event = eventClass_List.get(position);
+                final EventClass current_Event = eventClass_List.get(position);
 
                 main_Str = current_Event.getEventName_Str();
                 second_Str = current_Event.getEventNotes_Str();
@@ -130,6 +154,30 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
 
                 listItemMain_Txt.setText(main_Str);
                 listItemSecond_Txt.setText(second_Str);
+
+                // Set on click for whole view
+                listItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d(TAG, Integer.toString(current_Event.getEventID_Int()));
+                    }
+                });
+
+                // Set on click for edit button
+                listItemEdit_Btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        current_Event.editEventDialog(parentContext);
+                    }
+                });
+
+                // Set on click for delete button
+                listItemDelete_Btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        current_Event.removeEventItemDialog(parentContext);
+                    }
+                });
 
                 break;
             case GUN_LIST_TAG:
