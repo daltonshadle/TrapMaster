@@ -56,6 +56,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     //********************************** Variables and Constants ***********************************
     // General Constants
+    private String TAG = "JRW";
     private String ACTIVITY_TITLE;
     private String CURRENT_USER_KEY;
     private final boolean PORTRAIT_ORIENTATION = false; // Allow portrait orientation, landscape
@@ -118,6 +119,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         }
 
         initializeViews();
+
+        Log.d(TAG, "On Create");
     }
 
     public void onConfigurationChanged(Configuration newConfig) {
@@ -142,6 +145,11 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             setContentView(R.layout.activity_new_event_landscape);
         }
 
+        trapState_Array = trapScore_View.getAllStates();
+        initializeViews();
+        trapScore_View.setAllStates(trapState_Array);
+
+        Log.d(TAG, "On Config Change");
     }
 
     @Override
@@ -164,6 +172,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         trapState_Array = trapScore_View.getAllStates();
         savedInstanceState.putIntegerArrayList(TRAP_STATE_KEY, trapState_Array);
+
+        Log.d(TAG, "On saved instance");
     }
 
     @Override
@@ -186,6 +196,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         trapState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
         trapScore_View.setAllStates(trapState_Array);
 
+        Log.d(TAG, "On restore instance");
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -287,9 +298,6 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                 }
             }
         });
-
-        // Initializing integer array for trap states
-        trapState_Array = trapScore_View.getAllStates();
 
         // Initializing database variable
         db = new DBHandler(getApplicationContext());

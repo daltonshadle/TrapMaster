@@ -42,15 +42,15 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
     private OnTotalHitChange totalHitChange;
 
     // UI References
-    ArrayList<TrapTernaryButtonClass> mTrapTernaryBtn_List;
-    ArrayList<LinearLayout> mLaneLay_List;
-    ConstraintLayout mWholeView_Lay;
-    TextView mRound_Txt;
-    TextView mUserEmail_Txt;
-    TextView mScore_Txt;
-    Button mMiss_Btn;
-    Button mHit_Btn;
-    Button mClear_Btn;
+    private ArrayList<TrapTernaryButtonClass> mTrapTernaryBtn_List;
+    private ArrayList<LinearLayout> mLaneLay_List;
+    private ConstraintLayout mWholeView_Lay;
+    private TextView mRound_Txt;
+    private TextView mUserEmail_Txt;
+    private TextView mScore_Txt;
+    private Button mMiss_Btn;
+    private Button mHit_Btn;
+    private Button mClear_Btn;
 
     //************************************* Public Functions ***************************************
     // Constructors
@@ -644,5 +644,6 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
             child.setStage(allStates.get(i));
         }
 
+        OnStageChange();
     }
 }
