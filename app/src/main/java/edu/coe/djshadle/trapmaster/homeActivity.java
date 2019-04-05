@@ -287,7 +287,9 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
         auth.addAuthStateListener(authListener);
+
     }
+
 
     //************************************** Other Functions ***************************************
 }

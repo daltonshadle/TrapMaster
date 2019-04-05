@@ -52,7 +52,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NewEventActivity extends AppCompatActivity implements OnTotalHitChange, View.OnClickListener {
+public class NewEventActivity extends AppCompatActivity implements OnTotalHitChange {
 
     //********************************** Variables and Constants ***********************************
     // General Constants
@@ -60,29 +60,19 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     private String CURRENT_USER_KEY;
     private final boolean PORTRAIT_ORIENTATION = false; // Allow portrait orientation, landscape
                                                         // is the default TODO: Support Portrait
-    private final int HIT = 0, MISS = 1, NEUTRAL = 2;
-    private final int NUM_COUNTER_BUTTON = 5;
     private final int TOTAL_NUM_SHOTS = 25;
     private final String TRAP_STATE_KEY = "TRAP_STATE_KEY";
-    private final double HIT_MISS_TEXT_SF = 0.10;
-    private final int HEIGHT_SF = 3, WIDTH_SF = 5;
 
     // General Variables
-    private int trapCounterChildCount_Int = 0;
     private int totalHits_Int = 0;
     private boolean quickEventFlag_Bool;
-    private ArrayList<Integer> trapCounterState_Array;
-    private String mCurrentUserEmail_Str = "tempEmail";
+    private ArrayList<Integer> trapState_Array;
+    private String mCurrentUserEmail_Str = "Quick Event";
     DBHandler db;
 
     // UI References
-    private TextView mTxtTotalScore_View;
-    private LinearLayout mTrapCounter_SubLnrLay;
-    private LinearLayout mHitMiss_SubLnrLay;
-    private Button mHit_Btn;
-    private Button mMiss_Btn;
+    TrapScoreItemClass trapScore_View;
     private Button mSave_Btn;
-    private Button mClear_Btn;
 
     //Google Variables
     FirebaseAuth auth;
@@ -114,16 +104,20 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             setContentView(R.layout.activity_new_event_landscape);
         }
 
-        initializeViews();
-
         if (savedInstanceState != null) {
-            trapCounterState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
-            setTrapCounterStates(trapCounterState_Array);
+            trapState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
+            trapScore_View.setAllStates(trapState_Array);
 
         } else {
             mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
             quickEventFlag_Bool = getIntent().getBooleanExtra(getString(R.string.quick_event_flag_key), false);
         }
+
+        if (mCurrentUserEmail_Str == null) {
+            mCurrentUserEmail_Str = "Quick Event";
+        }
+
+        initializeViews();
     }
 
     public void onConfigurationChanged(Configuration newConfig) {
@@ -168,8 +162,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
 
-        getTrapCounterStates();
-        savedInstanceState.putIntegerArrayList(TRAP_STATE_KEY, trapCounterState_Array);
+        trapState_Array = trapScore_View.getAllStates();
+        savedInstanceState.putIntegerArrayList(TRAP_STATE_KEY, trapState_Array);
     }
 
     @Override
@@ -189,8 +183,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         // Restore UI state from the savedInstanceState.
         // This bundle has also been passed to onCreate.
 
-        trapCounterState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
-        setTrapCounterStates(trapCounterState_Array);
+        trapState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
+        trapScore_View.setAllStates(trapState_Array);
 
     }
 
@@ -266,47 +260,39 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          ******************************************************************************************/
 
         // Initializing all trap counters
-        TrapCounterButtonsClass trapCount_1 = findViewById(R.id.tcbCounter1);
-        TrapCounterButtonsClass trapCount_2 = findViewById(R.id.tcbCounter2);
-        TrapCounterButtonsClass trapCount_3 = findViewById(R.id.tcbCounter3);
-        TrapCounterButtonsClass trapCount_4 = findViewById(R.id.tcbCounter4);
-        TrapCounterButtonsClass trapCount_5 = findViewById(R.id.tcbCounter5);
-
-        trapCount_1.setTotalHitChange(this);
-        trapCount_2.setTotalHitChange(this);
-        trapCount_3.setTotalHitChange(this);
-        trapCount_4.setTotalHitChange(this);
-        trapCount_5.setTotalHitChange(this);
+        trapScore_View = findViewById(R.id.newEventTrapScore_View);
+        trapScore_View.setTotalHitChange(this);
+        trapScore_View.setRoundText(1);
+        trapScore_View.setUserEmailText(mCurrentUserEmail_Str);
 
         // Initializing all buttons
-        mHit_Btn = findViewById(R.id.hit_Btn);
-        mMiss_Btn = findViewById(R.id.miss_Btn);
         mSave_Btn = findViewById(R.id.save_Btn);
-        mClear_Btn = findViewById(R.id.clear_Btn);
+        mSave_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (trapScore_View.allChecked()) {
+                    // All traps are checked and ready to save
+                    Log.d("JRW", "Save button quick event: " + Boolean.toString(quickEventFlag_Bool));
+                    if (quickEventFlag_Bool) {
+                        // Quick Event, must have them log in
+                        quickEventLogin();
+                    } else {
+                        // Not a quick event, launch post event dialog
+                        postEventDialog();
+                    }
+                } else {
+                    // Not all traps are checked, not ready to save
+                    Toast.makeText(NewEventActivity.this,
+                            "All scoring buttons need to be checked", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
-        mHit_Btn.setOnClickListener(this);
-        mMiss_Btn.setOnClickListener(this);
-        mSave_Btn.setOnClickListener(this);
-        mClear_Btn.setOnClickListener(this);
-
-        // Initializing all textviews
-        mTxtTotalScore_View = findViewById(R.id.totalScore_Txt);
-
-        // Initializing all layouts
-        mTrapCounter_SubLnrLay = findViewById(R.id.newEventTrapCounter_SubLnrLay);
-        mHitMiss_SubLnrLay = findViewById(R.id.newEventHitMiss_SubLnrLay);
-
-        // Initializing integer to layout child count
-        trapCounterChildCount_Int = mTrapCounter_SubLnrLay.getChildCount();
-
-        // Initializing integer array for trap counter states (5 buttons per counter)
-        trapCounterState_Array = new ArrayList<Integer>(trapCounterChildCount_Int);
+        // Initializing integer array for trap states
+        trapState_Array = trapScore_View.getAllStates();
 
         // Initializing database variable
         db = new DBHandler(getApplicationContext());
-
-        // Resizing buttons and text
-        scaleHitMissViews(WIDTH_SF, HEIGHT_SF);
 
         // Initialize Google/Firebase Auth
         auth = FirebaseAuth.getInstance();
@@ -317,6 +303,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         } catch (Exception e) {
             // Didn't work.
         }
+
     }
 
     @Override
@@ -333,215 +320,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          ******************************************************************************************/
 
-        totalHits_Int = 0;
-
-        for (int i = 0; i < trapCounterChildCount_Int; i++){
-            TrapCounterButtonsClass tempTrapCounter =
-                    (TrapCounterButtonsClass) mTrapCounter_SubLnrLay.getChildAt(i);
-            totalHits_Int += tempTrapCounter.getTotalNumberHit();
-        }
-
-        mTxtTotalScore_View.setText(String.valueOf(totalHits_Int));
-    }
-
-    @Override
-    public void onClick(View view) {
-        /*******************************************************************************************
-         * Function: OnClick
-         *
-         * Purpose: Function listener for buttons that provides functionality when clicked
-         *
-         * Parameters: view (IN) - is the clicked view that enacted listener
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        switch (view.getId()) {
-            case R.id.hit_Btn:
-                setNextUncheckedTrapCounter(HIT);
-                break;
-            case R.id.miss_Btn:
-                setNextUncheckedTrapCounter(MISS);
-                break;
-            case R.id.clear_Btn:
-                resetAllTrapCounter();
-                break;
-            case R.id.save_Btn:
-                if (isAllTrapCounterChecked()) {
-                    // All traps are checked and ready to save
-                    Log.d("JRW", "Save button quick event: " + Boolean.toString(quickEventFlag_Bool));
-                    if (quickEventFlag_Bool) {
-                        // Quick Event, must have them log in
-                        quickEventLogin();
-                    } else {
-                        // Not a quick event, launch post event dialog
-                        postEventDialog();
-                    }
-                } else {
-                    // Not all traps are checked, not ready to save
-                    Toast.makeText(NewEventActivity.this,
-                            "All scoring buttons need to be checked", Toast.LENGTH_LONG).show();
-                }
-                break;
-        }
-    }
-    
-    private void scaleHitMissViews(int widthSF, int heightSF) {
-        int screenWidth = getResources().getDisplayMetrics().widthPixels;
-        int screenHeight = getResources().getDisplayMetrics().heightPixels;
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(screenWidth/widthSF, ViewGroup.LayoutParams.MATCH_PARENT);
-        mHitMiss_SubLnrLay.setLayoutParams(params);
-
-        mHit_Btn.setTextSize((float) HIT_MISS_TEXT_SF * screenHeight/ heightSF);
-        mMiss_Btn.setTextSize((float) HIT_MISS_TEXT_SF * screenHeight/ heightSF);
-        mTxtTotalScore_View.setTextSize((float) HIT_MISS_TEXT_SF * screenHeight/ heightSF);
-    }
-
-    //********************************** Trap Counter Functions ************************************
-    private int getNextUncheckedTrapCounter() {
-        /*******************************************************************************************
-         * Function: getNextUncheckedTrapCounter
-         *
-         * Purpose: Function iterates through all trap counters to find the next neutral child
-         *
-         * Parameters: None
-         *
-         * Returns: nextChild - index of the next neutral child
-         *
-         ******************************************************************************************/
-
-        int nextChild = -1;
-
-        for (int i = 0; i < trapCounterChildCount_Int; i++) {
-            TrapCounterButtonsClass tempTrapCounter =
-                    (TrapCounterButtonsClass) mTrapCounter_SubLnrLay.getChildAt(i);
-            if (!tempTrapCounter.allChecked()) {
-                nextChild = i;
-                break;
-            }
-        }
-
-        return nextChild;
-    }
-
-    private void setNextUncheckedTrapCounter(int status) {
-        /*******************************************************************************************
-         * Function: setNextUncheckedTrapCounter
-         *
-         * Purpose: Function sets next unchecked child to the status provided as parameter
-         *
-         * Parameters: status - provides the status for what the next neutral child should be set to
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        int nextUnchecked = getNextUncheckedTrapCounter();
-
-        if (nextUnchecked != -1) {
-            TrapCounterButtonsClass tempTrapCounter =
-                    (TrapCounterButtonsClass) mTrapCounter_SubLnrLay.getChildAt(nextUnchecked);
-
-            tempTrapCounter.setNextChild(status);
-        }
-    }
-
-    private void getTrapCounterStates() {
-        /*******************************************************************************************
-         * Function: getTrapCounterStates
-         *
-         * Purpose: Function iterates through all trap counters collecting states and sets ArrayList
-         *          to states of trap counters (used for saved instances)
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        for (int i = 0; i < trapCounterChildCount_Int; i++) {
-            TrapCounterButtonsClass tempTrapCounter =
-                    (TrapCounterButtonsClass) mTrapCounter_SubLnrLay.getChildAt(i);
-
-            ArrayList<Integer> tempTrapCounterStates = tempTrapCounter.getChildStates();
-            for (int j = 0; j < NUM_COUNTER_BUTTON; j++) {
-                trapCounterState_Array.add(tempTrapCounterStates.get(j));
-            }
-        }
-    }
-
-    private void setTrapCounterStates(ArrayList<Integer> stateList) {
-        /*******************************************************************************************
-         * Function: setTrapCounterStates
-         *
-         * Purpose: Function iterates through all trap counters setting states determined
-         *          by stateList
-         *
-         * Parameters: stateList (IN) - provides previous states for all trap counters
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        for (int i = 0; i < trapCounterChildCount_Int; i++) {
-            TrapCounterButtonsClass tempTrapCounter =
-                    (TrapCounterButtonsClass) mTrapCounter_SubLnrLay.getChildAt(i);
-            tempTrapCounter.resetTrapCounter();
-
-            for (int j = 0; j < NUM_COUNTER_BUTTON; j++) {
-                int index = (i * NUM_COUNTER_BUTTON) + j;
-                tempTrapCounter.setNextChild(stateList.get(index));
-            }
-        }
-    }
-
-    private boolean isAllTrapCounterChecked() {
-        /*******************************************************************************************
-         * Function: isAllTrapCounterChecked
-         *
-         * Purpose: Function iterates through all trap counters checking states
-         *
-         * Parameters: None
-         *
-         * Returns: allChecked - returns true if all buttons are checked
-         *
-         ******************************************************************************************/
-
-        boolean allChecked = true;
-
-        for (int i = 0; i < trapCounterChildCount_Int; i++) {
-            TrapCounterButtonsClass tempTrapCounter =
-                    (TrapCounterButtonsClass) mTrapCounter_SubLnrLay.getChildAt(i);
-
-            if(!tempTrapCounter.allChecked()) {
-                allChecked = false;
-                break;
-            }
-        }
-
-        return allChecked;
-    }
-
-    private void resetAllTrapCounter() {
-        /*******************************************************************************************
-         * Function: resetAllTrapCounter
-         *
-         * Purpose: Function iterates through all trap counters resetting states to neutral and
-         *          clearing the score
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        for (int i = 0; i < (mTrapCounter_SubLnrLay.getChildCount()); i++) {
-            TrapCounterButtonsClass tempTrapCounter =
-                    (TrapCounterButtonsClass) mTrapCounter_SubLnrLay.getChildAt(i);
-            tempTrapCounter.resetTrapCounter();
-        }
+        totalHits_Int = trapScore_View.getTotalNumberHit();
     }
 
     //************************************ Database Functions **************************************

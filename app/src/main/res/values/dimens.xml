@@ -29,6 +29,9 @@
     <dimen name="ListItemMargin">5dp</dimen>
     <dimen name="ListItemScoreTextSize">45sp</dimen>
 
+    <!-- Trap Ternary Button Dimensions -->
+    <dimen name="CircleTrapButton">25dp</dimen>
+
     <!-- General Dimensions -->
     <dimen name="CirclePlusAddButtonDim">55dp</dimen>
 

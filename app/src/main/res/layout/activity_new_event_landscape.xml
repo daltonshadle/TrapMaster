@@ -5,103 +5,22 @@
     android:orientation="horizontal">
 
     <LinearLayout
-        android:id="@+id/newEventHitMiss_SubLnrLay"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/hit_Btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:backgroundTint="@color/hit"
-            android:text="@string/hit_string"
-            android:textSize="30sp" />
-
-        <Button
-            android:id="@+id/miss_Btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:backgroundTint="@color/miss"
-            android:text="@string/miss_string"
-            android:textSize="30sp" />
-
-        <TextView
-            android:id="@+id/totalScore_Txt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="0"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textSize="30sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/newEventButtons_SubLnrLay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/newEventTrapCounter_SubLnrLay"
+        <edu.coe.djshadle.trapmaster.TrapScoreItemClass
+            android:id="@+id/newEventTrapScore_View"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <edu.coe.djshadle.trapmaster.TrapCounterButtonsClass
-                android:id="@+id/tcbCounter1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal" />
-
-            <edu.coe.djshadle.trapmaster.TrapCounterButtonsClass
-                android:id="@+id/tcbCounter2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal" />
-
-            <edu.coe.djshadle.trapmaster.TrapCounterButtonsClass
-                android:id="@+id/tcbCounter3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal" />
-
-            <edu.coe.djshadle.trapmaster.TrapCounterButtonsClass
-                android:id="@+id/tcbCounter4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal" />
-
-            <edu.coe.djshadle.trapmaster.TrapCounterButtonsClass
-                android:id="@+id/tcbCounter5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal" />
-
-        </LinearLayout>
+            android:layout_height="wrap_content" />
 
         <LinearLayout
             android:id="@+id/newEventClearSave_SubLnrLay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/clear_Btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="CLEAR" />
 
             <Button
                 android:id="@+id/save_Btn"
