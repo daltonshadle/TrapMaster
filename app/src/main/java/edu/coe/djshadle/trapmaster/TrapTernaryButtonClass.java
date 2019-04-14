@@ -308,4 +308,20 @@ public class TrapTernaryButtonClass extends RelativeLayout implements View.OnCli
         setButtonColor(btnStage_Int);
         invalidate();
     }
+
+    public void setSize(int size_Int){
+        /*******************************************************************************************
+         * Function: setSize
+         *
+         * Purpose: Function sets the size of the button
+         *
+         * Parameters: size_Int (IN) - dimension size for the button
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        LayoutParams params = new LayoutParams(size_Int, size_Int);
+        mTrapTernary_Btn.setLayoutParams(params);
+    }
 }

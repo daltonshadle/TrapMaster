@@ -15,10 +15,14 @@ package edu.coe.djshadle.trapmaster;
 
 //******************************************** Imports *********************************************
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,15 +34,17 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class TrapScoreItemClass extends ConstraintLayout implements OnStageChangeListener{
+public class TrapScoreItemClass extends ConstraintLayout implements OnStageChangeListener {
     //********************************** Variables and Constants ***********************************
     // General Constants
     private final static int HIT = 0, MISS = 1, NEUTRAL = 2;
     private final int NUM_LANES = 5;
     private final int NUM_BUTTONS_PER_LANE = 5;
+    private final String TAG = "JRW";
 
     // General Variables
     private int viewScore_Int = 0;
+    private boolean viewExpand_Bool = true;
     private OnTotalHitChange totalHitChange;
 
     // UI References
@@ -284,6 +290,7 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
         set.connect(rightMost_Lay.getId(), ConstraintSet.RIGHT, mWholeView_Lay.getId(), ConstraintSet.RIGHT, margin_Int);
         set.applyTo(mWholeView_Lay);
 
+        collapseView(context);
     }
 
     private void initializeBtns(Context context){
@@ -646,4 +653,78 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
 
         OnStageChange();
     }
+
+    //************************************** Expand Functions **************************************
+    public boolean getExpandBool(){
+        /*******************************************************************************************
+         * Function: getExpandBool
+         *
+         * Purpose: Function returns viewExpand_Bool
+         *
+         * Parameters: None
+         *
+         * Returns: viewExpand_Bool
+         *
+         ******************************************************************************************/
+
+        return viewExpand_Bool;
+    }
+
+    public void expandView(Context context){
+        /*******************************************************************************************
+         * Function: expandView
+         *
+         * Purpose: Function expands view to show all trap buttons
+         *
+         * Parameters: context (IN) - context for initializing views
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Set lanes to vertical
+        for (int i = 0; i < mLaneLay_List.size(); i++) {
+            mLaneLay_List.get(i).setOrientation(LinearLayout.VERTICAL);
+        }
+
+        // Set all trap button size to default
+        for (int i = 0; i < mTrapTernaryBtn_List.size(); i++) {
+            TrapTernaryButtonClass temp_Btn = mTrapTernaryBtn_List.get(i);
+            temp_Btn.setSize((int)context.getResources().getDimension(R.dimen.CircleTrapButton));
+        }
+
+        // Set boolean
+        viewExpand_Bool = true;
+    }
+
+    public void collapseView(Context context){
+        /*******************************************************************************************
+         * Function: collapseView
+         *
+         * Purpose: Function collapses view to a condensed form
+         *
+         * Parameters: context (IN) - context for initializing views
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        int width_Int = Resources.getSystem().getDisplayMetrics().widthPixels/35;
+
+        // Set lanes to horizontal
+        for (int i = 0; i < mLaneLay_List.size(); i++) {
+            mLaneLay_List.get(i).setOrientation(LinearLayout.HORIZONTAL);
+        }
+
+        // Set all trap button size to default
+        for (int i = 0; i < mTrapTernaryBtn_List.size(); i++) {
+            TrapTernaryButtonClass temp_Btn = mTrapTernaryBtn_List.get(i);
+            temp_Btn.setSize(width_Int);
+        }
+
+        // Set boolean
+        viewExpand_Bool = false;
+
+    }
+
 }

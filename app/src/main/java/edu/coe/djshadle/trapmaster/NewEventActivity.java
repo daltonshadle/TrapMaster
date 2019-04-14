@@ -275,6 +275,17 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         trapScore_View.setTotalHitChange(this);
         trapScore_View.setRoundText(1);
         trapScore_View.setUserEmailText(mCurrentUserEmail_Str);
+        trapScore_View.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "Custom View OnClick");
+                if (trapScore_View.getExpandBool()){
+                    trapScore_View.collapseView(NewEventActivity.this);
+                } else {
+                    trapScore_View.expandView(NewEventActivity.this);
+                }
+            }
+        });
 
         // Initializing all buttons
         mSave_Btn = findViewById(R.id.save_Btn);
