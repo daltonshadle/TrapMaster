@@ -709,7 +709,7 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
          *
          ******************************************************************************************/
 
-        int width_Int = Resources.getSystem().getDisplayMetrics().widthPixels/35;
+        int width_Int = mWholeView_Lay.getWidth()/35;
 
         // Set lanes to horizontal
         for (int i = 0; i < mLaneLay_List.size(); i++) {
