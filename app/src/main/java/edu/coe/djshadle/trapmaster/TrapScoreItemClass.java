@@ -14,11 +14,15 @@
 package edu.coe.djshadle.trapmaster;
 
 //******************************************** Imports *********************************************
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -27,10 +31,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -112,7 +118,7 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
     }
 
     //************************************* UI View Functions **************************************
-    private void initializeViews(Context context){
+    private void initializeViews(final Context context){
         /*******************************************************************************************
          * Function: initializeViews
          *
@@ -148,6 +154,15 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
 
         // Initialize buttons
         initializeBtns(context);
+
+        // A bad way to get the TrapScoreItem to start collapsed since we need to measure width
+        ViewTreeObserver vto = mWholeView_Lay.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                collapseView(context);
+            }
+        });
     }
 
     private void initializeTxtViews(){
@@ -289,11 +304,9 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
         set.connect(rightMost_Lay.getId(), ConstraintSet.TOP, mRound_Txt.getId(), ConstraintSet.BOTTOM, margin_Int);
         set.connect(rightMost_Lay.getId(), ConstraintSet.RIGHT, mWholeView_Lay.getId(), ConstraintSet.RIGHT, margin_Int);
         set.applyTo(mWholeView_Lay);
-
-        collapseView(context);
     }
 
-    private void initializeBtns(Context context){
+    private void initializeBtns(final Context context){
         /*******************************************************************************************
          * Function: initializeBtns
          *
@@ -338,22 +351,6 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
             }
         });
 
-        // Init clear button
-        mClear_Btn = new Button(context);
-        mClear_Btn.setId(View.generateViewId());
-        mClear_Btn.setText("CLEAR");
-        mClear_Btn.setTextSize(textSize_Int);
-        mClear_Btn.setPadding(padding_Int, padding_Int, padding_Int, padding_Int);
-        mClear_Btn.setBackgroundColor(ContextCompat.getColor(context, R.color.neutral));
-        mClear_Btn.setLayoutParams(btnParams);
-
-        mClear_Btn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                resetTrapCounter();
-            }
-        });
-
         // Init miss button
         mMiss_Btn = new Button(context);
         mMiss_Btn.setId(View.generateViewId());
@@ -370,8 +367,24 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
             }
         });
 
-        btn_Lay.addView(mMiss_Btn);
+        // Init clear button
+        mClear_Btn = new Button(context);
+        mClear_Btn.setId(View.generateViewId());
+        mClear_Btn.setText("CLEAR");
+        mClear_Btn.setTextSize(textSize_Int);
+        mClear_Btn.setPadding(padding_Int, padding_Int, padding_Int, padding_Int);
+        mClear_Btn.setBackgroundColor(ContextCompat.getColor(context, R.color.neutral));
+        mClear_Btn.setLayoutParams(btnParams);
+
+        mClear_Btn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clearBtnDialog(context);
+            }
+        });
+
         btn_Lay.addView(mClear_Btn);
+        btn_Lay.addView(mMiss_Btn);
         btn_Lay.addView(mHit_Btn);
 
         // Set btn_lay in layout
@@ -379,7 +392,6 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
         set.clone(mWholeView_Lay);
         set.connect(btn_Lay.getId(), ConstraintSet.TOP, refLane_Lay.getId(), ConstraintSet.BOTTOM, margin_Int);
         set.applyTo(mWholeView_Lay);
-
     }
 
     protected void onFinishInflate(){
@@ -654,6 +666,108 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
         OnStageChange();
     }
 
+    public void clearBtnDialog(final Context context){
+        /*******************************************************************************************
+         * Function: clearBtnDialog
+         *
+         * Purpose: Function creates dialog and prompts user to clear buttons
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        final String DIALOG_TITLE = "Clear Score";
+        final String DIALOG_MSG = "Are you sure you want to clear this score?";
+
+        final boolean POSITIVE_BTN = true;  // Right
+        final boolean NEUTRAL_BTN = false;   // Left
+        final boolean NEGATIVE_BTN = true;  // Middle
+
+        final String POSITIVE_BUTTON_TXT = "CLEAR";
+        final String NEUTRAL_BUTTON_TXT = "";
+        final String NEGATIVE_BUTTON_TXT = "CANCEL";
+
+        final int POSITIVE_BTN_COLOR = Color.BLUE;
+        final int NEUTRAL_BTN_COLOR = Color.RED;
+        final int NEGATIVE_BTN_COLOR = Color.RED;
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+
+        // Set Dialog Title
+        alertDialog.setTitle(DIALOG_TITLE);
+
+        // Set Dialog Message
+        alertDialog.setMessage(DIALOG_MSG);
+
+        // Set Buttons
+        // Positive Button, Right
+        if (POSITIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed with onClick below
+
+                }
+            });
+        }
+
+        // Neutral Button, Left
+        if (NEUTRAL_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed with onClick below
+                }
+            });
+        }
+
+        // Negative Button, Middle
+        if (NEGATIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed with onClick below
+                }
+            });
+        }
+
+
+        new Dialog(context);
+        alertDialog.show();
+
+        // Set Button Colors
+        if (POSITIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Positive button
+                    resetTrapCounter();
+                    alertDialog.dismiss();
+                }
+            });
+        }
+        if (NEUTRAL_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on NEUTRAL Button
+
+                }
+            });
+        }
+        if (NEGATIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Negative button
+                    alertDialog.dismiss();
+                }
+            });
+        }
+    }
+
     //************************************** Expand Functions **************************************
     public boolean getExpandBool(){
         /*******************************************************************************************
@@ -724,7 +838,6 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
 
         // Set boolean
         viewExpand_Bool = false;
-
     }
 
 }

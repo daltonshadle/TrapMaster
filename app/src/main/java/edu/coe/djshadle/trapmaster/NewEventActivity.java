@@ -270,7 +270,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          ******************************************************************************************/
 
-        // Initializing all trap counters
+        // Initializing all trap counter
         trapScore_View = findViewById(R.id.newEventTrapScore_View);
         trapScore_View.setTotalHitChange(this);
         trapScore_View.setRoundText(1);
@@ -640,4 +640,5 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             });
         }
     }
+
 }
