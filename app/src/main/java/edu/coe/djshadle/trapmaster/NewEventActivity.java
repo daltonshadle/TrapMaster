@@ -41,6 +41,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +60,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     private String TAG = "JRW";
     private String ACTIVITY_TITLE;
     private String CURRENT_USER_KEY;
+    private String NUM_SHOOTER_KEY;
     private final boolean PORTRAIT_ORIENTATION = false; // Allow portrait orientation, landscape
                                                         // is the default TODO: Support Portrait
     private final int TOTAL_NUM_SHOTS = 25;
@@ -66,13 +68,15 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     // General Variables
     private int totalHits_Int = 0;
+    private int numShooters_Int = 1;
     private boolean quickEventFlag_Bool;
     private ArrayList<Integer> trapState_Array;
     private String mCurrentUserEmail_Str = "Quick Event";
     DBHandler db;
 
     // UI References
-    TrapScoreItemClass trapScore_View;
+    ArrayList<TrapScoreItemClass> trapScoreViews_Array;
+    ScrollView trapScore_ScrollLay;
     private Button mSave_Btn;
 
     //Google Variables
@@ -107,10 +111,11 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         if (savedInstanceState != null) {
             trapState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
-            trapScore_View.setAllStates(trapState_Array);
+            //trapScore_View.setAllStates(trapState_Array);
 
         } else {
             mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
+            numShooters_Int = getIntent().getIntExtra(NUM_SHOOTER_KEY, 1);
             quickEventFlag_Bool = getIntent().getBooleanExtra(getString(R.string.quick_event_flag_key), false);
         }
 
@@ -145,9 +150,9 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             setContentView(R.layout.activity_new_event_landscape);
         }
 
-        trapState_Array = trapScore_View.getAllStates();
+        //trapState_Array = trapScore_View.getAllStates();
         initializeViews();
-        trapScore_View.setAllStates(trapState_Array);
+        //trapScore_View.setAllStates(trapState_Array);
 
         Log.d(TAG, "On Config Change");
     }
@@ -170,7 +175,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
 
-        trapState_Array = trapScore_View.getAllStates();
+        //trapState_Array = trapScore_View.getAllStates();
         savedInstanceState.putIntegerArrayList(TRAP_STATE_KEY, trapState_Array);
 
         Log.d(TAG, "On saved instance");
@@ -194,7 +199,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         // This bundle has also been passed to onCreate.
 
         trapState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
-        trapScore_View.setAllStates(trapState_Array);
+        //trapScore_View.setAllStates(trapState_Array);
 
         Log.d(TAG, "On restore instance");
     }
@@ -255,6 +260,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         ACTIVITY_TITLE = getString(R.string.new_event_activity_title);
         CURRENT_USER_KEY = getString(R.string.current_user_key);
+        NUM_SHOOTER_KEY = getString(R.string.num_shooter_key);
     }
 
     //************************************* UI View Functions **************************************
@@ -270,29 +276,18 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          ******************************************************************************************/
 
-        // Initializing all trap counter
-        trapScore_View = findViewById(R.id.newEventTrapScore_View);
-        trapScore_View.setTotalHitChange(this);
-        trapScore_View.setRoundText(1);
-        trapScore_View.setUserEmailText(mCurrentUserEmail_Str);
-        trapScore_View.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "Custom View OnClick");
-                if (trapScore_View.getExpandBool()){
-                    trapScore_View.collapseView(NewEventActivity.this);
-                } else {
-                    trapScore_View.expandView(NewEventActivity.this);
-                }
-            }
-        });
+        // Initializing scroll view
+        trapScore_ScrollLay = findViewById(R.id.newEventTrapButtons_ScrollLay);
+
+        // Initializing all trap counters
+        initializeTrapCounters();
 
         // Initializing all buttons
-        mSave_Btn = findViewById(R.id.save_Btn);
+        mSave_Btn = findViewById(R.id.newEventSave_Btn);
         mSave_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (trapScore_View.allChecked()) {
+                if (trapScoreViews_Array.get(1).allChecked()) {
                     // All traps are checked and ready to save
                     Log.d("JRW", "Save button quick event: " + Boolean.toString(quickEventFlag_Bool));
                     if (quickEventFlag_Bool) {
@@ -325,6 +320,41 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     }
 
+    private void initializeTrapCounters(){
+        /*******************************************************************************************
+         * Function: initializeTrapCounters
+         *
+         * Purpose: Function initializes all trap counters for this round
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        trapScoreViews_Array = new ArrayList<>();
+
+        for (int i = 0; i < numShooters_Int; i++) {
+            final TrapScoreItemClass temp_View = new TrapScoreItemClass(this);
+            temp_View.setTotalHitChange(this);
+            temp_View.setRoundText(1);
+            temp_View.setUserEmailText("Shooter " + Integer.toString(i));
+            temp_View.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (temp_View.getExpandBool()){
+                        temp_View.collapseView(NewEventActivity.this);
+                    } else {
+                        temp_View.expandView(NewEventActivity.this);
+                    }
+                }
+            });
+
+            trapScoreViews_Array.add(temp_View);
+            trapScore_ScrollLay.addView(temp_View);
+        }
+    }
+
     @Override
     public void OnTotalHitChange() {
         /*******************************************************************************************
@@ -339,7 +369,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          ******************************************************************************************/
 
-        totalHits_Int = trapScore_View.getTotalNumberHit();
+        //totalHits_Int = trapScore_View.getTotalNumberHit();
     }
 
     //************************************ Database Functions **************************************

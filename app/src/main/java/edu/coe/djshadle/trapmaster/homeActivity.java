@@ -14,16 +14,25 @@
 package edu.coe.djshadle.trapmaster;
 
 //******************************************** Imports *********************************************
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +43,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
     //********************************* Variables and Constants ************************************
     //General Constants
     private String CURRENT_USER_KEY;
+    private String NUM_SHOOTER_KEY;
 
     //General Variables
     private String mCurrentUserEmail_Str = "********";
@@ -197,9 +207,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         Intent i;
         switch (view.getId()) {
             case R.id.btnHomeNewEvent:
-                i = new Intent(this, NewEventActivity.class);
-                i.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
-                startActivity(i);
+                newEventDialog(this);
                 break;
             case R.id.btnHomeArmory:
                 i = new Intent(this, ArmoryActivity.class);
@@ -237,6 +245,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
          ******************************************************************************************/
 
         CURRENT_USER_KEY = getString(R.string.current_user_key);
+        NUM_SHOOTER_KEY = getString(R.string.num_shooter_key);
     }
 
     private void initializeViews(){
@@ -290,6 +299,126 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-
     //************************************** Other Functions ***************************************
+    private void newEventDialog(final Context context){
+        /*******************************************************************************************
+         * Function: newEventDialog
+         *
+         * Purpose: Function creates dialog and prompts user to enter info for new event
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Constants for Dialog
+        final String DIALOG_TITLE = "New Event";
+        final String DIALOG_MSG = "How many shooters for this event";
+
+        final boolean POSITIVE_BTN = true;  // Right
+        final boolean NEUTRAL_BTN = false;   // Left
+        final boolean NEGATIVE_BTN = true;  // Middle
+
+        final String POSITIVE_BUTTON_TXT = "CONTINUE";
+        final String NEUTRAL_BUTTON_TXT = "";
+        final String NEGATIVE_BUTTON_TXT = "CANCEL";
+
+        final int POSITIVE_BTN_COLOR = Color.BLUE;
+        final int NEUTRAL_BTN_COLOR = Color.RED;
+        final int NEGATIVE_BTN_COLOR = Color.RED;
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+
+        // Set Dialog Title
+        alertDialog.setTitle(DIALOG_TITLE);
+
+        // Set Dialog Message
+        alertDialog.setMessage(DIALOG_MSG);
+
+        // Set view for gathering information
+        LinearLayout subView_LnrLay = new LinearLayout(context);
+        subView_LnrLay.setOrientation(LinearLayout.VERTICAL);
+
+        // Set view
+        final NumberPicker shooter_NumPick = new NumberPicker(context);
+        shooter_NumPick.setMaxValue(5);
+        shooter_NumPick.setMinValue(1);
+        shooter_NumPick.setGravity(Gravity.START);
+        subView_LnrLay.addView(shooter_NumPick);
+
+        // Add linear layout to alert dialog
+        alertDialog.setView(subView_LnrLay);
+
+        // Positive Button, Right
+        if (POSITIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+                }
+            });
+        }
+
+        // Neutral Button, Left
+        if (NEUTRAL_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+                }
+            });
+        }
+
+        // Negative Button, Middle
+        if (NEGATIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+                }
+            });
+        }
+
+
+        new Dialog(context);
+        alertDialog.show();
+
+        // Set Buttons
+        if (POSITIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Positive button
+                    int numShooter_Int = shooter_NumPick.getValue();
+
+                    Intent i = new Intent(context, NewEventActivity.class);
+                    i.putExtra(NUM_SHOOTER_KEY, numShooter_Int);
+                    i.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+                    startActivity(i);
+
+                    alertDialog.dismiss();
+
+                }
+            });
+        }
+        if (NEUTRAL_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Neutral button
+                }
+            });
+        }
+        if (NEGATIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Negative button
+                    alertDialog.dismiss();
+                }
+            });
+        }
+    }
+
 }
