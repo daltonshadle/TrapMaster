@@ -1,25 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/newEvent_RelLay"
+    android:id="@+id/newEvent_ConstraintLay"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="edu.coe.djshadle.trapmaster.NewEventActivity">
 
     <ScrollView
-        android:id="@+id/newEventTrapButtons_ScrollLay"
+        android:id="@+id/newEventTrap_ScrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"/>
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/newEventSave_Btn"
+        app:layout_constraintTop_toTopOf="@id/newEvent_ConstraintLay">
+
+        <LinearLayout
+            android:id="@+id/newEventTrap_LnrLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+    </ScrollView>
 
     <Button
         android:id="@+id/newEventSave_Btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="SAVE" />
+        android:text="SAVE"
+        app:layout_constraintBottom_toBottomOf="@+id/newEvent_ConstraintLay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

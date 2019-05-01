@@ -314,7 +314,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
 
         // Constants for Dialog
         final String DIALOG_TITLE = "New Event";
-        final String DIALOG_MSG = "How many shooters for this event";
+        final String DIALOG_MSG = "How many shooters for this event?";
 
         final boolean POSITIVE_BTN = true;  // Right
         final boolean NEUTRAL_BTN = false;   // Left
@@ -341,9 +341,11 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         subView_LnrLay.setOrientation(LinearLayout.VERTICAL);
 
         // Set view
-        final NumberPicker shooter_NumPick = new NumberPicker(context);
-        shooter_NumPick.setMaxValue(5);
-        shooter_NumPick.setMinValue(1);
+        final com.travijuu.numberpicker.library.NumberPicker shooter_NumPick =
+                new com.travijuu.numberpicker.library.NumberPicker(context);
+        shooter_NumPick.setMax(5);
+        shooter_NumPick.setMin(1);
+        shooter_NumPick.setUnit(1);
         shooter_NumPick.setGravity(Gravity.START);
         subView_LnrLay.addView(shooter_NumPick);
 

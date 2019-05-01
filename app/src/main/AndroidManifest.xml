@@ -24,7 +24,7 @@
         </activity>
         <activity
             android:name=".homeActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"></activity>
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
         <activity
             android:name=".NewEventActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />

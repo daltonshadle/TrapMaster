@@ -24,6 +24,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -61,8 +62,6 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     private String ACTIVITY_TITLE;
     private String CURRENT_USER_KEY;
     private String NUM_SHOOTER_KEY;
-    private final boolean PORTRAIT_ORIENTATION = false; // Allow portrait orientation, landscape
-                                                        // is the default TODO: Support Portrait
     private final int TOTAL_NUM_SHOTS = 25;
     private final String TRAP_STATE_KEY = "TRAP_STATE_KEY";
 
@@ -75,8 +74,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     DBHandler db;
 
     // UI References
-    ArrayList<TrapScoreItemClass> trapScoreViews_Array;
-    ScrollView trapScore_ScrollLay;
+    private ArrayList<TrapScoreItemClass> trapScoreViews_Array;
+    private LinearLayout trap_LnrLay;
     private Button mSave_Btn;
 
     //Google Variables
@@ -101,17 +100,16 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         initializeConstants();
 
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT && PORTRAIT_ORIENTATION) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_new_event_portrait);
         }
         else {
-            // Landscape is the default orientation by AndroidManifest.xml
             setContentView(R.layout.activity_new_event_landscape);
         }
 
         if (savedInstanceState != null) {
             trapState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
-            //trapScore_View.setAllStates(trapState_Array);
+            setAllTrapStates(trapState_Array);
 
         } else {
             mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
@@ -142,17 +140,16 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         super.onConfigurationChanged(newConfig);
 
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT && PORTRAIT_ORIENTATION) {
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_new_event_portrait);
         }
         else {
-            // Landscape is the default orientation by AndroidManifest.xml
             setContentView(R.layout.activity_new_event_landscape);
         }
 
-        //trapState_Array = trapScore_View.getAllStates();
+        trapState_Array = getAllTrapStates();
         initializeViews();
-        //trapScore_View.setAllStates(trapState_Array);
+        setAllTrapStates(trapState_Array);
 
         Log.d(TAG, "On Config Change");
     }
@@ -175,7 +172,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
 
-        //trapState_Array = trapScore_View.getAllStates();
+        trapState_Array = getAllTrapStates();
         savedInstanceState.putIntegerArrayList(TRAP_STATE_KEY, trapState_Array);
 
         Log.d(TAG, "On saved instance");
@@ -199,7 +196,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         // This bundle has also been passed to onCreate.
 
         trapState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
-        //trapScore_View.setAllStates(trapState_Array);
+        setAllTrapStates(trapState_Array);
 
         Log.d(TAG, "On restore instance");
     }
@@ -276,8 +273,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          ******************************************************************************************/
 
-        // Initializing scroll view
-        trapScore_ScrollLay = findViewById(R.id.newEventTrapButtons_ScrollLay);
+        // Initializing linear layout
+        trap_LnrLay = findViewById(R.id.newEventTrap_LnrLay);
 
         // Initializing all trap counters
         initializeTrapCounters();
@@ -338,7 +335,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             final TrapScoreItemClass temp_View = new TrapScoreItemClass(this);
             temp_View.setTotalHitChange(this);
             temp_View.setRoundText(1);
-            temp_View.setUserEmailText("Shooter " + Integer.toString(i));
+            temp_View.setUserEmailText("Shooter " + Integer.toString(i+1));
             temp_View.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -351,7 +348,51 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             });
 
             trapScoreViews_Array.add(temp_View);
-            trapScore_ScrollLay.addView(temp_View);
+            trap_LnrLay.addView(temp_View);
+        }
+    }
+
+    private ArrayList<Integer> getAllTrapStates() {
+        /*******************************************************************************************
+         * Function: getAllTrapStates
+         *
+         * Purpose: Function gets all the states of the trap counters and returns in a list
+         *
+         * Parameters: None
+         *
+         * Returns: allStates_List - List of all current states
+         *
+         ******************************************************************************************/
+
+        ArrayList<Integer> allStates_List = new ArrayList<>();
+
+        for (int i = 0; i < numShooters_Int; i++) {
+            allStates_List.addAll(trapScoreViews_Array.get(i).getAllStates());
+        }
+
+        return allStates_List;
+    }
+
+    private void setAllTrapStates(ArrayList<Integer> allStates_List) {
+        /*******************************************************************************************
+         * Function: setAllTrapStates
+         *
+         * Purpose: Function sets all the states of the traps
+         *
+         * Parameters: allStates_List - List of states to set the traps to
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        int numState_Int = 25;
+
+        for (int i = 0; i < numShooters_Int; i++) {
+            int firstIndex_Int = (i * numState_Int);
+            int lastIndex_Int = firstIndex_Int + numState_Int;
+
+            trapScoreViews_Array.get(i).setAllStates(
+                    new ArrayList<Integer> (allStates_List.subList(firstIndex_Int, lastIndex_Int)));
         }
     }
 

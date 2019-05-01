@@ -44,13 +44,16 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
     //********************************** Variables and Constants ***********************************
     // General Constants
     private final static int HIT = 0, MISS = 1, NEUTRAL = 2;
+    private final static String JRW = "JRW";
     private final int NUM_LANES = 5;
     private final int NUM_BUTTONS_PER_LANE = 5;
     private final String TAG = "JRW";
 
     // General Variables
     private int viewScore_Int = 0;
-    private boolean viewExpand_Bool = true;
+    private int parentWidth_Int = 0;
+    private int parentHeight_Int = 0;
+    private boolean viewExpand_Bool;
     private OnTotalHitChange totalHitChange;
 
     // UI References
@@ -155,14 +158,24 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
         // Initialize buttons
         initializeBtns(context);
 
-        // A bad way to get the TrapScoreItem to start collapsed since we need to measure width
-        ViewTreeObserver vto = mWholeView_Lay.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                collapseView(context);
-            }
-        });
+        // Getting view dimensions to set in collapsed mode at start, another poor way to do so
+        if (getViewTreeObserver().isAlive()) {
+            getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    if (getViewTreeObserver().isAlive()) {
+                        getViewTreeObserver().removeOnPreDrawListener(this);
+                    }
+
+                    parentHeight_Int = TrapScoreItemClass.this.getHeight();
+                    parentWidth_Int = TrapScoreItemClass.this.getWidth();
+
+                    collapseView(context);
+
+                    return true;
+                }
+            });
+        }
     }
 
     private void initializeTxtViews(){
@@ -809,6 +822,8 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
 
         // Set boolean
         viewExpand_Bool = true;
+
+        Log.d(JRW, "Expanding trap view");
     }
 
     public void collapseView(Context context){
@@ -823,7 +838,7 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
          *
          ******************************************************************************************/
 
-        int width_Int = mWholeView_Lay.getWidth()/35;
+        int width_Int = parentWidth_Int/35;
 
         // Set lanes to horizontal
         for (int i = 0; i < mLaneLay_List.size(); i++) {
@@ -838,6 +853,8 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
 
         // Set boolean
         viewExpand_Bool = false;
+
+        Log.d(JRW, "Collapsing trap view");
     }
 
 }

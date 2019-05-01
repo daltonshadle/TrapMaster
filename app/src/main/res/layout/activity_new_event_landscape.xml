@@ -1,38 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/newEvent_ConstraintLay"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    tools:context="edu.coe.djshadle.trapmaster.NewEventActivity">
 
-    <LinearLayout
-        android:id="@+id/newEventButtons_SubLnrLay"
+    <ScrollView
+        android:id="@+id/newEventTrap_ScrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <edu.coe.djshadle.trapmaster.TrapScoreItemClass
-            android:id="@+id/newEventTrapScore_View"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/newEventSave_Btn"
+        app:layout_constraintTop_toTopOf="@id/newEvent_ConstraintLay">
 
         <LinearLayout
-            android:id="@+id/newEventClearSave_SubLnrLay"
+            android:id="@+id/newEventTrap_LnrLay"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
 
-            <Button
-                android:id="@+id/save_Btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="SAVE" />
+    </ScrollView>
 
-        </LinearLayout>
+    <Button
+        android:id="@+id/newEventSave_Btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SAVE"
+        app:layout_constraintBottom_toBottomOf="@+id/newEvent_ConstraintLay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
-    </LinearLayout>
-
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
