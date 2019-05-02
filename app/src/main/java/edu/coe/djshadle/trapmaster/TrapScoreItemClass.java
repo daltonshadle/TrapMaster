@@ -51,9 +51,9 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
 
     // General Variables
     private int viewScore_Int = 0;
-    private int parentWidth_Int = 0;
-    private int parentHeight_Int = 0;
-    private boolean viewExpand_Bool;
+    private int parentWidth_Int = 1080;
+    private int parentHeight_Int = 1920;
+    private boolean viewExpand_Bool = false;
     private OnTotalHitChange totalHitChange;
 
     // UI References
@@ -69,7 +69,7 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
 
     //************************************* Public Functions ***************************************
     // Constructors
-    public TrapScoreItemClass(Context context) {
+    public TrapScoreItemClass(Context context, boolean expandMode_Bool) {
         /*******************************************************************************************
          * Function: TrapScoreItemClass
          *
@@ -82,6 +82,7 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
          ******************************************************************************************/
 
         super(context);
+        viewExpand_Bool = expandMode_Bool;
         initializeViews(context);
     }
 
@@ -158,24 +159,13 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
         // Initialize buttons
         initializeBtns(context);
 
-        // Getting view dimensions to set in collapsed mode at start, another poor way to do so
-        if (getViewTreeObserver().isAlive()) {
-            getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    if (getViewTreeObserver().isAlive()) {
-                        getViewTreeObserver().removeOnPreDrawListener(this);
-                    }
-
-                    parentHeight_Int = TrapScoreItemClass.this.getHeight();
-                    parentWidth_Int = TrapScoreItemClass.this.getWidth();
-
-                    collapseView(context);
-
-                    return true;
-                }
-            });
+        // Start in collapse mode
+        if (viewExpand_Bool) {
+            expandView();
+        } else {
+            collapseView();
         }
+
     }
 
     private void initializeTxtViews(){
@@ -797,13 +787,34 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
         return viewExpand_Bool;
     }
 
-    public void expandView(Context context){
+    public void setExpandBool(Boolean expand_Bool){
+        /*******************************************************************************************
+         * Function: setExpandBool
+         *
+         * Purpose: Function sets expand bool based on parameter
+         *
+         * Parameters: expand_Bool (IN) - true if view is to be expanded, false if collapsed
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        viewExpand_Bool = expand_Bool;
+
+        if (viewExpand_Bool) {
+            expandView();
+        } else {
+            collapseView();
+        }
+    }
+
+    public void expandView(){
         /*******************************************************************************************
          * Function: expandView
          *
          * Purpose: Function expands view to show all trap buttons
          *
-         * Parameters: context (IN) - context for initializing views
+         * Parameters: None
          *
          * Returns: None
          *
@@ -817,7 +828,7 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
         // Set all trap button size to default
         for (int i = 0; i < mTrapTernaryBtn_List.size(); i++) {
             TrapTernaryButtonClass temp_Btn = mTrapTernaryBtn_List.get(i);
-            temp_Btn.setSize((int)context.getResources().getDimension(R.dimen.CircleTrapButton));
+            temp_Btn.setSize((int)this.getResources().getDimension(R.dimen.CircleTrapButton));
         }
 
         // Set boolean
@@ -826,7 +837,7 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
         Log.d(JRW, "Expanding trap view");
     }
 
-    public void collapseView(Context context){
+    public void collapseView(){
         /*******************************************************************************************
          * Function: collapseView
          *

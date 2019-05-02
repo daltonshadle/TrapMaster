@@ -19,12 +19,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.XmlResourceParser;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.AttributeSet;
+import android.util.Xml;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -39,14 +43,23 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class homeActivity extends AppCompatActivity implements View.OnClickListener {
     //********************************* Variables and Constants ************************************
     //General Constants
     private String CURRENT_USER_KEY;
     private String NUM_SHOOTER_KEY;
+    private String SHOOTER_LIST_KEY;
 
     //General Variables
     private String mCurrentUserEmail_Str = "********";
+    private ArrayList<String> shootName_List;
+    private ArrayList<String> DIALOG_MSG_TXT;
+    private ArrayList<String> POS_BTN_TXT;
+    private ArrayList<String> NEU_BTN_TXT;
+    private int NEW_EVENT_DIALOG_STATE = 0;
 
     // UI References
 
@@ -246,6 +259,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
 
         CURRENT_USER_KEY = getString(R.string.current_user_key);
         NUM_SHOOTER_KEY = getString(R.string.num_shooter_key);
+        SHOOTER_LIST_KEY = getString(R.string.shooter_list_key);
     }
 
     private void initializeViews(){
@@ -296,10 +310,50 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
         auth.addAuthStateListener(authListener);
-
     }
 
     //************************************** Other Functions ***************************************
+    private void initializeNewEventDialogStrings() {
+        /*******************************************************************************************
+         * Function: initializeNewEventDialogStrings
+         *
+         * Purpose: Function initializes all the string list for the dialog message
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        shootName_List = new ArrayList<>();
+
+        for (int i = 0; i < 6; i++) {
+            shootName_List.add("Shooter " + Integer.toString(i));
+        }
+
+        DIALOG_MSG_TXT = new ArrayList<String>(Arrays.asList(
+                "How many shooters for this event?",
+                "Enter the shooter's name.",
+                "Enter the shooter's name.",
+                "Enter the shooter's name.",
+                "Enter the shooter's name.",
+                "Enter the shooter's name."));
+        POS_BTN_TXT = new ArrayList<String>(Arrays.asList(
+                "NEXT",
+                "NEXT",
+                "NEXT",
+                "NEXT",
+                "NEXT",
+                "CONTINUE"));
+        NEU_BTN_TXT = new ArrayList<String>(Arrays.asList(
+                "CANCEL",
+                "BACK",
+                "BACK",
+                "BACK",
+                "BACK",
+                "BACK"));
+    }
+
     private void newEventDialog(final Context context){
         /*******************************************************************************************
          * Function: newEventDialog
@@ -312,21 +366,18 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
          *
          ******************************************************************************************/
 
+        // Initialize shooter name list for new event
+        initializeNewEventDialogStrings();
+
         // Constants for Dialog
         final String DIALOG_TITLE = "New Event";
-        final String DIALOG_MSG = "How many shooters for this event?";
+        final String DIALOG_MSG = DIALOG_MSG_TXT.get(NEW_EVENT_DIALOG_STATE);
 
-        final boolean POSITIVE_BTN = true;  // Right
-        final boolean NEUTRAL_BTN = false;   // Left
-        final boolean NEGATIVE_BTN = true;  // Middle
-
-        final String POSITIVE_BUTTON_TXT = "CONTINUE";
-        final String NEUTRAL_BUTTON_TXT = "";
-        final String NEGATIVE_BUTTON_TXT = "CANCEL";
+        final String POSITIVE_BUTTON_TXT = POS_BTN_TXT.get(NEW_EVENT_DIALOG_STATE);
+        final String NEUTRAL_BUTTON_TXT =  NEU_BTN_TXT.get(NEW_EVENT_DIALOG_STATE);
 
         final int POSITIVE_BTN_COLOR = Color.BLUE;
         final int NEUTRAL_BTN_COLOR = Color.RED;
-        final int NEGATIVE_BTN_COLOR = Color.RED;
 
         final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
 
@@ -337,90 +388,131 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         alertDialog.setMessage(DIALOG_MSG);
 
         // Set view for gathering information
-        LinearLayout subView_LnrLay = new LinearLayout(context);
+        final LinearLayout subView_LnrLay = new LinearLayout(context);
         subView_LnrLay.setOrientation(LinearLayout.VERTICAL);
 
-        // Set view
+        // Set number picker view
+        XmlResourceParser parser = getResources().getLayout(R.layout.view_horizontal_number_picker);
+        AttributeSet attributeSet = Xml.asAttributeSet(parser);
         final com.travijuu.numberpicker.library.NumberPicker shooter_NumPick =
-                new com.travijuu.numberpicker.library.NumberPicker(context);
+                new com.travijuu.numberpicker.library.NumberPicker(context, attributeSet);
         shooter_NumPick.setMax(5);
         shooter_NumPick.setMin(1);
         shooter_NumPick.setUnit(1);
-        shooter_NumPick.setGravity(Gravity.START);
+        shooter_NumPick.setGravity(Gravity.CENTER);
         subView_LnrLay.addView(shooter_NumPick);
+
+        // Set edit text view
+        final EditText item_Edt = new EditText(context);
+        item_Edt.setGravity(Gravity.START);
+        item_Edt.setTextColor(Color.BLACK);
 
         // Add linear layout to alert dialog
         alertDialog.setView(subView_LnrLay);
 
         // Positive Button, Right
-        if (POSITIVE_BTN) {
-            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    // Processed by onClick below
-                }
-            });
-        }
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Processed by onClick below
+            }
+        });
 
         // Neutral Button, Left
-        if (NEUTRAL_BTN) {
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    // Processed by onClick below
-                }
-            });
-        }
-
-        // Negative Button, Middle
-        if (NEGATIVE_BTN) {
-            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    // Processed by onClick below
-                }
-            });
-        }
-
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Processed by onClick below
+            }
+        });
 
         new Dialog(context);
         alertDialog.show();
 
         // Set Buttons
-        if (POSITIVE_BTN) {
-            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
-            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Perform Action on Positive button
-                    int numShooter_Int = shooter_NumPick.getValue();
+        final Button pos_Btn = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        final Button neu_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
 
-                    Intent i = new Intent(context, NewEventActivity.class);
-                    i.putExtra(NUM_SHOOTER_KEY, numShooter_Int);
-                    i.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
-                    startActivity(i);
+        pos_Btn.setTextColor(POSITIVE_BTN_COLOR);
+        pos_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Positive button
+                int numShooter_Int = shooter_NumPick.getValue();
+                String shooterName_Str = item_Edt.getText().toString();
 
-                    alertDialog.dismiss();
+                switch (NEW_EVENT_DIALOG_STATE) {
+                    case 0:
+                        // Number picker to entering shooter 1 info
+                        subView_LnrLay.removeView(shooter_NumPick);
+                        subView_LnrLay.addView(item_Edt);
 
+                        NEW_EVENT_DIALOG_STATE = (NEW_EVENT_DIALOG_STATE + 1);
+                        break;
+                    default:
+                        // For all shooter info
+                        if (shooterName_Str.isEmpty()) {
+                            item_Edt.setError(context.getString(R.string.error_field_required));
+                            item_Edt.requestFocus();
+                        } else {
+                            shootName_List.set(NEW_EVENT_DIALOG_STATE, shooterName_Str);
+
+                            if (numShooter_Int == NEW_EVENT_DIALOG_STATE) {
+                                // Put all extras into new intent and start new event
+                                Intent i = new Intent(context, NewEventActivity.class);
+                                i.putStringArrayListExtra(SHOOTER_LIST_KEY, shootName_List);
+                                i.putExtra(NUM_SHOOTER_KEY, numShooter_Int);
+                                i.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+                                startActivity(i);
+
+                                // Dismiss dialog
+                                alertDialog.dismiss();
+
+                                // Reset state
+                                NEW_EVENT_DIALOG_STATE = 0;
+
+                            } else {
+                                NEW_EVENT_DIALOG_STATE = (NEW_EVENT_DIALOG_STATE + 1);
+                            }
+                        }
+                        break;
                 }
-            });
-        }
-        if (NEUTRAL_BTN) {
-            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
-            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Perform Action on Neutral button
+
+                alertDialog.setMessage(DIALOG_MSG_TXT.get(NEW_EVENT_DIALOG_STATE));
+                item_Edt.setText(shootName_List.get(NEW_EVENT_DIALOG_STATE));
+                pos_Btn.setText(POS_BTN_TXT.get(NEW_EVENT_DIALOG_STATE));
+                neu_Btn.setText(NEU_BTN_TXT.get(NEW_EVENT_DIALOG_STATE));
+            }
+        });
+
+        neu_Btn.setTextColor(NEUTRAL_BTN_COLOR);
+        neu_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Neutral button
+                switch (NEW_EVENT_DIALOG_STATE) {
+                    case 0:
+                        // Cancel and close dialog
+                        alertDialog.dismiss();
+                        break;
+                    case 1:
+                        // Shooter 1 info to number of shooters picker
+                        subView_LnrLay.removeView(item_Edt);
+                        subView_LnrLay.addView(shooter_NumPick);
+
+                        NEW_EVENT_DIALOG_STATE = (NEW_EVENT_DIALOG_STATE - 1);
+                        break;
+                    default:
+                        // Some shooter info to previous shooter info
+                        NEW_EVENT_DIALOG_STATE = (NEW_EVENT_DIALOG_STATE - 1);
+                        break;
                 }
-            });
-        }
-        if (NEGATIVE_BTN) {
-            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
-            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Perform Action on Negative button
-                    alertDialog.dismiss();
-                }
-            });
-        }
+
+                alertDialog.setMessage(DIALOG_MSG_TXT.get(NEW_EVENT_DIALOG_STATE));
+                item_Edt.setText(shootName_List.get(NEW_EVENT_DIALOG_STATE));
+                pos_Btn.setText(POS_BTN_TXT.get(NEW_EVENT_DIALOG_STATE));
+                neu_Btn.setText(NEU_BTN_TXT.get(NEW_EVENT_DIALOG_STATE));
+
+            }
+        });
     }
 
 }

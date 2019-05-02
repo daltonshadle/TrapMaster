@@ -29,6 +29,7 @@ import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -52,6 +53,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class NewEventActivity extends AppCompatActivity implements OnTotalHitChange {
@@ -62,14 +64,18 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     private String ACTIVITY_TITLE;
     private String CURRENT_USER_KEY;
     private String NUM_SHOOTER_KEY;
+    private String SHOOTER_LIST_KEY;
     private final int TOTAL_NUM_SHOTS = 25;
     private final String TRAP_STATE_KEY = "TRAP_STATE_KEY";
+    private final String TRAP_EXPAND_KEY = "TRAP_EXPAND_KEY";
 
     // General Variables
     private int totalHits_Int = 0;
     private int numShooters_Int = 1;
     private boolean quickEventFlag_Bool;
+    private ArrayList<String> shooterNames_Array;
     private ArrayList<Integer> trapState_Array;
+    private ArrayList<Integer> trapExpand_Array;
     private String mCurrentUserEmail_Str = "Quick Event";
     DBHandler db;
 
@@ -109,12 +115,15 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         if (savedInstanceState != null) {
             trapState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
+            trapExpand_Array = savedInstanceState.getIntegerArrayList(TRAP_EXPAND_KEY);
             setAllTrapStates(trapState_Array);
-
+            setAllExpandStates(trapExpand_Array);
         } else {
             mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
             numShooters_Int = getIntent().getIntExtra(NUM_SHOOTER_KEY, 1);
+            shooterNames_Array = getIntent().getStringArrayListExtra(SHOOTER_LIST_KEY);
             quickEventFlag_Bool = getIntent().getBooleanExtra(getString(R.string.quick_event_flag_key), false);
+            trapExpand_Array = new ArrayList<>(Collections.nCopies(5, 0));
         }
 
         if (mCurrentUserEmail_Str == null) {
@@ -148,8 +157,10 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         }
 
         trapState_Array = getAllTrapStates();
+        trapExpand_Array = getAllExpandStates();
         initializeViews();
         setAllTrapStates(trapState_Array);
+        setAllExpandStates(trapExpand_Array);
 
         Log.d(TAG, "On Config Change");
     }
@@ -173,7 +184,9 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         // killed and restarted.
 
         trapState_Array = getAllTrapStates();
+        trapExpand_Array = getAllExpandStates();
         savedInstanceState.putIntegerArrayList(TRAP_STATE_KEY, trapState_Array);
+        savedInstanceState.putIntegerArrayList(TRAP_EXPAND_KEY, trapExpand_Array);
 
         Log.d(TAG, "On saved instance");
     }
@@ -196,7 +209,9 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         // This bundle has also been passed to onCreate.
 
         trapState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
+        trapExpand_Array = savedInstanceState.getIntegerArrayList(TRAP_EXPAND_KEY);
         setAllTrapStates(trapState_Array);
+        setAllExpandStates(trapExpand_Array);
 
         Log.d(TAG, "On restore instance");
     }
@@ -243,6 +258,27 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        /*******************************************************************************************
+         * Function: onKeyDown
+         *
+         * Purpose: Override key down function to check for back button presses, dialog if so
+         *
+         * Parameters: keyCode (IN) - integer code fo key pressed for identifying
+         *             event (IN) - event when key pressed
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            Log.d(this.getClass().getName(), "back button pressed");
+            backButtonDialog();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     private void initializeConstants() {
         /*******************************************************************************************
          * Function: initializeConstants
@@ -258,6 +294,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         ACTIVITY_TITLE = getString(R.string.new_event_activity_title);
         CURRENT_USER_KEY = getString(R.string.current_user_key);
         NUM_SHOOTER_KEY = getString(R.string.num_shooter_key);
+        SHOOTER_LIST_KEY = getString(R.string.shooter_list_key);
     }
 
     //************************************* UI View Functions **************************************
@@ -284,7 +321,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         mSave_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (trapScoreViews_Array.get(1).allChecked()) {
+                if (allTrapsChecked()) {
                     // All traps are checked and ready to save
                     Log.d("JRW", "Save button quick event: " + Boolean.toString(quickEventFlag_Bool));
                     if (quickEventFlag_Bool) {
@@ -317,7 +354,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     }
 
-    private void initializeTrapCounters(){
+    private void initializeTrapCounters() {
         /*******************************************************************************************
          * Function: initializeTrapCounters
          *
@@ -332,24 +369,37 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         trapScoreViews_Array = new ArrayList<>();
 
         for (int i = 0; i < numShooters_Int; i++) {
-            final TrapScoreItemClass temp_View = new TrapScoreItemClass(this);
+            final TrapScoreItemClass temp_View = new TrapScoreItemClass(this, trapExpand_Array.get(i) != 0);
             temp_View.setTotalHitChange(this);
             temp_View.setRoundText(1);
-            temp_View.setUserEmailText("Shooter " + Integer.toString(i+1));
+            temp_View.setUserEmailText(shooterNames_Array.get(i+1));
             temp_View.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (temp_View.getExpandBool()){
-                        temp_View.collapseView(NewEventActivity.this);
-                    } else {
-                        temp_View.expandView(NewEventActivity.this);
-                    }
+                    temp_View.setExpandBool(!temp_View.getExpandBool());
                 }
             });
 
             trapScoreViews_Array.add(temp_View);
             trap_LnrLay.addView(temp_View);
         }
+    }
+
+    @Override
+    public void OnTotalHitChange() {
+        /*******************************************************************************************
+         * Function: OnTotalHitChange
+         *
+         * Purpose: Function listener for UI trap counters to provide functionality when total hit
+         *          counter is updated
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        //totalHits_Int = trapScore_View.getTotalNumberHit();
     }
 
     private ArrayList<Integer> getAllTrapStates() {
@@ -396,21 +446,67 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         }
     }
 
-    @Override
-    public void OnTotalHitChange() {
+    private ArrayList<Integer> getAllExpandStates(){
         /*******************************************************************************************
-         * Function: OnTotalHitChange
+         * Function: getAllExpandStates
          *
-         * Purpose: Function listener for UI trap counters to provide functionality when total hit
-         *          counter is updated
+         * Purpose: Function gets all the expand states of the trap counters and returns in a list
          *
          * Parameters: None
+         *
+         * Returns: getAllExpandStates - List of all current expand states
+         *
+         ******************************************************************************************/
+
+        ArrayList<Integer> expandState_List = new ArrayList<>();
+
+        for (int i = 0; i < numShooters_Int; i++) {
+            expandState_List.add((trapScoreViews_Array.get(i).getExpandBool() ? 1 : 0));
+        }
+
+        return expandState_List;
+    }
+
+    private void setAllExpandStates(ArrayList<Integer> expandStates_List) {
+        /*******************************************************************************************
+         * Function: setAllExpandStates
+         *
+         * Purpose: Function sets all the expand tates of the traps
+         *
+         * Parameters: expandStates_List - List of expand states to set the traps to
          *
          * Returns: None
          *
          ******************************************************************************************/
 
-        //totalHits_Int = trapScore_View.getTotalNumberHit();
+        for (int i = 0; i < numShooters_Int; i++) {
+            trapScoreViews_Array.get(i).setExpandBool(expandStates_List.get(i) != 0);
+        }
+    }
+
+    private boolean allTrapsChecked() {
+        /*******************************************************************************************
+         * Function: allTrapsChecked
+         *
+         * Purpose: Function checks if all traps are checked
+         *
+         * Parameters: None
+         *
+         * Returns: allChecked
+         *
+         ******************************************************************************************/
+
+        boolean allChecked = true;
+
+        for (int i = 0; i < trapScoreViews_Array.size(); i++) {
+            allChecked = trapScoreViews_Array.get(i).allChecked();
+
+            if (!allChecked) {
+                break;
+            }
+        }
+
+        return allChecked;
     }
 
     //************************************ Database Functions **************************************
@@ -707,6 +803,115 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                     Intent homeActivity_Intent = new Intent(NewEventActivity.this, homeActivity.class);
                     homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
                     startActivity(homeActivity_Intent);
+                }
+            });
+        }
+    }
+
+    private void backButtonDialog() {
+        /*******************************************************************************************
+         * Function: backButtonDialog
+         *
+         * Purpose: Function creates a alert dialog to when back button is hit
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        final String DIALOG_TITLE = "Leaving Event";
+        final String DIALOG_MSG = "Are you sure you want to leave this event? " +
+                "(All event data will be lost)";
+
+        final boolean POSITIVE_BTN = true;  // Right
+        final boolean NEUTRAL_BTN = false;   // Left
+        final boolean NEGATIVE_BTN = true;  // Middle
+
+        final String POSITIVE_BUTTON_TXT = "LEAVE";
+        final String NEUTRAL_BUTTON_TXT = "";
+        final String NEGATIVE_BUTTON_TXT = "STAY";
+
+        final int POSITIVE_BTN_COLOR = Color.BLUE;
+        final int NEUTRAL_BTN_COLOR = Color.RED;
+        final int NEGATIVE_BTN_COLOR = Color.RED;
+
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+        // Set Dialog Title
+        alertDialog.setTitle(DIALOG_TITLE);
+
+        // Set Dialog Message
+        alertDialog.setMessage(DIALOG_MSG);
+
+        // Set Buttons
+        // Positive Button, Right
+        if (POSITIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed with onClick below
+
+                }
+            });
+        }
+
+        // Neutral Button, Left
+        if (NEUTRAL_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed with onClick below
+                }
+            });
+        }
+
+        // Negative Button, Middle
+        if (NEGATIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed with onClick below
+                }
+            });
+        }
+
+
+        new Dialog(getApplicationContext());
+        alertDialog.show();
+
+        // Set Button Colors
+        if (POSITIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Positive button
+
+                    alertDialog.dismiss();
+
+                    Intent homeActivity = new Intent(NewEventActivity.this, homeActivity.class);
+                    homeActivity.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+                    startActivity(homeActivity);
+                }
+            });
+        }
+        if (NEUTRAL_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on NEUTRAL Button
+
+                }
+            });
+        }
+        if (NEGATIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Negative button
+
+                    alertDialog.dismiss();
                 }
             });
         }
