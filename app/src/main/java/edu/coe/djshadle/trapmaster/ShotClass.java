@@ -37,7 +37,7 @@ public class ShotClass {
     //************************************* Private Variables **************************************
     // Object variables
     private int shotID_Int;
-    private String shotEmail_Str;
+    private String shotShooterName_Str;
     private String shotEventName_Str;
     private String shotTotalNum_Str;
     private String shotHitNum_Str;
@@ -63,14 +63,14 @@ public class ShotClass {
          ******************************************************************************************/
 
         this.shotID_Int = -1;
-        this.shotEmail_Str = "";
+        this.shotShooterName_Str = "";
         this.shotEventName_Str = "";
         this.shotTotalNum_Str = "";
         this.shotHitNum_Str = "";
         this.shotNotes_Str = "";
     }
 
-    public ShotClass(int shotID_Int, String shotEmail_Str, String shotEventName_Str,
+    public ShotClass(int shotID_Int, String shotShooterName_Str, String shotEventName_Str,
                      String shotTotalNum_Str, String shotHitNum_Str, String shotNotes_Str) {
         /*******************************************************************************************
          * Function: ShotClass
@@ -78,7 +78,7 @@ public class ShotClass {
          * Purpose: Constructor for this class with parameters
          *
          * Parameters: shotID_Str (IN) - ID tagged with this shot
-         *             shotEmail_Str (IN) - email tagged with this shot
+         *             shotShooterName_Str (IN) - email tagged with this shot
          *             shotEventName_Str (IN) - event name of the shot
          *             shotTotalNum_Str (IN) - total number of shots
          *             shotHitNum_Str (IN) - number of shots that were hits
@@ -89,21 +89,21 @@ public class ShotClass {
          ******************************************************************************************/
 
         this.shotID_Int = shotID_Int;
-        this.shotEmail_Str = shotEmail_Str;
+        this.shotShooterName_Str = shotShooterName_Str;
         this.shotEventName_Str = shotEventName_Str;
         this.shotTotalNum_Str = shotTotalNum_Str;
         this.shotHitNum_Str = shotHitNum_Str;
         this.shotNotes_Str = shotNotes_Str;
     }
 
-    public ShotClass(String shotEmail_Str, String shotEventName_Str,
+    public ShotClass(String shotShooterName_Str, String shotEventName_Str,
                      String shotTotalNum_Str, String shotHitNum_Str, String shotNotes_Str) {
         /*******************************************************************************************
          * Function: ShotClass
          *
          * Purpose: Constructor for this class with parameters
          *
-         * Parameters: shotEmail_Str (IN) - email tagged with this shot
+         * Parameters: shotShooterName_Str (IN) - email tagged with this shot
          *             shotEventName_Str (IN) - event name of the shot
          *             shotTotalNum_Str (IN) - total number of shots
          *             shotHitNum_Str (IN) - number of shots that were hits
@@ -114,7 +114,7 @@ public class ShotClass {
          ******************************************************************************************/
 
         this.shotID_Int = -1;
-        this.shotEmail_Str = shotEmail_Str;
+        this.shotShooterName_Str = shotShooterName_Str;
         this.shotEventName_Str = shotEventName_Str;
         this.shotTotalNum_Str = shotTotalNum_Str;
         this.shotHitNum_Str = shotHitNum_Str;
@@ -140,12 +140,12 @@ public class ShotClass {
         this.shotID_Int = shotID_Int;
     }
 
-    public String getShotEmail_Str() {
-        return shotEmail_Str;
+    public String getShotShooterName_Str() {
+        return shotShooterName_Str;
     }
 
-    public void setShotEmail_Str(String shotEmail_Str) {
-        this.shotEmail_Str = shotEmail_Str;
+    public void setShotShooterName_Str(String shotShooterName_Str) {
+        this.shotShooterName_Str = shotShooterName_Str;
     }
 
     public String getShotEventName_Str() {
@@ -348,7 +348,7 @@ public class ShotClass {
                                 Toast.LENGTH_LONG).show();
 
                         // Refresh shot list view
-                        adapter.refreshShotArrayAdapter(db.getAllShotFromDB(getShotEmail_Str()));
+                        adapter.refreshShotArrayAdapter(db.getAllShotFromDB(getShotShooterName_Str()));
 
                         // Reset state counter
                         SHOT_DIALOG_STATE = 0;
@@ -418,7 +418,7 @@ public class ShotClass {
         GlobalApplicationContext currentContext = new GlobalApplicationContext();
         final DBHandler db = new DBHandler(currentContext.getContext());
 
-        tempEvent_List = db.getAllEventFromDB(getShotEmail_Str());
+        tempEvent_List = db.getAllEventFromDB(getShotShooterName_Str());
 
         for (int i = 0; i < tempEvent_List.size(); i++) {
             EventClass temp_Event = tempEvent_List.get(i);
@@ -523,7 +523,7 @@ public class ShotClass {
                             Toast.LENGTH_LONG).show();
 
                     // Refresh shoot list view
-                    adapter.refreshShotArrayAdapter(db.getAllShotFromDB(getShotEmail_Str()));
+                    adapter.refreshShotArrayAdapter(db.getAllShotFromDB(getShotShooterName_Str()));
                 }
             });
         }
