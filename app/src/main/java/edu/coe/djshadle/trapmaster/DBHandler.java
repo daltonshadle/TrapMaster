@@ -34,7 +34,7 @@ import java.util.ArrayList;
 public class DBHandler extends SQLiteOpenHelper {
     //********************************** Variables and Constants ***********************************
     //Database Variables & Constants
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "trapMasterDB.db";
     private SQLiteDatabase dbWhole;
 
@@ -152,7 +152,6 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          ******************************************************************************************/
 
-
         //Profile Table
         String CREATE_PROFILE_TABLE = "CREATE TABLE " + TABLE_PROFILES + " ("
                 + KEY_PROFILE_ID + " INTEGER PRIMARY KEY,"
@@ -256,6 +255,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROFILES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SHOOTERS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_GUNS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOADS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATION);
@@ -643,6 +643,48 @@ public class DBHandler extends SQLiteOpenHelper {
 
         dbWhole.close();
         return tempShooter_List;
+    }
+
+    public boolean isShooterInDB (String email, String shooterName_Str, int ID) {
+        /*******************************************************************************************
+         * Function: isShooterInDB
+         *
+         * Purpose: Function decides if shooter name is already in db for user
+         *
+         * Parameters: email (IN) - key string for finding profile
+         *             shooterName_Str (IN) - string to find in database
+         *             ID (IN) - ID of shooter being passed in, this is to ignore this load when checking
+         *                       ID = -1 if new user
+         *
+         * Returns: doesShooterExist - returns true if the user already has a shooter under that name,
+         *                              besides the shooter that shares the same ID
+         *
+         ******************************************************************************************/
+
+        boolean doesShooterExist = false;
+        int currentID_Int = -1;
+        String currentShooterName_Str;
+        String query = "SELECT * FROM " + TABLE_SHOOTERS + " WHERE "
+                + KEY_SHOOTER_COACH + " = '" + email + "'";
+
+        dbWhole = this.getReadableDatabase();
+        Cursor cursor = dbWhole.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                currentShooterName_Str = cursor.getString(cursor.getColumnIndex(KEY_SHOOTER_NAME));
+                currentID_Int = cursor.getInt(cursor.getColumnIndex(KEY_SHOOTER_ID));
+
+                if (currentShooterName_Str.equals(shooterName_Str) && currentID_Int != ID) {
+                    //name already exists
+                    doesShooterExist = true;
+                    break;
+                }
+            } while (cursor.moveToNext());
+        }
+
+        dbWhole.close();
+        return doesShooterExist;
     }
 
     //*************************************** Load Functions ***************************************

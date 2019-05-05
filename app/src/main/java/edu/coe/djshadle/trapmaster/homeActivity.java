@@ -33,6 +33,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,6 +46,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.lang.reflect.Field;
 import java.nio.channels.AlreadyBoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,7 +61,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
 
     //General Variables
     private String mCurrentUserEmail_Str = "********";
-    private ArrayList<String> shootName_List;
+    private ArrayList<String> shootNameCurr_List;
     private ArrayList<String> shootNameDB_List;
     private ArrayList<String> DIALOG_MSG_TXT;
     private ArrayList<String> POS_BTN_TXT;
@@ -266,7 +268,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         CURRENT_USER_KEY = getString(R.string.current_user_key);
         NUM_SHOOTER_KEY = getString(R.string.num_shooter_key);
         SHOOTER_LIST_KEY = getString(R.string.shooter_list_key);
-        ADD_SHOOTER_STRING = "Add new shooter";
+        ADD_SHOOTER_STRING = "Click + to add new shooter";
     }
 
     private void initializeViews(){
@@ -332,11 +334,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
          *
          ******************************************************************************************/
 
-        shootName_List = new ArrayList<>();
-
-        for (int i = 0; i < 6; i++) {
-            shootName_List.add("Shooter " + Integer.toString(i));
-        }
+        shootNameCurr_List = new ArrayList<>();
 
         DIALOG_MSG_TXT = new ArrayList<String>(Arrays.asList(
                 "How many shooters for this event?",
@@ -360,12 +358,12 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
                 "BACK",
                 "BACK"));
         NEG_BTN_TXT = new ArrayList<String>(Arrays.asList(
-                "",
-                " + ",
-                " + ",
-                " + ",
-                " + ",
-                " + "));
+                " ",
+                "+",
+                "+",
+                "+",
+                "+",
+                "+"));
     }
 
     private ArrayAdapter<String> initializeShooterSpinnerAdapt(final Context context) {
@@ -414,15 +412,51 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
 
         ArrayAdapter<String> tempShooter_Adapt;
 
-        for (int i = 0; i < shootName_List.size(); i++) {
-            if (shootNameDB_List.contains(shootName_List.get(i))) {
-                shootNameDB_List.remove(shootName_List.get(i))
+        for (int i = 0; i < shootNameCurr_List.size(); i++) {
+            if (shootNameDB_List.contains(shootNameCurr_List.get(i))) {
+                shootNameDB_List.remove(shootNameCurr_List.get(i));
             }
         }
 
         tempShooter_Adapt = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, shootNameDB_List);
 
         return tempShooter_Adapt;
+    }
+
+    private void addShooterToDBList(String shooterName_Str) {
+        /*******************************************************************************************
+         * Function: addShooterToDBList
+         *
+         * Purpose: Function updates DB List
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        int prevLastIndex_Int = shootNameDB_List.size() - 1;
+        shootNameDB_List.set(prevLastIndex_Int, shooterName_Str);
+        shootNameDB_List.add(ADD_SHOOTER_STRING);
+    }
+
+    private void removeLastShooterFromCurrList() {
+        /*******************************************************************************************
+         * Function: removeLastShooterFromCurrList
+         *
+         * Purpose: Function removes the last added shooter from current list and adds back to
+         *          DB list
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        int lastIndex_Int = shootNameCurr_List.size() - 1;
+        String shooterNameRemoved_Str = shootNameCurr_List.get(lastIndex_Int);
+        shootNameCurr_List.remove(lastIndex_Int);
+        addShooterToDBList(shooterNameRemoved_Str);
     }
 
     private void newEventDialog(final Context context){
@@ -446,15 +480,13 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
 
         final String POSITIVE_BUTTON_TXT = POS_BTN_TXT.get(NEW_EVENT_DIALOG_STATE);
         final String NEUTRAL_BUTTON_TXT =  NEU_BTN_TXT.get(NEW_EVENT_DIALOG_STATE);
-        final String NEGATIVE_BUTTON_TXT = NEG_BTN_TXT.get(NEW_EVENT_DIALOG_STATE)
+        final String NEGATIVE_BUTTON_TXT = NEG_BTN_TXT.get(NEW_EVENT_DIALOG_STATE);
 
         final int POSITIVE_BTN_COLOR = Color.BLUE;
         final int NEUTRAL_BTN_COLOR = Color.RED;
-        final int NEGATIVE_BTN_COLOR = Color.GREEN;
+        final int NEGATIVE_BTN_COLOR = context.getColor(R.color.colorPrimary);
 
         final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-
-        final DBHandler db = new DBHandler(this);
 
         // Set Dialog Title
         alertDialog.setTitle(DIALOG_TITLE);
@@ -477,12 +509,21 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         shooter_NumPick.setGravity(Gravity.CENTER);
         subView_LnrLay.addView(shooter_NumPick);
 
-        final EditText item_Edt = new EditText(context);
-        item_Edt.setGravity(Gravity.START);
-        item_Edt.setTextColor(Color.BLACK);
-
         final Spinner item_Spin = new Spinner(context);
         item_Spin.setGravity(Gravity.START);
+        try {
+            Field popup = Spinner.class.getDeclaredField("mPopup");
+            popup.setAccessible(true);
+
+            // Get private mPopup member variable and try cast to ListPopupWindow
+            android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(item_Spin);
+
+            // Set popupWindow height to 500px
+            popupWindow.setHeight(500);
+        }
+        catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
+            // silently fail...
+        }
 
         // Add linear layout to alert dialog
         alertDialog.setView(subView_LnrLay);
@@ -522,32 +563,30 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View view) {
                 // Perform Action on Positive button
                 int numShooter_Int = shooter_NumPick.getValue();
-                String shooterNameSpin_Str = item_Spin.getSelectedItem().toString();
-                String shooterNameEdt_Str = item_Edt.getText().toString();
 
                 switch (NEW_EVENT_DIALOG_STATE) {
                     case 0:
                         // Number picker to entering shooter 1 info
                         subView_LnrLay.removeView(shooter_NumPick);
                         subView_LnrLay.addView(item_Spin);
-                        initializeShooterSpinnerAdapt(context);
+                        item_Spin.setAdapter(initializeShooterSpinnerAdapt(context));
 
                         NEW_EVENT_DIALOG_STATE = (NEW_EVENT_DIALOG_STATE + 1);
                         break;
                     default:
                         // For all shooter info
+                        String shooterNameSpin_Str = item_Spin.getSelectedItem().toString();
 
-
-                        if (shooterName_Str.isEmpty()) {
-                            item_Edt.setError(context.getString(R.string.error_field_required));
-                            item_Edt.requestFocus();
+                        if (shooterNameSpin_Str.equals(ADD_SHOOTER_STRING)) {
+                            // Is the default text, set error
                         } else {
-                            shootName_List.set(NEW_EVENT_DIALOG_STATE, shooterName_Str);
+                            // All is good, keep going
+                            shootNameCurr_List.add(shooterNameSpin_Str);
 
                             if (numShooter_Int == NEW_EVENT_DIALOG_STATE) {
                                 // Put all extras into new intent and start new event
                                 Intent i = new Intent(context, NewEventActivity.class);
-                                i.putStringArrayListExtra(SHOOTER_LIST_KEY, shootName_List);
+                                i.putStringArrayListExtra(SHOOTER_LIST_KEY, shootNameCurr_List);
                                 i.putExtra(NUM_SHOOTER_KEY, numShooter_Int);
                                 i.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
                                 startActivity(i);
@@ -557,8 +596,8 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
 
                                 // Reset state
                                 NEW_EVENT_DIALOG_STATE = 0;
-
                             } else {
+                                item_Spin.setAdapter(updateShooterSpinnerAdapt(context));
                                 NEW_EVENT_DIALOG_STATE = (NEW_EVENT_DIALOG_STATE + 1);
                             }
                         }
@@ -566,7 +605,6 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
                 alertDialog.setMessage(DIALOG_MSG_TXT.get(NEW_EVENT_DIALOG_STATE));
-                item_Edt.setText(shootName_List.get(NEW_EVENT_DIALOG_STATE));
                 pos_Btn.setText(POS_BTN_TXT.get(NEW_EVENT_DIALOG_STATE));
                 neu_Btn.setText(NEU_BTN_TXT.get(NEW_EVENT_DIALOG_STATE));
                 neg_Btn.setText(NEG_BTN_TXT.get(NEW_EVENT_DIALOG_STATE));
@@ -585,7 +623,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
                         break;
                     case 1:
                         // Shooter 1 info to number of shooters picker
-                        subView_LnrLay.removeView(item_Edt);
+                        subView_LnrLay.removeView(item_Spin);
                         subView_LnrLay.addView(shooter_NumPick);
 
                         NEW_EVENT_DIALOG_STATE = (NEW_EVENT_DIALOG_STATE - 1);
@@ -593,11 +631,12 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
                     default:
                         // Some shooter info to previous shooter info
                         NEW_EVENT_DIALOG_STATE = (NEW_EVENT_DIALOG_STATE - 1);
+                        removeLastShooterFromCurrList();
+                        updateShooterSpinnerAdapt(context);
                         break;
                 }
 
                 alertDialog.setMessage(DIALOG_MSG_TXT.get(NEW_EVENT_DIALOG_STATE));
-                item_Edt.setText(shootName_List.get(NEW_EVENT_DIALOG_STATE));
                 pos_Btn.setText(POS_BTN_TXT.get(NEW_EVENT_DIALOG_STATE));
                 neu_Btn.setText(NEU_BTN_TXT.get(NEW_EVENT_DIALOG_STATE));
                 neg_Btn.setText(NEG_BTN_TXT.get(NEW_EVENT_DIALOG_STATE));
@@ -609,12 +648,19 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View view) {
                 // Perform Action on Negative button
-
+                AlertDialog newShooter_Dialog = newShooterDialog(alertDialog.getContext());
+                newShooter_Dialog.show();
+                newShooter_Dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        item_Spin.setAdapter(updateShooterSpinnerAdapt(context));
+                    }
+                });
             }
         });
     }
 
-    private void newShooterDialog(final Context context){
+    private AlertDialog newShooterDialog(final Context context){
         /*******************************************************************************************
          * Function: newShooterDialog
          *
@@ -622,7 +668,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
          *
          * Parameters: None
          *
-         * Returns: None
+         * Returns: alertDialog - Returns an alert dialog message that was built from this
          *
          ******************************************************************************************/
 
@@ -638,8 +684,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
 
         final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
 
-        GlobalApplicationContext globalApplicationContext = new GlobalApplicationContext();
-        final DBHandler db = new DBHandler(globalApplicationContext.getApplicationContext());
+        final DBHandler db = new DBHandler(context);
 
         // Set Dialog Title
         alertDialog.setTitle(DIALOG_TITLE);
@@ -655,6 +700,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         final EditText item_Edt = new EditText(context);
         item_Edt.setGravity(Gravity.START);
         item_Edt.setTextColor(Color.BLACK);
+        subView_LnrLay.addView(item_Edt);
 
         // Add linear layout to alert dialog
         alertDialog.setView(subView_LnrLay);
@@ -662,30 +708,6 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         // Positive Button, Right
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                // Processed by onClick below
-            }
-        });
-
-        // Neutral Button, Left
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // Processed by onClick below
-            }
-        });
-
-
-        new Dialog(context);
-        alertDialog.show();
-
-        // Set Buttons
-        final Button pos_Btn = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        final Button neu_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-
-        pos_Btn.setTextColor(POSITIVE_BTN_COLOR);
-        pos_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Perform Action on Positive button
                 String shooterNameEdt_Str = item_Edt.getText().toString();
 
                 if (shooterNameEdt_Str.isEmpty()) {
@@ -695,31 +717,47 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
                     ShooterClass temp_Shooter = new ShooterClass();
 
                     // TODO: Need to check if name is already in DB for coach
-                    temp_Shooter.setShooterName_Str(shooterNameEdt_Str);
-                    temp_Shooter.setShooterCoach_Str(mCurrentUserEmail_Str);
+                    if (db.isShooterInDB(mCurrentUserEmail_Str, shooterNameEdt_Str, -1)) {
+                        // Shooter name is already in the database
+                        item_Edt.setError(context.getString(R.string.error_shooter_name_already_exits));
+                        item_Edt.requestFocus();
+                    } else {
+                        // Shooter name is not in database, proceed
+                        temp_Shooter.setShooterName_Str(shooterNameEdt_Str);
+                        temp_Shooter.setShooterCoach_Str(mCurrentUserEmail_Str);
 
-                    // Add shooter to database
-                    db.insertShooterInDB(temp_Shooter);
+                        // Add shooter to database
+                        db.insertShooterInDB(temp_Shooter);
 
-                    // Add shooter to current shooter list
-                    shootName_List.add(shooterNameEdt_Str);
+                        // Add shooter to current shooter list
+                        addShooterToDBList(shooterNameEdt_Str);
 
-                    
-
+                        // Dismiss dialog and return to previous dialog
+                        alertDialog.dismiss();
+                    }
                 }
-
             }
         });
 
-        neu_Btn.setTextColor(NEUTRAL_BTN_COLOR);
-        neu_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Perform Action on Neutral button
+        // Neutral Button, Left
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Processed by onClick below
                 alertDialog.dismiss();
             }
         });
 
+        alertDialog.setOnShowListener( new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
+                alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
+            }
+        });
+
+        new Dialog(context);
+
+        return alertDialog;
     }
 
 }

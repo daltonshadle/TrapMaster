@@ -75,5 +75,7 @@
 
     <!--************************************ Profile Strings ************************************-->
     <string name="profile_activity_title">Profile</string>
+    <string name="error_shooter_name_already_exits">Shooter name already exists</string>
+    <string name="error_default_string">Default string</string>
 
 </resources>

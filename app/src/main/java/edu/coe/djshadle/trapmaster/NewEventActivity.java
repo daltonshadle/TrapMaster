@@ -372,7 +372,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             final TrapScoreItemClass temp_View = new TrapScoreItemClass(this, trapExpand_Array.get(i) != 0);
             temp_View.setTotalHitChange(this);
             temp_View.setRoundText(1);
-            temp_View.setUserEmailText(shooterNames_Array.get(i+1));
+            temp_View.setUserEmailText(shooterNames_Array.get(i));
             temp_View.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
