@@ -40,8 +40,6 @@ public class EventClass {
     private String eventTeam_Str;
     private String eventName_Str;
     private String eventLocation_Str;
-    private String eventGun_Str;
-    private String eventLoad_Str;
     private String eventDate_Str;
     private String eventWeather_Str;
     private String eventNotes_Str;
@@ -69,16 +67,13 @@ public class EventClass {
         this.eventTeam_Str = "";
         this.eventName_Str = "";
         this.eventLocation_Str = "";
-        this.eventGun_Str = "";
-        this.eventLoad_Str = "";
         this.eventDate_Str = "";
         this.eventWeather_Str = "";
         this.eventNotes_Str = "";
     }
 
     public EventClass(String eventEmail_Str, String eventTeam_Str,
-                      String eventName_Str, String eventLocation_Str, String eventGun_Str,
-                      String eventLoad_Str, String eventDate_Str,
+                      String eventName_Str, String eventLocation_Str, String eventDate_Str,
                       String eventWeather_Str, String eventNotes_Str) {
         /*******************************************************************************************
          * Function: EventClass
@@ -104,8 +99,6 @@ public class EventClass {
         this.eventTeam_Str = eventTeam_Str;
         this.eventName_Str = eventName_Str;
         this.eventLocation_Str = eventLocation_Str;
-        this.eventGun_Str = eventGun_Str;
-        this.eventLoad_Str = eventLoad_Str;
         this.eventDate_Str = eventDate_Str;
         this.eventWeather_Str = eventWeather_Str;
         this.eventNotes_Str = eventNotes_Str;
@@ -154,22 +147,6 @@ public class EventClass {
         this.eventLocation_Str = eventLocation_Str;
     }
 
-    public String getEventGun_Str() {
-        return eventGun_Str;
-    }
-
-    public void setEventGun_Str(String eventGun_Str) {
-        this.eventGun_Str = eventGun_Str;
-    }
-
-    public String getEventLoad_Str() {
-        return eventLoad_Str;
-    }
-
-    public void setEventLoad_Str(String eventLoad_Str) {
-        this.eventLoad_Str = eventLoad_Str;
-    }
-
     public String getEventDate_Str() {
         return eventDate_Str;
     }
@@ -207,14 +184,10 @@ public class EventClass {
         EVENT_DIALOG_MSG = new ArrayList<String>(Arrays.asList(
                 "Enter a name for this event.",
                 "Enter the location for this event.",
-                "Choose the gun used for this event.",
-                "Choose the load used for this event.",
                 "Choose the date this event took place.",
                 "Enter a weather description for this event.",
                 "Enter any notes for this event."));
         EVENT_POS_BTN_TXT = new ArrayList<String>(Arrays.asList(
-                "NEXT",
-                "NEXT",
                 "NEXT",
                 "NEXT",
                 "NEXT",
@@ -225,14 +198,10 @@ public class EventClass {
                 "BACK",
                 "BACK",
                 "BACK",
-                "BACK",
-                "BACK",
                 "BACK"));
         EVENT_EDT_HINT = new ArrayList<String>(Arrays.asList(
                 "i.e. MyEvent",
                 "i.e. Shooting Star Gun Club",
-                "",
-                "",
                 "",
                 "i.e. Warm, Sunny, Windy",
                 "i.e. This was a good event!"));
@@ -353,47 +322,17 @@ public class EventClass {
 
                         break;
                     case 1:
-                        // Location to Gun
+                        // Location to Date
                         item_Txt = item_Edt.getText().toString();
 
                         setEventLocation_Str(item_Txt);
 
                         subView_RelLay.removeView(item_Edt);
-                        item_Spin.setAdapter(initializeGunSpinnerAdapt(context));
-                        subView_RelLay.addView(item_Spin);
-
-                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
-                        break;
-                    case 2:
-                        // Gun to Load
-                        item_Txt = item_Spin.getSelectedItem().toString();
-
-                        if (item_Txt.equals(context.getString(R.string.add_gun_text))) {
-                            item_Txt = context.getString(R.string.no_gun_main_text);
-                        }
-
-                        setEventGun_Str(item_Txt);
-
-                        item_Spin.setAdapter(initializeLoadSpinnerAdapt(context));
-
-                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
-                        break;
-                    case 3:
-                        // Load to Date
-                        item_Txt = item_Spin.getSelectedItem().toString();
-
-                        if (item_Txt.equals(context.getString(R.string.add_load_text))) {
-                            item_Txt = context.getString(R.string.no_load_main_text);
-                        }
-
-                        setEventLoad_Str(item_Txt);
-
-                        subView_RelLay.removeView(item_Spin);
                         subView_RelLay.addView(item_Date);
 
                         EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
                         break;
-                    case 4:
+                    case 2:
                         // Date to Weather
                         item_Txt = item_Date.toString();
 
@@ -405,7 +344,7 @@ public class EventClass {
 
                         EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
                         break;
-                    case 5:
+                    case 3:
                         // Weather to Notes
                         item_Txt = item_Edt.getText().toString();
 
@@ -414,7 +353,7 @@ public class EventClass {
 
                         EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
                         break;
-                    case 6:
+                    case 4:
                         // Notes to Saving event and closing dialog
                         item_Txt = item_Edt.getText().toString();
 
@@ -465,36 +404,22 @@ public class EventClass {
                         EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
                         break;
                     case 2:
-                        // Gun to Location
+                        // Date to Location
                         item_Edt.setText(getEventLocation_Str());
 
-                        subView_RelLay.removeView(item_Spin);
+                        subView_RelLay.removeView(item_Date);
                         subView_RelLay.addView(item_Edt);
 
                         EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
                         break;
                     case 3:
-                        // Load to Gun
-                        item_Spin.setAdapter(initializeGunSpinnerAdapt(context));
-                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
-                        break;
-                    case 4:
-                        // Date to Load
-                        item_Spin.setAdapter(initializeLoadSpinnerAdapt(context));
-
-                        subView_RelLay.removeView(item_Date);
-                        subView_RelLay.addView(item_Spin);
-
-                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
-                        break;
-                    case 5:
                         // Weather to Date
                         subView_RelLay.removeView(item_Edt);
                         subView_RelLay.addView(item_Date);
 
                         EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
                         break;
-                    case 6:
+                    case 4:
                         // Notes to Weather
                         item_Edt.setText(getEventWeather_Str());
                         EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
@@ -508,80 +433,6 @@ public class EventClass {
             }
 
         });
-    }
-
-    private ArrayAdapter<String> initializeGunSpinnerAdapt(final Context context) {
-        /*******************************************************************************************
-         * Function: initializeGunSpinnerAdapt
-         *
-         * Purpose: Function initializes gun spinner for adding a new event
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        ArrayAdapter<String> tempGun_Adapt;
-        ArrayList<GunClass> tempGun_List;
-        ArrayList<String> tempGunStr_List = new ArrayList<>();
-
-        GlobalApplicationContext currentContext = new GlobalApplicationContext();
-        final DBHandler db = new DBHandler(currentContext.getContext());
-
-        tempGun_List = db.getAllGunFromDB(getEventEmail_Str());
-
-        for (int i = 0; i < tempGun_List.size(); i++) {
-            GunClass tempGun = tempGun_List.get(i);
-            String gunItem_Str = tempGun.getGunNickname_Str();
-
-            tempGunStr_List.add(gunItem_Str);
-        }
-
-        if (tempGunStr_List.isEmpty()) {
-            tempGunStr_List.add(context.getString(R.string.add_gun_text));
-        }
-
-        tempGun_Adapt = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, tempGunStr_List);
-
-        return tempGun_Adapt;
-    }
-
-    private ArrayAdapter<String> initializeLoadSpinnerAdapt(final Context context) {
-        /*******************************************************************************************
-         * Function: initializeLoadSpinnerAdapt
-         *
-         * Purpose: Function initializes load spinner for adding a new event
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        ArrayAdapter<String> tempLoad_Adapt;
-        ArrayList<LoadClass> tempLoad_List;
-        ArrayList<String> tempLoadStr_List = new ArrayList<>();
-
-        GlobalApplicationContext currentContext = new GlobalApplicationContext();
-        final DBHandler db = new DBHandler(currentContext.getContext());
-
-        tempLoad_List = db.getAllLoadFromDB(getEventEmail_Str());
-
-        for (int i = 0; i < tempLoad_List.size(); i++) {
-            LoadClass tempLoad = tempLoad_List.get(i);
-            String loadItem_Str = tempLoad.getLoadNickname_Str();
-
-            tempLoadStr_List.add(loadItem_Str);
-        }
-
-        if (tempLoadStr_List.isEmpty()) {
-            tempLoadStr_List.add(context.getString(R.string.add_load_text));
-        }
-
-        tempLoad_Adapt = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, tempLoadStr_List);
-
-        return tempLoad_Adapt;
     }
 
     public void removeEventItemDialog(final Context context, final TrapMasterListArrayAdapter adapter) {

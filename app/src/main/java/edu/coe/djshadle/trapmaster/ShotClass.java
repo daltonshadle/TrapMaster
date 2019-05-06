@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ShotClass {
-    // Might be my favorite name for a class, I will try to work this in wherever I can
     //************************************* Private Variables **************************************
     // Object variables
     private int shotID_Int;
@@ -41,6 +40,8 @@ public class ShotClass {
     private String shotEventName_Str;
     private String shotTotalNum_Str;
     private String shotHitNum_Str;
+    private String shotGun_Str;
+    private String shotLoad_Str;
     private String shotNotes_Str;
 
     // Dialog variables
@@ -67,11 +68,14 @@ public class ShotClass {
         this.shotEventName_Str = "";
         this.shotTotalNum_Str = "";
         this.shotHitNum_Str = "";
+        this.shotGun_Str = "";
+        this.shotLoad_Str = "";
         this.shotNotes_Str = "";
     }
 
     public ShotClass(int shotID_Int, String shotShooterName_Str, String shotEventName_Str,
-                     String shotTotalNum_Str, String shotHitNum_Str, String shotNotes_Str) {
+                     String shotTotalNum_Str, String shotHitNum_Str, String shotGun_Str,
+                     String shotLoad_Str, String shotNotes_Str) {
         /*******************************************************************************************
          * Function: ShotClass
          *
@@ -82,6 +86,8 @@ public class ShotClass {
          *             shotEventName_Str (IN) - event name of the shot
          *             shotTotalNum_Str (IN) - total number of shots
          *             shotHitNum_Str (IN) - number of shots that were hits
+         *             shotGun_Str (IN) - name of gun used in shoot
+         *             shotLoad_Str (IN) - name of load used in shoot
          *             shotNotes_Str (IN) - notes tagged with the shot
          *
          * Returns: None
@@ -93,11 +99,14 @@ public class ShotClass {
         this.shotEventName_Str = shotEventName_Str;
         this.shotTotalNum_Str = shotTotalNum_Str;
         this.shotHitNum_Str = shotHitNum_Str;
+        this.shotGun_Str = shotGun_Str;
+        this.shotLoad_Str = shotLoad_Str;
         this.shotNotes_Str = shotNotes_Str;
     }
 
     public ShotClass(String shotShooterName_Str, String shotEventName_Str,
-                     String shotTotalNum_Str, String shotHitNum_Str, String shotNotes_Str) {
+                     String shotTotalNum_Str, String shotHitNum_Str, String shotGun_Str,
+                     String shotLoad_Str, String shotNotes_Str) {
         /*******************************************************************************************
          * Function: ShotClass
          *
@@ -107,6 +116,8 @@ public class ShotClass {
          *             shotEventName_Str (IN) - event name of the shot
          *             shotTotalNum_Str (IN) - total number of shots
          *             shotHitNum_Str (IN) - number of shots that were hits
+         *             shotGun_Str (IN) - name of gun used in shoot
+         *             shotLoad_Str (IN) - name of load used in shoot
          *             shotNotes_Str (IN) - notes tagged with the shot
          *
          * Returns: None
@@ -118,6 +129,8 @@ public class ShotClass {
         this.shotEventName_Str = shotEventName_Str;
         this.shotTotalNum_Str = shotTotalNum_Str;
         this.shotHitNum_Str = shotHitNum_Str;
+        this.shotGun_Str = shotGun_Str;
+        this.shotLoad_Str = shotLoad_Str;
         this.shotNotes_Str = shotNotes_Str;
     }
 
@@ -180,22 +193,46 @@ public class ShotClass {
         this.shotNotes_Str = shotNotes_Str;
     }
 
+    public String getShotGun_Str() {
+        return shotGun_Str;
+    }
+
+    public void setShotGun_Str(String shotGun_Str) {
+        this.shotGun_Str = shotGun_Str;
+    }
+
+    public String getShotLoad_Str() {
+        return shotLoad_Str;
+    }
+
+    public void setShotLoad_Str(String shotLoad_Str) {
+        this.shotLoad_Str = shotLoad_Str;
+    }
+
     //*************************************** Other Functions **************************************
     private void initializeShotDialogStrings() {
         SHOT_DIALOG_MSG = new ArrayList<String>(Arrays.asList(
                 "Enter the score for this shoot.",
                 "Choose an event for this shoot.",
+                "Choose a gun for this shoot.",
+                "Choose a load for this shoot.",
                 "Enter any notes for this shoot."));
         SHOT_POS_BTN_TXT = new ArrayList<String>(Arrays.asList(
+                "NEXT",
+                "NEXT",
                 "NEXT",
                 "NEXT",
                 "SAVE"));
         SHOT_NEU_BTN_TXT = new ArrayList<String>(Arrays.asList(
                 "CANCEL",
                 "BACK",
+                "BACK",
+                "BACK",
                 "BACK"));
         SHOT_EDT_HINT = new ArrayList<String>(Arrays.asList(
                 "i.e. 25",
+                "",
+                "",
                 "",
                 "i.e. This was a good event!"));
     }
@@ -310,7 +347,7 @@ public class ShotClass {
 
                         break;
                     case 1:
-                        // Event to Notes
+                        // Event to Gun
                         item_Txt = item_Spin.getSelectedItem().toString();
 
                         Log.d(TAG, item_Txt);
@@ -322,13 +359,47 @@ public class ShotClass {
 
                         setShotEventName_Str(item_Txt);
 
+                        item_Spin.setAdapter(initializeGunSpinnerAdapt(context));
+
+                        SHOT_DIALOG_STATE = (SHOT_DIALOG_STATE + 1);
+                        break;
+                    case 2:
+                        // Gun to Load
+                        item_Txt = item_Spin.getSelectedItem().toString();
+
+                        Log.d(TAG, item_Txt);
+
+                        // Check if the text is the default text for events
+                        if (item_Txt.equals(context.getString(R.string.add_gun_text))) {
+                            item_Txt = context.getString(R.string.no_gun_main_text);
+                        }
+
+                        setShotGun_Str(item_Txt);
+
+                        item_Spin.setAdapter(initializeLoadSpinnerAdapt(context));
+
+                        SHOT_DIALOG_STATE = (SHOT_DIALOG_STATE + 1);
+                        break;
+                    case 3:
+                        // Load to Notes
+                        item_Txt = item_Spin.getSelectedItem().toString();
+
+                        Log.d(TAG, item_Txt);
+
+                        // Check if the text is the default text for events
+                        if (item_Txt.equals(context.getString(R.string.add_load_text))) {
+                            item_Txt = context.getString(R.string.no_load_main_text);
+                        }
+
+                        setShotLoad_Str(item_Txt);
+
                         subView_RelLay.removeView(item_Spin);
                         item_Edt.setText(getShotNotes_Str());
                         subView_RelLay.addView(item_Edt);
 
                         SHOT_DIALOG_STATE = (SHOT_DIALOG_STATE + 1);
                         break;
-                    case 2:
+                    case 4:
                         // Notes to saving shoot and closing dialog
                         item_Txt = item_Edt.getText().toString();
 
@@ -382,7 +453,15 @@ public class ShotClass {
                         SHOT_DIALOG_STATE = (SHOT_DIALOG_STATE - 1);
                         break;
                     case 2:
-                        // Notes to event
+                        // Gun to event
+                        item_Spin.setAdapter(initializeEventSpinnerAdapt(context));
+                        break;
+                    case 3:
+                        // Load to gun
+                        item_Spin.setAdapter(initializeGunSpinnerAdapt(context));
+                        break;
+                    case 4:
+                        // Notes to load
                         subView_RelLay.removeView(item_Edt);
                         subView_RelLay.addView(item_Spin);
 
@@ -397,6 +476,82 @@ public class ShotClass {
             }
 
         });
+    }
+
+    private ArrayAdapter<String> initializeGunSpinnerAdapt(final Context context) {
+        /*******************************************************************************************
+         * Function: initializeGunSpinnerAdapt
+         *
+         * Purpose: Function initializes gun spinner for adding a new event
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        ArrayAdapter<String> tempGun_Adapt;
+        ArrayList<GunClass> tempGun_List;
+        ArrayList<String> tempGunStr_List = new ArrayList<>();
+
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+        final DBHandler db = new DBHandler(currentContext.getContext());
+
+        String coachName_Str = db.getShooterInDB(getShotShooterName_Str()).getShooterCoach_Str();
+        tempGun_List = db.getAllGunFromDB(coachName_Str);
+
+        for (int i = 0; i < tempGun_List.size(); i++) {
+            GunClass tempGun = tempGun_List.get(i);
+            String gunItem_Str = tempGun.getGunNickname_Str();
+
+            tempGunStr_List.add(gunItem_Str);
+        }
+
+        if (tempGunStr_List.isEmpty()) {
+            tempGunStr_List.add(context.getString(R.string.add_gun_text));
+        }
+
+        tempGun_Adapt = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, tempGunStr_List);
+
+        return tempGun_Adapt;
+    }
+
+    private ArrayAdapter<String> initializeLoadSpinnerAdapt(final Context context) {
+        /*******************************************************************************************
+         * Function: initializeLoadSpinnerAdapt
+         *
+         * Purpose: Function initializes load spinner for adding a new event
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        ArrayAdapter<String> tempLoad_Adapt;
+        ArrayList<LoadClass> tempLoad_List;
+        ArrayList<String> tempLoadStr_List = new ArrayList<>();
+
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+        final DBHandler db = new DBHandler(currentContext.getContext());
+
+        String coachName_Str = db.getShooterInDB(getShotShooterName_Str()).getShooterCoach_Str();
+        tempLoad_List = db.getAllLoadFromDB(coachName_Str);
+
+        for (int i = 0; i < tempLoad_List.size(); i++) {
+            LoadClass tempLoad = tempLoad_List.get(i);
+            String loadItem_Str = tempLoad.getLoadNickname_Str();
+
+            tempLoadStr_List.add(loadItem_Str);
+        }
+
+        if (tempLoadStr_List.isEmpty()) {
+            tempLoadStr_List.add(context.getString(R.string.add_load_text));
+        }
+
+        tempLoad_Adapt = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, tempLoadStr_List);
+
+        return tempLoad_Adapt;
     }
 
     private ArrayAdapter<String> initializeEventSpinnerAdapt(Context context) {

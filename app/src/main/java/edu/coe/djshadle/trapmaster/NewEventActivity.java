@@ -65,15 +65,16 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     private String CURRENT_USER_KEY;
     private String NUM_SHOOTER_KEY;
     private String SHOOTER_LIST_KEY;
+    private String SHOOTER_SCORE_LIST_KEY;
     private final int TOTAL_NUM_SHOTS = 25;
     private final String TRAP_STATE_KEY = "TRAP_STATE_KEY";
     private final String TRAP_EXPAND_KEY = "TRAP_EXPAND_KEY";
 
     // General Variables
-    private int totalHits_Int = 0;
     private int numShooters_Int = 1;
     private boolean quickEventFlag_Bool;
     private ArrayList<String> shooterNames_Array;
+    private ArrayList<Integer> shooterScores_Array;
     private ArrayList<Integer> trapState_Array;
     private ArrayList<Integer> trapExpand_Array;
     private String mCurrentUserEmail_Str = "Quick Event";
@@ -247,12 +248,19 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         int id = item.getItemId();
 
-        if (id == R.id.newEventCancel_MenuItem) {
-            // Cancel shoot, return to home
-            Intent homeActivity_Intent = new Intent(this, homeActivity.class);
-            homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
-            startActivity(homeActivity_Intent);
-            return true;
+        switch (id) {
+            case R.id.newEventAllHit_MenuItem:
+                // All items to hit
+                for (TrapScoreItemClass i:trapScoreViews_Array) {
+                    i.setAllStatesToHit();
+                }
+                break;
+            case R.id.newEventCancel_MenuItem:
+                // Cancel shoot, return to home
+                Intent homeActivity_Intent = new Intent(this, homeActivity.class);
+                homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+                startActivity(homeActivity_Intent);
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -295,6 +303,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         CURRENT_USER_KEY = getString(R.string.current_user_key);
         NUM_SHOOTER_KEY = getString(R.string.num_shooter_key);
         SHOOTER_LIST_KEY = getString(R.string.shooter_list_key);
+        SHOOTER_SCORE_LIST_KEY =  getString(R.string.shooter_score_list_key);
     }
 
     //************************************* UI View Functions **************************************
@@ -509,19 +518,35 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         return allChecked;
     }
 
+    private ArrayList<Integer> getAllTrapScores() {
+        /*******************************************************************************************
+         * Function: getAllTrapScores
+         *
+         * Purpose: Function returns a list of all the trap scores in order
+         *
+         * Parameters: None
+         *
+         * Returns: tempScore_List
+         *
+         ******************************************************************************************/
+
+        ArrayList<Integer> tempScore_List = new ArrayList<>();
+
+        for (int i = 0; i < numShooters_Int; i++) {
+            tempScore_List.add(trapScoreViews_Array.get(i).getTotalNumberHit());
+        }
+
+        return  tempScore_List;
+    }
+
     //************************************ Database Functions **************************************
-    private void saveScoreToDB(String email_Str, String eventName_Str, int totalShot_Int,
-                           int totalHit_Int, String notes_Str) {
+    private void saveScoresToDB() {
         /*******************************************************************************************
          * Function: saveScoreToDB
          *
          * Purpose: Function takes info necessary to save score to database
          *
-         * Parameters: email_Str (IN) - email of the user
-         *             eventName_Str (IN) - name of the event
-         *             totalShot_Int (IN) - number of total possible shots taken
-         *             totalHit_Int (IN) - number of total hits
-         *             notes_Str (IN) - notes from the shoot
+         * Parameters: None
          *
          * Returns: None
          *
@@ -529,10 +554,15 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         DBHandler db = new DBHandler(getApplicationContext());
 
-        ShotClass temp_Shot = new ShotClass(email_Str, eventName_Str, Integer.toString(totalShot_Int),
-                Integer.toString(totalHit_Int), notes_Str);
+        for (int i = 0; i < numShooters_Int; i++) {
+            ShotClass temp_Shot = new ShotClass();
 
-        db.insertShotInDB(temp_Shot);
+            temp_Shot.setShotShooterName_Str(shooterNames_Array.get(i));
+            temp_Shot.setShotHitNum_Str(Integer.toString(trapScoreViews_Array.get(i).getTotalNumberHit()));
+            temp_Shot.setShotTotalNum_Str(Integer.toString(TOTAL_NUM_SHOTS));
+
+            db.insertShotInDB(temp_Shot);
+        }
     }
 
     //*********************************** QuickEvent Functions *************************************
@@ -704,7 +734,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         final String DIALOG_TITLE = "Post Event Logger";
         final String DIALOG_MSG = "Do you want to continue to the post event logger? " +
-                "(This let's you add notes and tag an event)";
+                "(This let's you add additional info to your shoot)";
 
         final boolean POSITIVE_BTN = true;  // Right
         final boolean NEUTRAL_BTN = false;   // Left
@@ -772,7 +802,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
                     Intent postEventActivity_Intent = new Intent(NewEventActivity.this, PostEventActivity.class);
                     postEventActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
-                    postEventActivity_Intent.putExtra(getString(R.string.current_user_score), totalHits_Int);
+                    postEventActivity_Intent.putStringArrayListExtra(SHOOTER_LIST_KEY, shooterNames_Array);
+                    postEventActivity_Intent.putIntegerArrayListExtra(SHOOTER_SCORE_LIST_KEY, getAllTrapScores());
                     startActivity(postEventActivity_Intent);
 
                 }
@@ -797,8 +828,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
                     alertDialog.dismiss();
 
-                    saveScoreToDB(mCurrentUserEmail_Str, "", TOTAL_NUM_SHOTS,
-                            totalHits_Int, "");
+                    saveScoresToDB();
 
                     Intent homeActivity_Intent = new Intent(NewEventActivity.this, homeActivity.class);
                     homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);

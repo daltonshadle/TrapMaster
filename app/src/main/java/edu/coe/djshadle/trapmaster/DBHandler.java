@@ -34,7 +34,7 @@ import java.util.ArrayList;
 public class DBHandler extends SQLiteOpenHelper {
     //********************************** Variables and Constants ***********************************
     //Database Variables & Constants
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "trapMasterDB.db";
     private SQLiteDatabase dbWhole;
 
@@ -77,8 +77,6 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_EVENT_TEAM_NAME = "eventTeamName";
     private static final String KEY_EVENT_NAME = "eventName";
     private static final String KEY_EVENT_LOCATION = "eventLocation";
-    private static final String KEY_EVENT_GUN = "eventGun";
-    private static final String KEY_EVENT_LOAD = "eventLoad";
     private static final String KEY_EVENT_DATE = "eventDate";
     private static final String KEY_EVENT_WEATHER = "eventWeather";
     private static final String KEY_EVENT_NOTES = "eventNotes";
@@ -96,6 +94,8 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_SHOT_EVENT_NAME = "shotEventName";
     private static final String KEY_SHOT_NUMBER = "shotNumber";
     private static final String KEY_SHOT_HIT_MISS = "shotHitMiss";
+    private static final String KEY_SHOT_GUN = "shotGun";
+    private static final String KEY_SHOT_LOAD = "shotLoad";
     private static final String KEY_SHOT_NOTES = "shotNotes";
 
     //TeamTable Stuff
@@ -199,8 +199,6 @@ public class DBHandler extends SQLiteOpenHelper {
                 + KEY_EVENT_TEAM_NAME + " TEXT,"
                 + KEY_EVENT_NAME + " TEXT,"
                 + KEY_EVENT_LOCATION + " TEXT,"
-                + KEY_EVENT_GUN + " TEXT,"
-                + KEY_EVENT_LOAD + " TEXT,"
                 + KEY_EVENT_DATE + " TEXT,"
                 + KEY_EVENT_WEATHER + " TEXT,"
                 + KEY_EVENT_NOTES + " TEXT"
@@ -222,6 +220,8 @@ public class DBHandler extends SQLiteOpenHelper {
                 + KEY_SHOT_EVENT_NAME + " TEXT,"
                 + KEY_SHOT_NUMBER + " TEXT,"
                 + KEY_SHOT_HIT_MISS + " TEXT,"
+                + KEY_SHOT_GUN + " TEXT,"
+                + KEY_SHOT_LOAD + " TEXT,"
                 + KEY_SHOT_NOTES + " TEXT"
                 + ")";
         db.execSQL(CREATE_SHOT_TABLE);
@@ -343,6 +343,8 @@ public class DBHandler extends SQLiteOpenHelper {
             temp_Shot.setShotEventName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_EVENT_NAME)));
             temp_Shot.setShotHitNum_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_HIT_MISS)));
             temp_Shot.setShotTotalNum_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_NUMBER)));
+            temp_Shot.setShotGun_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_GUN)));
+            temp_Shot.setShotLoad_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_LOAD)));
             temp_Shot.setShotNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_NOTES)));
         } catch (Exception e) {
             Log.d("JRW", e.toString());
@@ -372,6 +374,8 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_SHOT_EVENT_NAME, s.getShotEventName_Str());
         values.put(KEY_SHOT_NUMBER, s.getShotTotalNum_Str());
         values.put(KEY_SHOT_HIT_MISS, s.getShotHitNum_Str());
+        values.put(KEY_SHOT_GUN, s.getShotGun_Str());
+        values.put(KEY_SHOT_LOAD, s.getShotLoad_Str());
         values.put(KEY_SHOT_NOTES, s.getShotNotes_Str());
 
         dbWhole.insert(TABLE_SHOT, null, values);
@@ -421,6 +425,8 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_SHOT_EVENT_NAME, s.getShotEventName_Str());
         values.put(KEY_SHOT_NUMBER, s.getShotTotalNum_Str());
         values.put(KEY_SHOT_HIT_MISS, s.getShotHitNum_Str());
+        values.put(KEY_SHOT_GUN, s.getShotGun_Str());
+        values.put(KEY_SHOT_LOAD, s.getShotLoad_Str());
         values.put(KEY_SHOT_NOTES, s.getShotNotes_Str());
 
         String whereClaus = KEY_SHOT_ID + " = " + Integer.toString(s.getShotID_Int());
@@ -456,6 +462,8 @@ public class DBHandler extends SQLiteOpenHelper {
             tempShot.setShotEventName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_EVENT_NAME)));
             tempShot.setShotTotalNum_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_NUMBER)));
             tempShot.setShotHitNum_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_HIT_MISS)));
+            tempShot.setShotGun_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_GUN)));
+            tempShot.setShotLoad_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_LOAD)));
             tempShot.setShotNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_NOTES)));
 
             tempShot_List.add(tempShot);
@@ -481,6 +489,40 @@ public class DBHandler extends SQLiteOpenHelper {
         ShooterClass tempShooter = new ShooterClass();
         String query = "SELECT * FROM " + TABLE_SHOOTERS + " WHERE "
                 + KEY_SHOOTER_ID + " = " + Integer.toString(shooterID_Int);
+
+        dbWhole = this.getReadableDatabase();
+
+        try {
+            Cursor cursor = dbWhole.rawQuery(query, null);
+            cursor.moveToFirst();
+            tempShooter.setShooterID_Int(cursor.getInt(cursor.getColumnIndex(KEY_SHOOTER_ID)));
+            tempShooter.setShooterName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOOTER_NAME)));
+            tempShooter.setShooterCoach_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOOTER_COACH)));
+            tempShooter.setShooterTeamNameArray_fromString(cursor.getString(cursor.getColumnIndex(KEY_SHOOTER_TEAM_NAME)));
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        dbWhole.close();
+
+        return tempShooter;
+    }
+
+    public ShooterClass getShooterInDB (String shooterName_Str) {
+        /*******************************************************************************************
+         * Function: getShooterInDB
+         *
+         * Purpose: Function returns the ID number of a shooter in the database
+         *
+         * Parameters: shooterName_Str (IN) - name of the shooter information to return
+         *
+         * Returns: tempShooter - Information of the shooter stored at ID
+         *
+         ******************************************************************************************/
+
+        ShooterClass tempShooter = new ShooterClass();
+        String query = "SELECT * FROM " + TABLE_SHOOTERS + " WHERE "
+                + KEY_SHOOTER_NAME + " = '" + shooterName_Str + "''";
 
         dbWhole = this.getReadableDatabase();
 
@@ -1104,8 +1146,6 @@ public class DBHandler extends SQLiteOpenHelper {
             tempEvent.setEventTeam_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_TEAM_NAME)));
             tempEvent.setEventName_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_NAME)));
             tempEvent.setEventLocation_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_LOCATION)));
-            tempEvent.setEventGun_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_GUN)));
-            tempEvent.setEventLoad_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_LOAD)));
             tempEvent.setEventDate_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_DATE)));
             tempEvent.setEventWeather_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_WEATHER)));
             tempEvent.setEventNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_NOTES)));
@@ -1137,8 +1177,6 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_EVENT_TEAM_NAME, e.getEventTeam_Str());
         values.put(KEY_EVENT_NAME, e.getEventName_Str());
         values.put(KEY_EVENT_LOCATION, e.getEventLocation_Str());
-        values.put(KEY_EVENT_GUN, e.getEventGun_Str());
-        values.put(KEY_EVENT_LOAD, e.getEventLoad_Str());
         values.put(KEY_EVENT_DATE, e.getEventDate_Str());
         values.put(KEY_EVENT_WEATHER, e.getEventWeather_Str());
         values.put(KEY_EVENT_NOTES, e.getEventNotes_Str());
@@ -1192,8 +1230,6 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_EVENT_TEAM_NAME, e.getEventTeam_Str());
         values.put(KEY_EVENT_NAME, e.getEventName_Str());
         values.put(KEY_EVENT_LOCATION, e.getEventLocation_Str());
-        values.put(KEY_EVENT_GUN, e.getEventGun_Str());
-        values.put(KEY_EVENT_LOAD, e.getEventLoad_Str());
         values.put(KEY_EVENT_DATE, e.getEventDate_Str());
         values.put(KEY_EVENT_WEATHER, e.getEventWeather_Str());
         values.put(KEY_EVENT_NOTES, e.getEventNotes_Str());
@@ -1232,8 +1268,6 @@ public class DBHandler extends SQLiteOpenHelper {
             tempEvent.setEventTeam_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_TEAM_NAME)));
             tempEvent.setEventName_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_NAME)));
             tempEvent.setEventLocation_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_LOCATION)));
-            tempEvent.setEventGun_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_GUN)));
-            tempEvent.setEventLoad_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_LOAD)));
             tempEvent.setEventDate_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_DATE)));
             tempEvent.setEventWeather_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_WEATHER)));
             tempEvent.setEventNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_NOTES)));

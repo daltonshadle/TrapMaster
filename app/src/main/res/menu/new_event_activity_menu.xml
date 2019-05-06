@@ -4,4 +4,7 @@
     <item
         android:id="@+id/newEventCancel_MenuItem"
         android:title="Cancel" />
+    <item
+        android:id="@+id/newEventAllHit_MenuItem"
+        android:title="All Hit" />
 </menu>

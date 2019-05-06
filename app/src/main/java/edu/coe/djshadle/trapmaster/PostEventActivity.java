@@ -37,6 +37,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -51,6 +52,8 @@ public class PostEventActivity extends AppCompatActivity {
     // General Constants
     private String ACTIVITY_TITLE;
     private String CURRENT_USER_KEY;
+    private String SHOOTER_LIST_KEY;
+    private String SHOOTER_SCORE_LIST_KEY;
     private final String TAG = "JRW";
     private final int TOTAL_NUM_SHOTS = 25;
     private final int EVENT_LIST_TAG = 2;
@@ -59,6 +62,9 @@ public class PostEventActivity extends AppCompatActivity {
     DBHandler db;
     private boolean isPortrait = true;
     private String mCurrentUserEmail_Str = "*********";
+    private int numShooters_Int;
+    private ArrayList<String> shooterName_List;
+    private ArrayList<Integer> shooterScore_List;
     // event
     private TrapMasterListArrayAdapter mCustomEventList_Adapt;
     private String mEventName_Str = "";
@@ -68,7 +74,9 @@ public class PostEventActivity extends AppCompatActivity {
 
     // UI References
     private ListView mEventList_View;
-    private EditText mShotNotes_Edt;
+    private ArrayList<PostEventItemClass> mShooterPostEventItems_List;
+    private LinearLayout mPostEventItems_Lay;
+    private ScrollView mPostEvent_Scroll;
 
     //Google Variables
 
@@ -105,6 +113,9 @@ public class PostEventActivity extends AppCompatActivity {
         } else {
             mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
             mShotScore_Int = getIntent().getIntExtra(getString(R.string.current_user_score), 0);
+            shooterName_List = getIntent().getStringArrayListExtra(SHOOTER_LIST_KEY);
+            shooterScore_List = getIntent().getIntegerArrayListExtra(SHOOTER_SCORE_LIST_KEY);
+            numShooters_Int = shooterName_List.size();
         }
 
         initializeViews();
@@ -151,6 +162,8 @@ public class PostEventActivity extends AppCompatActivity {
 
         ACTIVITY_TITLE = getString(R.string.post_event_activity_title);
         CURRENT_USER_KEY = getString(R.string.current_user_key);
+        SHOOTER_LIST_KEY = getString(R.string.shooter_list_key);
+        SHOOTER_SCORE_LIST_KEY = getString(R.string.shooter_score_list_key);
     }
 
     //************************************* UI View Functions **************************************
@@ -176,8 +189,11 @@ public class PostEventActivity extends AppCompatActivity {
             // Didn't work.
         }
 
-        // Initializing shot notes edit text
-        mShotNotes_Edt = findViewById(R.id.postEventShotNotes_Edt);
+        // Initialize Scroll
+        mPostEvent_Scroll = findViewById(R.id.postEventItems_Scroll);
+
+        // Initializing Post Event Items List
+        initializeShooterPostEventItems();
 
         // Initializing buttons
         FloatingActionButton mAddEvent_Btn = findViewById(R.id.postEventAddEvent_Btn);
@@ -202,11 +218,9 @@ public class PostEventActivity extends AppCompatActivity {
                 // Save post event action
 
                 // Get shot notes to save, save even if it is empty
-                mShotNotes_Str = mShotNotes_Edt.getText().toString();
 
                 // Save score to db, mEventName_Str may be empty (ie no event selected)
-                saveScoreToDB(mCurrentUserEmail_Str, mEventName_Str, TOTAL_NUM_SHOTS,
-                        mShotScore_Int, mShotNotes_Str);
+                saveScoreToDB(mEventName_Str);
 
                 Toast.makeText(PostEventActivity.this, "Shoot saved!", Toast.LENGTH_LONG).show();
 
@@ -221,8 +235,7 @@ public class PostEventActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // Cancel post event action
                 // Don't add any event or notes, just save score to database
-                saveScoreToDB(mCurrentUserEmail_Str, "", TOTAL_NUM_SHOTS,
-                        mShotScore_Int, "");
+                saveScoreToDB("No Event");
 
                 Toast.makeText(PostEventActivity.this, "Shoot saved!", Toast.LENGTH_LONG).show();
 
@@ -237,6 +250,7 @@ public class PostEventActivity extends AppCompatActivity {
         mEventList_View.setTag(EVENT_LIST_TAG);
         setListViewLayoutParams();
         initializeEventListView();
+
     }
 
     private void setListViewLayoutParams() {
@@ -264,9 +278,48 @@ public class PostEventActivity extends AppCompatActivity {
         }
 
         params = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int)(screenHeight_Dbl / scaleFactor_Dbl));
-        params.topToBottom = mShotNotes_Edt.getId();
+        params.topToBottom = mPostEvent_Scroll.getId();
 
         mEventList_View.setLayoutParams(params);
+    }
+
+    private void initializeShooterPostEventItems(){
+        /*******************************************************************************************
+         * Function: initializeShooterPostEventItems
+         *
+         * Purpose: Function initializes the post event items with shooter info
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Initialize linear layout
+        mPostEventItems_Lay = findViewById(R.id.postEventItems_Lay);
+
+        // Initialize list of views
+        mShooterPostEventItems_List = new ArrayList<>();
+
+        mShooterPostEventItems_List.add((PostEventItemClass) findViewById(R.id.postEventItem_1));
+        mShooterPostEventItems_List.add((PostEventItemClass) findViewById(R.id.postEventItem_2));
+        mShooterPostEventItems_List.add((PostEventItemClass) findViewById(R.id.postEventItem_3));
+        mShooterPostEventItems_List.add((PostEventItemClass) findViewById(R.id.postEventItem_4));
+        mShooterPostEventItems_List.add((PostEventItemClass) findViewById(R.id.postEventItem_5));
+
+        // Add info to views that are going to be used
+        for (int i = 0; i < numShooters_Int; i++) {
+            mShooterPostEventItems_List.get(i).setShooterName(shooterName_List.get(i));
+            mShooterPostEventItems_List.get(i).setShooterCoach(mCurrentUserEmail_Str);
+            mShooterPostEventItems_List.get(i).setShooterScore(shooterScore_List.get(i));
+        }
+
+        // Remove unused views
+        for (int i = 4; i > (numShooters_Int-1); i--) {
+            mPostEventItems_Lay.removeView(mShooterPostEventItems_List.get(i));
+            mShooterPostEventItems_List.remove(i);
+        }
+
     }
 
     //************************************** Event Functions ***************************************
@@ -321,27 +374,35 @@ public class PostEventActivity extends AppCompatActivity {
     }
 
     //************************************ Database Functions **************************************
-    private void saveScoreToDB(String email_Str, String eventName_Str, int totalShot_Int,
-                               int totalHit_Int, String notes_Str) {
+    private void saveScoreToDB(String eventName_Str) {
         /*******************************************************************************************
          * Function: saveScoreToDB
          *
-         * Purpose: Function takes info necessary to save score to database
+         * Purpose: Function saves all scores and info to database
          *
-         * Parameters: email_Str (IN) - email of the user
-         *             eventName_Str (IN) - name of the event
-         *             totalShot_Int (IN) - number of total possible shots taken
-         *             totalHit_Int (IN) - number of total hits
-         *             notes_Str (IN) - notes from the shoot
+         * Parameters: eventName_Str (IN) - name of the event
          *
          * Returns: None
          *
          ******************************************************************************************/
 
-        ShotClass temp_Shot = new ShotClass(email_Str, eventName_Str, Integer.toString(totalShot_Int),
-                Integer.toString(totalHit_Int), notes_Str);
+        DBHandler db = new DBHandler(GlobalApplicationContext.getContext());
 
-        db.insertShotInDB(temp_Shot);
+        for (int i = 0; i < numShooters_Int; i++) {
+            ShotClass temp_Shot = new ShotClass();
+            PostEventItemClass temp_Item = mShooterPostEventItems_List.get(i);
+
+            temp_Shot.setShotShooterName_Str(temp_Item.getShooterName());
+            temp_Shot.setShotEventName_Str(eventName_Str);
+            temp_Shot.setShotTotalNum_Str(Integer.toString(TOTAL_NUM_SHOTS));
+            temp_Shot.setShotHitNum_Str(Integer.toString(temp_Item.getShooterScore()));
+            temp_Shot.setShotGun_Str(temp_Item.shooterGun_Spin.getSelectedItem().toString());
+            temp_Shot.setShotLoad_Str(temp_Item.shooterLoad_Spin.getSelectedItem().toString());
+            temp_Shot.setShotNotes_Str(temp_Item.shooterNotes_Edt.getText().toString());
+
+            db.insertShotInDB(temp_Shot);
+        }
+
     }
 
 }

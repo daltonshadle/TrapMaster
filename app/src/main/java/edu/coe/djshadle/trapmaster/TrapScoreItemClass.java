@@ -771,6 +771,26 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
         }
     }
 
+    public void setAllStatesToHit() {
+        /*******************************************************************************************
+         * Function: setAllStatesToHit
+         *
+         * Purpose: Function sets all states to hit
+         *
+         * Parameters: None
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        for (int i = 0; i < mTrapTernaryBtn_List.size(); i++) {
+            TrapTernaryButtonClass child = mTrapTernaryBtn_List.get(i);
+            child.setStage(HIT);
+        }
+
+        OnStageChange();
+    }
+
     //************************************** Expand Functions **************************************
     public boolean getExpandBool(){
         /*******************************************************************************************

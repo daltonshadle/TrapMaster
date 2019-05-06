@@ -6,29 +6,90 @@
     android:layout_height="match_parent"
     tools:context=".PostEventActivity">
 
-    <EditText
-        android:id="@+id/postEventShotNotes_Edt"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:layout_margin="10dp"
-        android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:gravity="top"
-        android:hint="Enter notes on your shoot here!"
-        android:inputType="textMultiLine"
+    <ScrollView
+        android:id="@+id/postEventItems_Scroll"
+        android:layout_width="match_parent"
+        android:layout_height="363dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/postEventItems_Lay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <edu.coe.djshadle.trapmaster.PostEventItemClass
+                android:id="@+id/postEventItem_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <edu.coe.djshadle.trapmaster.PostEventItemClass
+                android:id="@+id/postEventItem_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <edu.coe.djshadle.trapmaster.PostEventItemClass
+                android:id="@+id/postEventItem_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <edu.coe.djshadle.trapmaster.PostEventItemClass
+                android:id="@+id/postEventItem_4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <edu.coe.djshadle.trapmaster.PostEventItemClass
+                android:id="@+id/postEventItem_5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
+    </ScrollView>
 
     <ListView
         android:id="@+id/postEvent_List"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="173dp"
         android:choiceMode="singleChoice"
         android:listSelector="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/postEventShotNotes_Edt" />
+        app:layout_constraintTop_toBottomOf="@id/postEventItems_Scroll" />
 
     <LinearLayout
         android:id="@+id/postEventButtons_SubLnrLay"
@@ -66,5 +127,6 @@
         android:clickable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/postEvent_List"
+        app:layout_constraintBottom_toTopOf="@id/postEventButtons_SubLnrLay"
         app:srcCompat="@drawable/black_plus_icon" />
 </android.support.constraint.ConstraintLayout>
