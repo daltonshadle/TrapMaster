@@ -41,6 +41,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class EventHistoryActivity extends AppCompatActivity {
 
@@ -213,18 +214,24 @@ public class EventHistoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
-        ArrayList<ShotClass> currentShotStr_List = db.getAllShotFromDB(mCurrentUserEmail_Str);
+        db = new DBHandler(this);
+        ArrayList<ShooterClass> currentShooter_List = db.getAllShooterFromDB(mCurrentUserEmail_Str);
+        ArrayList<ShotClass> currentShot_List = new ArrayList<>();
 
-        ShotClass temp_Shot = new ShotClass();
-        temp_Shot.setShotEventName_Str(getString(R.string.no_shot_main_text));
-        temp_Shot.setShotNotes_Str(getString(R.string.no_shot_second_text));
-
-        if (currentShotStr_List.isEmpty()) {
-            Log.d(TAG, "Shot list empty.");
-            currentShotStr_List.add(temp_Shot);
+        for (ShooterClass shooter : currentShooter_List) {
+            currentShot_List.addAll(db.getAllShotFromDB(shooter.getShooterName_Str()));
+            Collections.sort(currentShot_List, Collections.<ShotClass>reverseOrder());
         }
 
-        return currentShotStr_List;
+        if (currentShot_List.isEmpty()) {
+            Log.d(TAG, "Shot list empty.");
+            ShotClass temp_Shot = new ShotClass();
+            temp_Shot.setShotEventName_Str(getString(R.string.no_shot_main_text));
+            temp_Shot.setShotNotes_Str(getString(R.string.no_shot_second_text));
+            currentShot_List.add(temp_Shot);
+        }
+
+        return currentShot_List;
     }
 
     private void initializeShotListView() {

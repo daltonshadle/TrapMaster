@@ -231,6 +231,8 @@ public class PostEventActivity extends AppCompatActivity {
                 Intent homeActivity_Intent = new Intent(PostEventActivity.this, homeActivity.class);
                 homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
                 startActivity(homeActivity_Intent);
+
+                PostEventActivity.this.finish();
             }
         });
 
@@ -246,6 +248,8 @@ public class PostEventActivity extends AppCompatActivity {
                 Intent homeActivity_Intent = new Intent(PostEventActivity.this, homeActivity.class);
                 homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
                 startActivity(homeActivity_Intent);
+
+                PostEventActivity.this.finish();
             }
         });
 

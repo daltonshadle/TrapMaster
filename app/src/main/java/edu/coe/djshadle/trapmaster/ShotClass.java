@@ -17,6 +17,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Gravity;
@@ -32,7 +33,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class ShotClass {
+public class ShotClass implements Comparable <ShotClass> {
     //************************************* Private Variables **************************************
     // Object variables
     private int shotID_Int;
@@ -701,5 +702,11 @@ public class ShotClass {
                 }
             });
         }
+    }
+
+    //************************************** Compare Functions *************************************
+    @Override
+    public int compareTo(@NonNull ShotClass s) {
+        return (Integer.compare(this.getShotID_Int(), s.getShotID_Int()));
     }
 }

@@ -94,8 +94,8 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                 // Item is a shot class object
                 final ShotClass current_Shot = shotClass_List.get(position);
 
-                String main_Str = current_Shot.getShotEventName_Str();
-                String second_Str = current_Shot.getShotNotes_Str();
+                String main_Str = current_Shot.getShotShooterName_Str();
+                String second_Str = current_Shot.getShotEventName_Str();
 
                 // Check for default item and process accordingly
                 if (isDefaultItem(current_Shot)) {
@@ -115,12 +115,6 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                 // Set tag of list view item to be database ID
                 listItem.setTag(current_Shot.getShotID_Int());
 
-                if (main_Str.equals("")) {
-                    main_Str = "No event for shoot.";
-                }
-                if (second_Str.equals("")) {
-                    second_Str = "No notes for this shoot.";
-                }
                 if (second_Str.length() > 40) {
                     second_Str = second_Str.substring(0, 36) + "...";
                 }
@@ -168,12 +162,6 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                 // Set tag of list view item to be database ID
                 listItem.setTag(current_Event.getEventID_Int());
 
-                if (main_Str.equals("")) {
-                    main_Str = "No name for event.";
-                }
-                if (second_Str.equals("")) {
-                    second_Str = "No notes for this event.";
-                }
                 if (second_Str.length() > 40) {
                     second_Str = second_Str.substring(0, 36) + "...";
                 }
@@ -221,12 +209,6 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                 // Set tag of list view item to be database ID
                 listItem.setTag(current_Gun.getGunID_Int());
 
-                if (main_Str.equals("")) {
-                    main_Str = "No nickname for gun.";
-                }
-                if (second_Str.equals("")) {
-                    second_Str = "No notes for this gun.";
-                }
                 if (second_Str.length() > 40) {
                     second_Str = second_Str.substring(0, 36) + "...";
                 }
@@ -273,13 +255,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
 
                 // Set tag of list view item to be database ID
                 listItem.setTag(current_Load.getLoadID_Int());
-
-                if (main_Str.equals("")) {
-                    main_Str = "No nickname for load.";
-                }
-                if (second_Str.equals("")) {
-                    second_Str = "No notes for load.";
-                }
+                
                 if (second_Str.length() > 40) {
                     second_Str = second_Str.substring(0, 36) + "...";
                 }

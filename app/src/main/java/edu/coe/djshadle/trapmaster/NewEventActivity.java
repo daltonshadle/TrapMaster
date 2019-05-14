@@ -805,7 +805,6 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                     postEventActivity_Intent.putStringArrayListExtra(SHOOTER_LIST_KEY, shooterNames_Array);
                     postEventActivity_Intent.putIntegerArrayListExtra(SHOOTER_SCORE_LIST_KEY, getAllTrapScores());
                     startActivity(postEventActivity_Intent);
-
                 }
             });
         }
@@ -833,6 +832,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                     Intent homeActivity_Intent = new Intent(NewEventActivity.this, homeActivity.class);
                     homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
                     startActivity(homeActivity_Intent);
+
+                    NewEventActivity.this.finish();
                 }
             });
         }
