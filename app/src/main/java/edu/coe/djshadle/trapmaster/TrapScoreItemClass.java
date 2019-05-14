@@ -14,15 +14,21 @@
 package edu.coe.djshadle.trapmaster;
 
 //******************************************** Imports *********************************************
+import android.animation.LayoutTransition;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.transition.AutoTransition;
+import android.transition.Transition;
+import android.transition.TransitionManager;
+import android.transition.TransitionValues;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -32,6 +38,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -55,6 +62,7 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
     // UI References
     private ArrayList<TrapTernaryButtonClass> mTrapTernaryBtn_List;
     private ArrayList<LinearLayout> mLaneLay_List;
+    private ConstraintLayout mWholeConstraint_Lay;
     private TextView mRound_Txt;
     private TextView mShooter_Txt;
     private TextView mScore_Txt;
@@ -136,6 +144,7 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
         // Initialize all variables
         mTrapTernaryBtn_List = new ArrayList<>();
         mLaneLay_List = new ArrayList<>();
+        mWholeConstraint_Lay = findViewById(R.id.trapScoreItem_Lay);
         mRound_Txt = findViewById(R.id.trapScoreRound_txt);
         mShooter_Txt = findViewById(R.id.trapScoreName_txt);
         mScore_Txt =  findViewById(R.id.trapScoreScore_txt);
@@ -155,7 +164,6 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
         } else {
             collapseView();
         }
-
     }
 
     private void initializeTxtViews(){
@@ -683,6 +691,9 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
 
         int margin_Int = 2;
 
+        // Animate the transition a little
+        // TODO: Add transition here
+
         // Set lanes to vertical
         for (int i = 0; i < mLaneLay_List.size(); i++) {
             mLaneLay_List.get(i).setOrientation(LinearLayout.VERTICAL);
@@ -718,6 +729,9 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
 
         int margin_Int = 2;
 
+        // Animate the transition a little
+        // TODO: Add transition here
+
         // Set lanes to horizontal
         for (int i = 0; i < mLaneLay_List.size(); i++) {
             mLaneLay_List.get(i).setOrientation(LinearLayout.HORIZONTAL);
@@ -732,6 +746,7 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
             params.setMargins(margin_Int,margin_Int,margin_Int,margin_Int);
             temp_Btn.setLayoutParams(params);
         }
+
 
         // Set boolean
         viewExpand_Bool = false;

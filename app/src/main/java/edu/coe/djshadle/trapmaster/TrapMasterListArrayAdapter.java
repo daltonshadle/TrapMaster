@@ -255,7 +255,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
 
                 // Set tag of list view item to be database ID
                 listItem.setTag(current_Load.getLoadID_Int());
-                
+
                 if (second_Str.length() > 40) {
                     second_Str = second_Str.substring(0, 36) + "...";
                 }

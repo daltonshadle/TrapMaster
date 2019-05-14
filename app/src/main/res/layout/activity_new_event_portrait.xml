@@ -18,7 +18,38 @@
             android:id="@+id/newEventTrap_LnrLay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical" >
+
+            <edu.coe.djshadle.trapmaster.TrapScoreItemClass
+                android:id="@+id/trapScoreItem1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp" />
+
+            <edu.coe.djshadle.trapmaster.TrapScoreItemClass
+                android:id="@+id/trapScoreItem2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"/>
+
+            <edu.coe.djshadle.trapmaster.TrapScoreItemClass
+                android:id="@+id/trapScoreItem3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"/>
+
+            <edu.coe.djshadle.trapmaster.TrapScoreItemClass
+                android:id="@+id/trapScoreItem4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"/>
+
+            <edu.coe.djshadle.trapmaster.TrapScoreItemClass
+                android:id="@+id/trapScoreItem5"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"/>
+        </LinearLayout>
 
     </ScrollView>
 

@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/trapScoreItem_Lay"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    android:background="@drawable/trap_score_item_main_background">
 
     <TextView
         android:id="@+id/trapScoreName_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
         android:text="Shooter"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="12dp"
         android:text="Round"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -31,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:text="0"
         android:textAlignment="center"
@@ -40,241 +42,260 @@
         app:layout_constraintStart_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/trapScoreLane1_LnrLay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trapScoreScore_txt">
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn1"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn2"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn3"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn4"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn5"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/trapScoreLane2_LnrLay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toStartOf="@id/trapScoreLane3_LnrLay"
-        app:layout_constraintStart_toEndOf="@id/trapScoreLane1_LnrLay"
-        app:layout_constraintTop_toBottomOf="@+id/trapScoreScore_txt">
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn6"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn7"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn8"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn9"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn10"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/trapScoreLane3_LnrLay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trapScoreScore_txt">
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn11"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn12"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn13"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn14"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn15"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/trapScoreLane4_LnrLay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toStartOf="@id/trapScoreLane5_LnrLay"
-        app:layout_constraintStart_toEndOf="@id/trapScoreLane3_LnrLay"
-        app:layout_constraintTop_toBottomOf="@+id/trapScoreScore_txt">
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn16"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn17"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn18"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn19"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn20"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/trapScoreLane5_LnrLay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trapScoreScore_txt">
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn21"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn22"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn23"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn24"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-
-        <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
-            android:id="@+id/trapBtn25"
-            android:layout_width="@dimen/SmallCircleTrapButton"
-            android:layout_height="@dimen/SmallCircleTrapButton"
-            android:layout_margin="@dimen/MarginCircleTrapButton" />
-    </LinearLayout>
-
     <Button
         android:id="@+id/trapScoreHit_Btn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
+        android:layout_height="@dimen/TrapScoreHitMissClear"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="2dp"
         android:backgroundTint="@color/hit"
         android:text="HIT"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trapScoreLane3_LnrLay" />
+        app:layout_constraintTop_toBottomOf="@+id/trapScoreLanesContainer_Lay" />
 
     <Button
         android:id="@+id/trapScoreMiss_Btn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/TrapScoreHitMissClear"
+        android:layout_marginTop="2dp"
         android:layout_marginEnd="4dp"
+        android:layout_marginBottom="2dp"
         android:backgroundTint="@color/miss"
         android:text="MISS"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/trapScoreHit_Btn"
-        app:layout_constraintTop_toBottomOf="@+id/trapScoreLane3_LnrLay" />
+        app:layout_constraintTop_toBottomOf="@+id/trapScoreLanesContainer_Lay" />
 
     <Button
         android:id="@+id/trapScoreClear_Btn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
+        android:layout_height="@dimen/TrapScoreHitMissClear"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
         android:text="CLEAR"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trapScoreLane3_LnrLay" />
+        app:layout_constraintTop_toBottomOf="@+id/trapScoreLanesContainer_Lay" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/trapScoreLanesContainer_Lay"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="@color/colorPrimary"
+        android:padding="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/trapScoreScore_txt">
+
+        <LinearLayout
+            android:id="@+id/trapScoreLane1_LnrLay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn1"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn2"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn3"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn4"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn5"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/trapScoreLane2_LnrLay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toStartOf="@id/trapScoreLane3_LnrLay"
+            app:layout_constraintStart_toEndOf="@id/trapScoreLane1_LnrLay"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn6"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn7"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn8"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn9"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn10"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/trapScoreLane3_LnrLay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn11"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn12"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn13"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn14"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn15"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/trapScoreLane4_LnrLay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toStartOf="@id/trapScoreLane5_LnrLay"
+            app:layout_constraintStart_toEndOf="@id/trapScoreLane3_LnrLay"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn16"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn17"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn18"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn19"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn20"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/trapScoreLane5_LnrLay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn21"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn22"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn23"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn24"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+
+            <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
+                android:id="@+id/trapBtn25"
+                android:layout_width="@dimen/SmallCircleTrapButton"
+                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_margin="@dimen/MarginCircleTrapButton" />
+        </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

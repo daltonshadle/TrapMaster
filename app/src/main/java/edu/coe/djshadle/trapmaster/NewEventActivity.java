@@ -319,9 +319,6 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          ******************************************************************************************/
 
-        // Initializing linear layout
-        trap_LnrLay = findViewById(R.id.newEventTrap_LnrLay);
-
         // Initializing all trap counters
         initializeTrapCounters();
 
@@ -375,22 +372,37 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          ******************************************************************************************/
 
+        // Initializing linear layout
+        trap_LnrLay = findViewById(R.id.newEventTrap_LnrLay);
+
+        // Initializing array
         trapScoreViews_Array = new ArrayList<>();
 
+        // Adding all views to list
+        trapScoreViews_Array.add((TrapScoreItemClass) findViewById(R.id.trapScoreItem1));
+        trapScoreViews_Array.add((TrapScoreItemClass) findViewById(R.id.trapScoreItem2));
+        trapScoreViews_Array.add((TrapScoreItemClass) findViewById(R.id.trapScoreItem3));
+        trapScoreViews_Array.add((TrapScoreItemClass) findViewById(R.id.trapScoreItem4));
+        trapScoreViews_Array.add((TrapScoreItemClass) findViewById(R.id.trapScoreItem5));
+
+        // Add info to the views that are going to be used
         for (int i = 0; i < numShooters_Int; i++) {
-            final TrapScoreItemClass temp_View = new TrapScoreItemClass(this, trapExpand_Array.get(i) != 0);
-            temp_View.setTotalHitChange(this);
-            temp_View.setRoundText(1);
-            temp_View.setShooterText(shooterNames_Array.get(i));
-            temp_View.setOnClickListener(new View.OnClickListener() {
+            final int index = i;
+            trapScoreViews_Array.get(i).setTotalHitChange(this);
+            trapScoreViews_Array.get(i).setRoundText(1);
+            trapScoreViews_Array.get(i).setShooterText(shooterNames_Array.get(i));
+            trapScoreViews_Array.get(i).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    temp_View.setExpandBool(!temp_View.getExpandBool());
+                    trapScoreViews_Array.get(index).setExpandBool(!trapScoreViews_Array.get(index).getExpandBool());
                 }
             });
+        }
 
-            trapScoreViews_Array.add(temp_View);
-            trap_LnrLay.addView(temp_View);
+        // Remove unused views
+        for (int i = 4; i > (numShooters_Int-1); i--) {
+            trap_LnrLay.removeView(trapScoreViews_Array.get(i));
+            trapScoreViews_Array.remove(i);
         }
     }
 
@@ -859,9 +871,9 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         final boolean NEUTRAL_BTN = false;   // Left
         final boolean NEGATIVE_BTN = true;  // Middle
 
-        final String POSITIVE_BUTTON_TXT = "LEAVE";
+        final String POSITIVE_BUTTON_TXT = "STAY";
         final String NEUTRAL_BUTTON_TXT = "";
-        final String NEGATIVE_BUTTON_TXT = "STAY";
+        final String NEGATIVE_BUTTON_TXT = "LEAVE";
 
         final int POSITIVE_BTN_COLOR = Color.BLUE;
         final int NEUTRAL_BTN_COLOR = Color.RED;
@@ -918,10 +930,6 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                     // Perform Action on Positive button
 
                     alertDialog.dismiss();
-
-                    Intent homeActivity = new Intent(NewEventActivity.this, homeActivity.class);
-                    homeActivity.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
-                    startActivity(homeActivity);
                 }
             });
         }
@@ -943,6 +951,10 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                     // Perform Action on Negative button
 
                     alertDialog.dismiss();
+
+                    Intent homeActivity = new Intent(NewEventActivity.this, homeActivity.class);
+                    homeActivity.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+                    startActivity(homeActivity);
                 }
             });
         }
