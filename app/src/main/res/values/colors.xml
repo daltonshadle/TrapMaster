@@ -7,4 +7,6 @@
     <color name="miss">#d90c0c</color>
     <color name="neutral">#B7AAAA</color>
     <color name="dark">#000000</color>
+    <color name="selectorGrey">#DBDBDB</color>
+    <color name="transparent">#00FFFFFF</color>
 </resources>

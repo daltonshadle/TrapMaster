@@ -128,14 +128,6 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                 listItemMain_Txt.setText(main_Str);
                 listItemSecond_Txt.setText(second_Str);
 
-                // Set on click for whole view
-                listItem.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Log.d(TAG, Integer.toString(current_Shot.getShotID_Int()));
-                    }
-                });
-
                 // Set on click for edit button
                 listItemEdit_Btn.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -188,14 +180,6 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
 
                 listItemMain_Txt.setText(main_Str);
                 listItemSecond_Txt.setText(second_Str);
-
-                // Set on click for whole view
-                listItem.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Log.d(TAG, Integer.toString(current_Event.getEventID_Int()));
-                    }
-                });
 
                 // Set on click for edit button
                 listItemEdit_Btn.setOnClickListener(new View.OnClickListener() {
@@ -250,14 +234,6 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                 listItemMain_Txt.setText(main_Str);
                 listItemSecond_Txt.setText(second_Str);
 
-                // Set on click for whole view
-                listItem.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Log.d(TAG, Integer.toString(current_Gun.getGunID_Int()));
-                    }
-                });
-
                 // Set on click for edit button
                 listItemEdit_Btn.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -310,14 +286,6 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
 
                 listItemMain_Txt.setText(main_Str);
                 listItemSecond_Txt.setText(second_Str);
-
-                // Set on click for whole view
-                listItem.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Log.d(TAG, Integer.toString(current_Load.getLoadID_Int()));
-                    }
-                });
 
                 // Set on click for edit button
                 listItemEdit_Btn.setOnClickListener(new View.OnClickListener() {
@@ -531,4 +499,5 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
 
         return (mainText_Str.equals(l.getLoadNickname_Str()) && secondText_Str.equals(l.getLoadNotes_Str()));
     }
+
 }

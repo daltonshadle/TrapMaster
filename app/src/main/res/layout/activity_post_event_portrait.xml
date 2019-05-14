@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/postEventParent_Lay"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PostEventActivity">
@@ -9,7 +10,7 @@
     <ScrollView
         android:id="@+id/postEventItems_Scroll"
         android:layout_width="match_parent"
-        android:layout_height="363dp"
+        android:layout_height="250dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -18,6 +19,7 @@
             android:id="@+id/postEventItems_Lay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#00FFFFFF"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -86,7 +88,6 @@
         android:layout_width="match_parent"
         android:layout_height="173dp"
         android:choiceMode="singleChoice"
-        android:listSelector="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/postEventItems_Scroll" />
@@ -95,8 +96,8 @@
         android:id="@+id/postEventButtons_SubLnrLay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_margin="10dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -127,6 +128,6 @@
         android:clickable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/postEvent_List"
-        app:layout_constraintBottom_toTopOf="@id/postEventButtons_SubLnrLay"
         app:srcCompat="@drawable/black_plus_icon" />
+
 </android.support.constraint.ConstraintLayout>
