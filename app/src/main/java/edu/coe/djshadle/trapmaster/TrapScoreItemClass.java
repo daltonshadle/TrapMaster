@@ -44,24 +44,19 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
     //********************************** Variables and Constants ***********************************
     // General Constants
     private final static int HIT = 0, MISS = 1, NEUTRAL = 2;
-    private final static String JRW = "JRW";
-    private final int NUM_LANES = 5;
+    private final static String TAG = "JRW";
     private final int NUM_BUTTONS_PER_LANE = 5;
-    private final String TAG = "JRW";
 
     // General Variables
     private int viewScore_Int = 0;
-    private int parentWidth_Int = 1080;
-    private int parentHeight_Int = 1920;
     private boolean viewExpand_Bool = false;
     private OnTotalHitChange totalHitChange;
 
     // UI References
     private ArrayList<TrapTernaryButtonClass> mTrapTernaryBtn_List;
     private ArrayList<LinearLayout> mLaneLay_List;
-    private ConstraintLayout mWholeView_Lay;
     private TextView mRound_Txt;
-    private TextView mUserEmail_Txt;
+    private TextView mShooter_Txt;
     private TextView mScore_Txt;
     private Button mMiss_Btn;
     private Button mHit_Btn;
@@ -139,16 +134,11 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
         inflater.inflate(R.layout.view_trap_score_item, this);
 
         // Initialize all variables
-        mWholeView_Lay = findViewById(R.id.trapScoreItem_Lay);
         mTrapTernaryBtn_List = new ArrayList<>();
         mLaneLay_List = new ArrayList<>();
-        mRound_Txt = new TextView(context);
-        mUserEmail_Txt = new TextView(context);
-        mScore_Txt =  new TextView(context);
-
-        // Initialize whole view layout
-        ConstraintLayout.LayoutParams layout_Params = new ConstraintLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        mWholeView_Lay.setLayoutParams(layout_Params);
+        mRound_Txt = findViewById(R.id.trapScoreRound_txt);
+        mShooter_Txt = findViewById(R.id.trapScoreName_txt);
+        mScore_Txt =  findViewById(R.id.trapScoreScore_txt);
 
         // Initialize all textviews
         initializeTxtViews();
@@ -180,47 +170,7 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
          *
          ******************************************************************************************/
 
-        ConstraintSet set = new ConstraintSet();
-        int topMargin_Int = 10;
-        int viewPadding_Int = 10;
-        int mainTextSize_Int = 25;
-        int secondTextSize_Int = 20;
 
-        // Add score text to center of layout
-        mScore_Txt.setId(View.generateViewId());
-        mScore_Txt.setText("0");
-        mScore_Txt.setTextSize(mainTextSize_Int);
-        mScore_Txt.setPadding(viewPadding_Int, viewPadding_Int, viewPadding_Int, viewPadding_Int);
-        mWholeView_Lay.addView(mScore_Txt);
-        set.clone(mWholeView_Lay);
-        set.connect(mScore_Txt.getId(), ConstraintSet.TOP, mWholeView_Lay.getId(), ConstraintSet.TOP, topMargin_Int);
-        set.connect(mScore_Txt.getId(), ConstraintSet.LEFT, mWholeView_Lay.getId(), ConstraintSet.LEFT, topMargin_Int);
-        set.connect(mScore_Txt.getId(), ConstraintSet.RIGHT, mWholeView_Lay.getId(), ConstraintSet.RIGHT, topMargin_Int);
-        set.applyTo(mWholeView_Lay);
-
-        // Add round number text to left side of layout
-        mRound_Txt.setId(View.generateViewId());
-        mRound_Txt.setText("Round");
-        mRound_Txt.setTextSize(secondTextSize_Int);
-        mRound_Txt.setPadding(viewPadding_Int, viewPadding_Int, viewPadding_Int, viewPadding_Int);
-        mWholeView_Lay.addView(mRound_Txt);
-        set.clone(mWholeView_Lay);
-        set.connect(mRound_Txt.getId(), ConstraintSet.TOP, mWholeView_Lay.getId(), ConstraintSet.TOP, topMargin_Int);
-        set.connect(mRound_Txt.getId(), ConstraintSet.BOTTOM, mScore_Txt.getId(), ConstraintSet.BOTTOM, topMargin_Int);
-        set.connect(mRound_Txt.getId(), ConstraintSet.LEFT, mWholeView_Lay.getId(), ConstraintSet.LEFT, topMargin_Int);
-        set.applyTo(mWholeView_Lay);
-
-        // Add user email text to layout
-        mUserEmail_Txt.setId(View.generateViewId());
-        mUserEmail_Txt.setText("User");
-        mUserEmail_Txt.setTextSize(secondTextSize_Int);
-        mUserEmail_Txt.setPadding(viewPadding_Int, viewPadding_Int, viewPadding_Int, viewPadding_Int);
-        mWholeView_Lay.addView(mUserEmail_Txt);
-        set.clone(mWholeView_Lay);
-        set.connect(mUserEmail_Txt.getId(), ConstraintSet.TOP, mWholeView_Lay.getId(), ConstraintSet.TOP, topMargin_Int);
-        set.connect(mUserEmail_Txt.getId(), ConstraintSet.BOTTOM, mScore_Txt.getId(), ConstraintSet.BOTTOM, topMargin_Int);
-        set.connect(mUserEmail_Txt.getId(), ConstraintSet.RIGHT, mWholeView_Lay.getId(), ConstraintSet.RIGHT, topMargin_Int);
-        set.applyTo(mWholeView_Lay);
     }
 
     private void initializeTrapTernaryBtns(Context context){
@@ -235,78 +185,22 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
          *
          ******************************************************************************************/
 
-        ConstraintSet set = new ConstraintSet();
-        int margin_Int = 10;
-        int padding_Int = 3;
+        // Add all linear layouts to list by ID
+        mLaneLay_List.add((LinearLayout) findViewById(R.id.trapScoreLane1_LnrLay));
+        mLaneLay_List.add((LinearLayout) findViewById(R.id.trapScoreLane2_LnrLay));
+        mLaneLay_List.add((LinearLayout) findViewById(R.id.trapScoreLane3_LnrLay));
+        mLaneLay_List.add((LinearLayout) findViewById(R.id.trapScoreLane4_LnrLay));
+        mLaneLay_List.add((LinearLayout) findViewById(R.id.trapScoreLane5_LnrLay));
 
-        for (int i = 0; i < NUM_LANES; i++) {
-            // Initialize Layout
-            LinearLayout temp_Lay = new LinearLayout(context);
-            temp_Lay.setId(View.generateViewId());
-            temp_Lay.setOrientation(LinearLayout.VERTICAL);
-            LinearLayout.LayoutParams temp_Params =
-                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT);
-            temp_Lay.setLayoutParams(temp_Params);
-
+        // Add all buttons to list by ID
+        for (int i = 0; i < mLaneLay_List.size(); i++) {
             for (int j = 0; j < NUM_BUTTONS_PER_LANE; j++) {
                 // Initialize Button
-                TrapTernaryButtonClass temp_Btn = new TrapTernaryButtonClass(context);
-                temp_Btn.setId(View.generateViewId());
-                temp_Btn.setPadding(padding_Int, padding_Int, padding_Int, padding_Int);
+                TrapTernaryButtonClass temp_Btn = findViewById(mLaneLay_List.get(i).getChildAt(j).getId());
                 temp_Btn.setStageChangeListener(this);
-                temp_Lay.addView(temp_Btn);
                 mTrapTernaryBtn_List.add(temp_Btn);
             }
-
-            // Add linear layout to list of layouts
-            mLaneLay_List.add(temp_Lay);
         }
-
-        // All lanes
-        LinearLayout leftMost_Lay = mLaneLay_List.get(0);
-        LinearLayout leftCenter_Lay = mLaneLay_List.get(1);
-        LinearLayout center_Lay = mLaneLay_List.get(2);
-        LinearLayout rightCenter_Lay = mLaneLay_List.get(3);
-        LinearLayout rightMost_Lay = mLaneLay_List.get(4);
-
-        // Right most lane
-        mWholeView_Lay.addView(leftMost_Lay);
-        set.clone(mWholeView_Lay);
-        set.connect(leftMost_Lay.getId(), ConstraintSet.TOP, mRound_Txt.getId(), ConstraintSet.BOTTOM, margin_Int);
-        set.connect(leftMost_Lay.getId(), ConstraintSet.LEFT, mWholeView_Lay.getId(), ConstraintSet.LEFT, margin_Int);
-        set.applyTo(mWholeView_Lay);
-
-        // Left center lane
-        mWholeView_Lay.addView(leftCenter_Lay);
-        set.clone(mWholeView_Lay);
-        set.connect(leftCenter_Lay.getId(), ConstraintSet.TOP, mRound_Txt.getId(), ConstraintSet.BOTTOM, margin_Int);
-        set.connect(leftCenter_Lay.getId(), ConstraintSet.LEFT, leftMost_Lay.getId(), ConstraintSet.LEFT, margin_Int);
-        set.connect(leftCenter_Lay.getId(), ConstraintSet.RIGHT, center_Lay.getId(), ConstraintSet.RIGHT, margin_Int);
-        set.applyTo(mWholeView_Lay);
-
-        // Center lane
-        mWholeView_Lay.addView(center_Lay);
-        set.clone(mWholeView_Lay);
-        set.connect(center_Lay.getId(), ConstraintSet.TOP, mRound_Txt.getId(), ConstraintSet.BOTTOM, margin_Int);
-        set.connect(center_Lay.getId(), ConstraintSet.LEFT, mWholeView_Lay.getId(), ConstraintSet.LEFT, margin_Int);
-        set.connect(center_Lay.getId(), ConstraintSet.RIGHT, mWholeView_Lay.getId(), ConstraintSet.RIGHT, margin_Int);
-        set.applyTo(mWholeView_Lay);
-
-        // Left center lane
-        mWholeView_Lay.addView(rightCenter_Lay);
-        set.clone(mWholeView_Lay);
-        set.connect(rightCenter_Lay.getId(), ConstraintSet.TOP, mRound_Txt.getId(), ConstraintSet.BOTTOM, margin_Int);
-        set.connect(rightCenter_Lay.getId(), ConstraintSet.LEFT, center_Lay.getId(), ConstraintSet.LEFT, margin_Int);
-        set.connect(rightCenter_Lay.getId(), ConstraintSet.RIGHT, rightMost_Lay.getId(), ConstraintSet.RIGHT, margin_Int);
-        set.applyTo(mWholeView_Lay);
-
-        // Right most lane
-        mWholeView_Lay.addView(rightMost_Lay);
-        set.clone(mWholeView_Lay);
-        set.connect(rightMost_Lay.getId(), ConstraintSet.TOP, mRound_Txt.getId(), ConstraintSet.BOTTOM, margin_Int);
-        set.connect(rightMost_Lay.getId(), ConstraintSet.RIGHT, mWholeView_Lay.getId(), ConstraintSet.RIGHT, margin_Int);
-        set.applyTo(mWholeView_Lay);
     }
 
     private void initializeBtns(final Context context){
@@ -321,32 +215,8 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
          *
          ******************************************************************************************/
 
-        ConstraintSet set = new ConstraintSet();
-        int margin_Int = 10;
-        int padding_Int = 3;
-        int buttonHeight_Int = 80;
-        int textSize_Int = 10;
-
-        LinearLayout refLane_Lay = mLaneLay_List.get(0);
-
-        LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, buttonHeight_Int, 1.0f);
-        btnParams.setMargins(margin_Int, 0, margin_Int, 0);
-        ConstraintLayout.LayoutParams layParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        LinearLayout btn_Lay = new LinearLayout(context);
-        btn_Lay.setId(View.generateViewId());
-        btn_Lay.setOrientation(LinearLayout.HORIZONTAL);
-        btn_Lay.setLayoutParams(layParams);
-
         // Init hit button
-        mHit_Btn = new Button(context);
-        mHit_Btn.setId(View.generateViewId());
-        mHit_Btn.setText("HIT");
-        mHit_Btn.setTextSize(textSize_Int);
-        mHit_Btn.setPadding(padding_Int, padding_Int, padding_Int, padding_Int);
-        mHit_Btn.setBackgroundColor(ContextCompat.getColor(context, R.color.hit));
-        mHit_Btn.setLayoutParams(btnParams);
-
+        mHit_Btn = findViewById(R.id.trapScoreHit_Btn);
         mHit_Btn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -355,14 +225,7 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
         });
 
         // Init miss button
-        mMiss_Btn = new Button(context);
-        mMiss_Btn.setId(View.generateViewId());
-        mMiss_Btn.setText("MISS");
-        mMiss_Btn.setTextSize(textSize_Int);
-        mMiss_Btn.setPadding(padding_Int, padding_Int, padding_Int, padding_Int);
-        mMiss_Btn.setBackgroundColor(ContextCompat.getColor(context, R.color.miss));
-        mMiss_Btn.setLayoutParams(btnParams);
-
+        mMiss_Btn = findViewById(R.id.trapScoreMiss_Btn);
         mMiss_Btn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -371,30 +234,13 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
         });
 
         // Init clear button
-        mClear_Btn = new Button(context);
-        mClear_Btn.setId(View.generateViewId());
-        mClear_Btn.setText("CLEAR");
-        mClear_Btn.setTextSize(textSize_Int);
-        mClear_Btn.setPadding(padding_Int, padding_Int, padding_Int, padding_Int);
-        mClear_Btn.setBackgroundColor(ContextCompat.getColor(context, R.color.neutral));
-        mClear_Btn.setLayoutParams(btnParams);
-
+        mClear_Btn = findViewById(R.id.trapScoreClear_Btn);
         mClear_Btn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 clearBtnDialog(context);
             }
         });
-
-        btn_Lay.addView(mClear_Btn);
-        btn_Lay.addView(mMiss_Btn);
-        btn_Lay.addView(mHit_Btn);
-
-        // Set btn_lay in layout
-        mWholeView_Lay.addView(btn_Lay);
-        set.clone(mWholeView_Lay);
-        set.connect(btn_Lay.getId(), ConstraintSet.TOP, refLane_Lay.getId(), ConstraintSet.BOTTOM, margin_Int);
-        set.applyTo(mWholeView_Lay);
     }
 
     protected void onFinishInflate(){
@@ -607,24 +453,19 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
         mRound_Txt.setText("Round " + Integer.toString(roundNum_Int));
     }
 
-    public void setUserEmailText(String email_Str) {
+    public void setShooterText(String shooter_Str) {
         /*******************************************************************************************
          * Function: setRoundText
          *
          * Purpose: Function sets the text for the user email text view
          *
-         * Parameters: email_Str (IN) - user email to set
+         * Parameters: shooter_Str (IN) - user email to set
          *
          * Returns: None
          *
          ******************************************************************************************/
 
-        if (email_Str.contains("@")) {
-            int atIndex_Int = email_Str.indexOf("@");
-            email_Str = email_Str.substring(0, atIndex_Int);
-        }
-
-        mUserEmail_Txt.setText(email_Str);
+        mShooter_Txt.setText(shooter_Str);
     }
 
     public ArrayList<Integer> getAllStates() {
@@ -840,6 +681,8 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
          *
          ******************************************************************************************/
 
+        int margin_Int = 2;
+
         // Set lanes to vertical
         for (int i = 0; i < mLaneLay_List.size(); i++) {
             mLaneLay_List.get(i).setOrientation(LinearLayout.VERTICAL);
@@ -848,13 +691,17 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
         // Set all trap button size to default
         for (int i = 0; i < mTrapTernaryBtn_List.size(); i++) {
             TrapTernaryButtonClass temp_Btn = mTrapTernaryBtn_List.get(i);
-            temp_Btn.setSize((int)this.getResources().getDimension(R.dimen.CircleTrapButton));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    (int) getContext().getResources().getDimension(R.dimen.CircleTrapButton),
+                    (int) getContext().getResources().getDimension(R.dimen.CircleTrapButton));
+            params.setMargins(margin_Int,margin_Int,margin_Int,margin_Int);
+            temp_Btn.setLayoutParams(params);
         }
 
         // Set boolean
         viewExpand_Bool = true;
 
-        Log.d(JRW, "Expanding trap view");
+        Log.d(TAG, "Expanding trap view");
     }
 
     public void collapseView(){
@@ -869,7 +716,7 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
          *
          ******************************************************************************************/
 
-        int width_Int = parentWidth_Int/35;
+        int margin_Int = 2;
 
         // Set lanes to horizontal
         for (int i = 0; i < mLaneLay_List.size(); i++) {
@@ -879,13 +726,17 @@ public class TrapScoreItemClass extends ConstraintLayout implements OnStageChang
         // Set all trap button size to default
         for (int i = 0; i < mTrapTernaryBtn_List.size(); i++) {
             TrapTernaryButtonClass temp_Btn = mTrapTernaryBtn_List.get(i);
-            temp_Btn.setSize(width_Int);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    (int) getContext().getResources().getDimension(R.dimen.SmallCircleTrapButton),
+                    (int) getContext().getResources().getDimension(R.dimen.SmallCircleTrapButton));
+            params.setMargins(margin_Int,margin_Int,margin_Int,margin_Int);
+            temp_Btn.setLayoutParams(params);
         }
 
         // Set boolean
         viewExpand_Bool = false;
 
-        Log.d(JRW, "Collapsing trap view");
+        Log.d(TAG, "Collapsing trap view");
     }
 
 }
