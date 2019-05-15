@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/postEventItem_Lay"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/trap_score_item_main_background"
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/postEventShooterName_Txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:text="Name"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,18 +23,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="8dp"
         android:text="Score"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/postEventNotes_Edt"
+        android:background="@drawable/white_rounded_rectangle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="4dp"
+        android:padding="4dp"
         android:ems="10"
         android:hint="Notes"
         android:inputType="textPersonName"
@@ -40,8 +44,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/postEventShooterName_Txt" />
 
-    <Spinner
-        android:id="@+id/postEventGun_Spin"
+    <RelativeLayout
+        android:id="@+id/postEventGunSpinBackground_Lay"
+        android:background="@drawable/white_rounded_rectangle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
@@ -49,12 +54,19 @@
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/postEventLoad_Spin"
+        app:layout_constraintEnd_toStartOf="@+id/postEventLoadSpinBackground_Lay"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/postEventNotes_Edt" />
+        app:layout_constraintTop_toBottomOf="@+id/postEventNotes_Edt">
 
-    <Spinner
-        android:id="@+id/postEventLoad_Spin"
+        <Spinner
+            android:id="@+id/postEventGun_Spin"
+            android:layout_width="match_parent"
+            android:layout_height="30dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/postEventLoadSpinBackground_Lay"
+        android:background="@drawable/white_rounded_rectangle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
@@ -63,7 +75,13 @@
         android:layout_marginBottom="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/postEventGun_Spin"
-        app:layout_constraintTop_toBottomOf="@+id/postEventNotes_Edt" />
+        app:layout_constraintStart_toEndOf="@+id/postEventGunSpinBackground_Lay"
+        app:layout_constraintTop_toBottomOf="@+id/postEventNotes_Edt">
+
+        <Spinner
+            android:id="@+id/postEventLoad_Spin"
+            android:layout_width="match_parent"
+            android:layout_height="30dp" />
+    </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
