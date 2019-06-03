@@ -54,6 +54,7 @@
     <!--*********************************** New Event Strings ***********************************-->
     <string name="new_event_activity_title">New Event</string>
     <string name="num_shooter_key">number_shooters</string>
+    <string name="num_rounds_key">number_rounds</string>
     <string name="shooter_list_key">shooter_list_key</string>
     <string name="shooter_score_list_key">shooter_score_list_key</string>
 

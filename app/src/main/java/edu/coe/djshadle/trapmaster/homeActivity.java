@@ -28,26 +28,20 @@ import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Xml;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.NumberPicker;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.lang.reflect.Field;
-import java.nio.channels.AlreadyBoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -55,6 +49,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
     //********************************* Variables and Constants ************************************
     //General Constants
     private String CURRENT_USER_KEY;
+    private String NUM_ROUNDS_KEY;
     private String NUM_SHOOTER_KEY;
     private String SHOOTER_LIST_KEY;
     private String ADD_SHOOTER_STRING;
@@ -266,6 +261,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
          ******************************************************************************************/
 
         CURRENT_USER_KEY = getString(R.string.current_user_key);
+        NUM_ROUNDS_KEY = getString(R.string.num_rounds_key);
         NUM_SHOOTER_KEY = getString(R.string.num_shooter_key);
         SHOOTER_LIST_KEY = getString(R.string.shooter_list_key);
         ADD_SHOOTER_STRING = "Click + to add new shooter";
@@ -337,6 +333,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         shootNameCurr_List = new ArrayList<>();
 
         DIALOG_MSG_TXT = new ArrayList<String>(Arrays.asList(
+                "How many rounds for this event?",
                 "How many shooters for this event?",
                 "Enter the shooter's name. (1)",
                 "Enter the shooter's name. (2)",
@@ -349,6 +346,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
                 "NEXT",
                 "NEXT",
                 "NEXT",
+                "NEXT",
                 "CONTINUE"));
         NEU_BTN_TXT = new ArrayList<String>(Arrays.asList(
                 "CANCEL",
@@ -356,8 +354,10 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
                 "BACK",
                 "BACK",
                 "BACK",
+                "BACK",
                 "BACK"));
         NEG_BTN_TXT = new ArrayList<String>(Arrays.asList(
+                " ",
                 " ",
                 "+",
                 "+",
@@ -501,14 +501,24 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         // Set views
         XmlResourceParser parser = getResources().getLayout(R.layout.view_horizontal_number_picker);
         AttributeSet attributeSet = Xml.asAttributeSet(parser);
+        // Round number picker
+        final com.travijuu.numberpicker.library.NumberPicker round_NumPick =
+                new com.travijuu.numberpicker.library.NumberPicker(context, attributeSet);
+        round_NumPick.setMax(4);
+        round_NumPick.setMin(1);
+        round_NumPick.setUnit(1);
+        round_NumPick.setGravity(Gravity.CENTER);
+        subView_LnrLay.addView(round_NumPick);
+
+        // Shooter number picker
         final com.travijuu.numberpicker.library.NumberPicker shooter_NumPick =
                 new com.travijuu.numberpicker.library.NumberPicker(context, attributeSet);
         shooter_NumPick.setMax(5);
         shooter_NumPick.setMin(1);
         shooter_NumPick.setUnit(1);
         shooter_NumPick.setGravity(Gravity.CENTER);
-        subView_LnrLay.addView(shooter_NumPick);
 
+        // Shooter name spinner
         final Spinner item_Spin = new Spinner(context);
         item_Spin.setGravity(Gravity.START);
         try {
@@ -562,11 +572,19 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View view) {
                 // Perform Action on Positive button
+                int numRound_Int = round_NumPick.getValue();
                 int numShooter_Int = shooter_NumPick.getValue();
 
                 switch (NEW_EVENT_DIALOG_STATE) {
                     case 0:
-                        // Number picker to entering shooter 1 info
+                        // Round number picker to shooter number picker
+                        subView_LnrLay.removeView(round_NumPick);
+                        subView_LnrLay.addView(shooter_NumPick);
+
+                        NEW_EVENT_DIALOG_STATE = (NEW_EVENT_DIALOG_STATE + 1);
+                        break;
+                    case 1:
+                        // Shooter number picker to entering shooter 1 info
                         subView_LnrLay.removeView(shooter_NumPick);
                         subView_LnrLay.addView(item_Spin);
                         item_Spin.setAdapter(initializeShooterSpinnerAdapt(context));
@@ -583,10 +601,11 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
                             // All is good, keep going
                             shootNameCurr_List.add(shooterNameSpin_Str);
 
-                            if (numShooter_Int == NEW_EVENT_DIALOG_STATE) {
+                            if (NEW_EVENT_DIALOG_STATE > numShooter_Int) {
                                 // Put all extras into new intent and start new event
                                 Intent i = new Intent(context, NewEventActivity.class);
                                 i.putStringArrayListExtra(SHOOTER_LIST_KEY, shootNameCurr_List);
+                                i.putExtra(NUM_ROUNDS_KEY, numRound_Int);
                                 i.putExtra(NUM_SHOOTER_KEY, numShooter_Int);
                                 i.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
                                 startActivity(i);
@@ -622,6 +641,13 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
                         alertDialog.dismiss();
                         break;
                     case 1:
+                        // Shooter number picker to round number picker
+                        subView_LnrLay.removeView(shooter_NumPick);
+                        subView_LnrLay.addView(round_NumPick);
+
+                        NEW_EVENT_DIALOG_STATE = (NEW_EVENT_DIALOG_STATE - 1);
+                        break;
+                    case 2:
                         // Shooter 1 info to number of shooters picker
                         subView_LnrLay.removeView(item_Spin);
                         subView_LnrLay.addView(shooter_NumPick);

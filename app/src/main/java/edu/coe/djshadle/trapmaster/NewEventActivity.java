@@ -24,27 +24,18 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
-import android.text.Layout;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -54,7 +45,6 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class NewEventActivity extends AppCompatActivity implements OnTotalHitChange {
 
@@ -63,6 +53,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     private String TAG = "JRW";
     private String ACTIVITY_TITLE;
     private String CURRENT_USER_KEY;
+    private String NUM_ROUNDS_KEY;
     private String NUM_SHOOTER_KEY;
     private String SHOOTER_LIST_KEY;
     private String SHOOTER_SCORE_LIST_KEY;
@@ -72,9 +63,9 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
     // General Variables
     private int numShooters_Int = 1;
-    private boolean quickEventFlag_Bool;
+    private int numRounds_Int = 1;
     private ArrayList<String> shooterNames_Array;
-    private ArrayList<Integer> shooterScores_Array;
+    private ArrayList<ArrayList<Integer>> shooterScores_Array;
     private ArrayList<Integer> trapState_Array;
     private ArrayList<Integer> trapExpand_Array;
     private String mCurrentUserEmail_Str = "Quick Event";
@@ -83,7 +74,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     // UI References
     private ArrayList<TrapScoreItemClass> trapScoreViews_Array;
     private LinearLayout trap_LnrLay;
-    private Button mSave_Btn;
+    private Button mRight_Btn;
+    private Button mLeft_Btn;
 
     //Google Variables
     FirebaseAuth auth;
@@ -121,14 +113,10 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             setAllExpandStates(trapExpand_Array);
         } else {
             mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
+            numRounds_Int = getIntent().getIntExtra(NUM_ROUNDS_KEY, 1);
             numShooters_Int = getIntent().getIntExtra(NUM_SHOOTER_KEY, 1);
             shooterNames_Array = getIntent().getStringArrayListExtra(SHOOTER_LIST_KEY);
-            quickEventFlag_Bool = getIntent().getBooleanExtra(getString(R.string.quick_event_flag_key), false);
             trapExpand_Array = new ArrayList<>(Collections.nCopies(5, 0));
-        }
-
-        if (mCurrentUserEmail_Str == null) {
-            mCurrentUserEmail_Str = "Quick Event";
         }
 
         initializeViews();
@@ -301,6 +289,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         ACTIVITY_TITLE = getString(R.string.new_event_activity_title);
         CURRENT_USER_KEY = getString(R.string.current_user_key);
+        NUM_ROUNDS_KEY = getString(R.string.num_rounds_key);
         NUM_SHOOTER_KEY = getString(R.string.num_shooter_key);
         SHOOTER_LIST_KEY = getString(R.string.shooter_list_key);
         SHOOTER_SCORE_LIST_KEY =  getString(R.string.shooter_score_list_key);
@@ -323,25 +312,27 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         initializeTrapCounters();
 
         // Initializing all buttons
-        mSave_Btn = findViewById(R.id.newEventSave_Btn);
-        mSave_Btn.setOnClickListener(new View.OnClickListener() {
+        mRight_Btn = findViewById(R.id.newEventRight_Btn);
+        mRight_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Next Button
                 if (allTrapsChecked()) {
-                    // All traps are checked and ready to save
-                    Log.d("JRW", "Save button quick event: " + Boolean.toString(quickEventFlag_Bool));
-                    if (quickEventFlag_Bool) {
-                        // Quick Event, must have them log in
-                        quickEventLogin();
-                    } else {
-                        // Not a quick event, launch post event dialog
-                        postEventDialog();
-                    }
+                    // All traps are checked and ready to save to move to next
+
                 } else {
                     // Not all traps are checked, not ready to save
                     Toast.makeText(NewEventActivity.this,
                             "All scoring buttons need to be checked", Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+
+        mLeft_Btn = findViewById(R.id.newEventLeft_Btn);
+        mLeft_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Previous Button
             }
         });
 
