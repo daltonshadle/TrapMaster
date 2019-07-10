@@ -64,6 +64,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     // General Variables
     private int numShooters_Int = 1;
     private int numRounds_Int = 1;
+    private int currentRound_Int = 1;
     private ArrayList<String> shooterNames_Array;
     private ArrayList<ArrayList<Integer>> shooterScores_Array;
     private ArrayList<Integer> trapState_Array;
@@ -97,8 +98,10 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         super.onCreate(savedInstanceState);
 
+        // Initialize constants
         initializeConstants();
 
+        // Set layout for correct orientation
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_new_event_portrait);
         }
@@ -106,6 +109,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             setContentView(R.layout.activity_new_event_landscape);
         }
 
+        // Pull saved instances from prior states
         if (savedInstanceState != null) {
             trapState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
             trapExpand_Array = savedInstanceState.getIntegerArrayList(TRAP_EXPAND_KEY);
@@ -119,6 +123,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             trapExpand_Array = new ArrayList<>(Collections.nCopies(5, 0));
         }
 
+        // Initialize views
         initializeViews();
 
         Log.d(TAG, "On Create");
@@ -317,8 +322,19 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             @Override
             public void onClick(View view) {
                 // Next Button
+
                 if (allTrapsChecked()) {
-                    // All traps are checked and ready to save to move to next
+                    // All traps are checked, move to next state
+                    // Increment current round number
+                    currentRound_Int = currentRound_Int + 1;
+
+                    if (currentRound_Int == numRounds_Int) {
+                        // Move to post event dialog
+
+                    } else {
+                        // Move to next round
+
+                    }
 
                 } else {
                     // Not all traps are checked, not ready to save
@@ -333,6 +349,15 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             @Override
             public void onClick(View view) {
                 // Previous Button
+
+                // Need to save all scores for current round in the round score array
+                // Decrement current round number
+                currentRound_Int = currentRound_Int - 1;
+
+                if (currentRound_Int < 1) {
+                    // Prompt user about exiting new event
+
+                }
             }
         });
 
@@ -715,7 +740,6 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                             Toast.makeText(NewEventActivity.this, "Sign in successful!",
                                     Toast.LENGTH_LONG).show();
                             mCurrentUserEmail_Str = email;
-                            quickEventFlag_Bool = false;
                         }
                     }
                 });
