@@ -114,6 +114,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                     listItem_Img.setVisibility(View.INVISIBLE);
                     listItemEdit_Btn.setVisibility(View.INVISIBLE);
                     listItemDelete_Btn.setVisibility(View.INVISIBLE);
+                    listItemScore_Txt.setVisibility(View.INVISIBLE);
                 } else {
                     // Not a default item, set score
                     listItemScore_Txt.setText(current_Shot.getShotHitNum_Str());

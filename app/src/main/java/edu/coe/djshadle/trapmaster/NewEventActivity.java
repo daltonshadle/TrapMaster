@@ -680,7 +680,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             for (int j = 0; j < numShooters_Int; j++) {
                 // Initialize temp shot object
                 ShotClass temp_Shot = new ShotClass();
-                String round_Str = "No Event Name - Round " + Integer.toString(tempCurRound_Int);
+                String round_Str = "No Event - Round " + Integer.toString(tempCurRound_Int);
 
                 // Set necessary fields for temp shot
                 temp_Shot.setShotShooterName_Str(shooterNames_Array.get(j));
@@ -932,6 +932,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                     // Create intent for post event activity and put all necessary extras
                     Intent postEventActivity_Intent = new Intent(NewEventActivity.this, PostEventActivity.class);
                     postEventActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+                    postEventActivity_Intent.putExtra(NUM_ROUNDS_KEY, numRounds_Int);
                     postEventActivity_Intent.putStringArrayListExtra(SHOOTER_LIST_KEY, shooterNames_Array);
                     postEventActivity_Intent.putExtra(SHOOTER_SCORE_LIST_KEY, (HashMap) shooterScores_Array);
                     startActivity(postEventActivity_Intent);
