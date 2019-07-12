@@ -48,6 +48,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PostEventActivity extends AppCompatActivity {
     //********************************** Variables and Constants ***********************************
@@ -68,7 +70,8 @@ public class PostEventActivity extends AppCompatActivity {
     private String mCurrentUserEmail_Str = "*********";
     private int numShooters_Int;
     private ArrayList<String> shooterName_List;
-    private ArrayList<Integer> shooterScore_List;
+    // 3D array of shooter scores by round, takes the form [round #][shooter #}{score index] = hit/miss
+    private Map<Integer, Map<Integer, ArrayList<Integer>>> shooterScores_Array;
     // event
     private TrapMasterListArrayAdapter mCustomEventList_Adapt;
     private String mEventName_Str = "";
@@ -115,7 +118,7 @@ public class PostEventActivity extends AppCompatActivity {
         } else {
             mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
             shooterName_List = getIntent().getStringArrayListExtra(SHOOTER_LIST_KEY);
-            shooterScore_List = getIntent().getIntegerArrayListExtra(SHOOTER_SCORE_LIST_KEY);
+            shooterScores_Array = (HashMap) getIntent().getSerializableExtra(SHOOTER_SCORE_LIST_KEY);
             numShooters_Int = shooterName_List.size();
         }
 

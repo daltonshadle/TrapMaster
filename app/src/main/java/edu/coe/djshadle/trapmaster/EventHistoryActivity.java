@@ -214,21 +214,15 @@ public class EventHistoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
+        // Initialize db handler and shooter and score arrays
         db = new DBHandler(this);
         ArrayList<ShooterClass> currentShooter_List = db.getAllShooterFromDB(mCurrentUserEmail_Str);
         ArrayList<ShotClass> currentShot_List = new ArrayList<>();
 
+        // For each shooter in the db shooter list, add scores for that shooter to score list.
         for (ShooterClass shooter : currentShooter_List) {
             currentShot_List.addAll(db.getAllShotFromDB(shooter.getShooterName_Str()));
             Collections.sort(currentShot_List, Collections.<ShotClass>reverseOrder());
-        }
-
-        if (currentShot_List.isEmpty()) {
-            Log.d(TAG, "Shot list empty.");
-            ShotClass temp_Shot = new ShotClass();
-            temp_Shot.setShotEventName_Str(getString(R.string.no_shot_main_text));
-            temp_Shot.setShotNotes_Str(getString(R.string.no_shot_second_text));
-            currentShot_List.add(temp_Shot);
         }
 
         return currentShot_List;
@@ -247,8 +241,12 @@ public class EventHistoryActivity extends AppCompatActivity {
          ******************************************************************************************/
 
         try {
+            // Initialize shot adapter
             mCustomShotList_Adapt = new TrapMasterListArrayAdapter(this,
                     (ArrayList<Object>)(ArrayList<?>)(refreshShotList()));
+
+
+            mCustomShotList_Adapt.refreshShotArrayAdapter(refreshShotList());
 
             mShotList_View.setAdapter(mCustomShotList_Adapt);
 
@@ -271,16 +269,9 @@ public class EventHistoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
+        // Initialize db handler and shooter and event array
+        db = new DBHandler(this);
         ArrayList<EventClass> userEvent_List = db.getAllEventFromDB(mCurrentUserEmail_Str);
-
-        EventClass temp_Event = new EventClass();
-        temp_Event.setEventName_Str(getString(R.string.no_event_main_text));
-        temp_Event.setEventNotes_Str(getString(R.string.no_event_second_text));
-
-        if (userEvent_List.isEmpty()) {
-            Log.d(TAG, "Event list empty.");
-            userEvent_List.add(temp_Event);
-        }
 
         return userEvent_List;
     }

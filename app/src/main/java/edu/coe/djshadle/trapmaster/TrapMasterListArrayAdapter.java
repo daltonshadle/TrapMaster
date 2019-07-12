@@ -57,6 +57,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
             // List is not empty
             Object first_Obj = objects.get(0);
 
+            // Find what type of object the object list is and assign it to correct list type
             if (first_Obj instanceof ShotClass) {
                 shotClass_List = (ArrayList<ShotClass>)(ArrayList<?>) objects;
             } else if (first_Obj instanceof EventClass) {
@@ -67,20 +68,29 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                 loadClass_List = (ArrayList<LoadClass>)(ArrayList<?>) objects;
             }
         }
+
+        // Refresh all lists, these functions will handle all empty lists
+        refreshShotArrayAdapter(shotClass_List);
+        refreshEventArrayAdapter(eventClass_List);
+        refreshGunArrayAdapter(gunClass_List);
+        refreshLoadArrayAdapter(loadClass_List);
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull final ViewGroup parent) {
+        // Initialize the list item view, context, and db handler vairables
         View listItem = convertView;
         final Context parentContext = parent.getContext();
         GlobalApplicationContext currentContext = new GlobalApplicationContext();
         final DBHandler db = new DBHandler(currentContext.getContext());
 
+        // Handle null exceptions for list view layout
         if (listItem == null)
             listItem = LayoutInflater.from(mCurrentContext).inflate(R.layout.view_custom_list_item,
                     parent,false);
 
+        // Initialize all views in list view
         ImageView listItem_Img = listItem.findViewById(R.id.listItem_Img);
         TextView listItemMain_Txt = listItem.findViewById(R.id.listItemMain_Txt);
         TextView listItemSecond_Txt = listItem.findViewById(R.id.listItemSecond_Txt);
@@ -89,6 +99,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
         ImageButton listItemDelete_Btn = listItem.findViewById(R.id.listItemDelete_Btn);
         ConstraintLayout listItem_Layout = listItem.findViewById(R.id.listItem_ConLay);
 
+        // Handle each type of list item appropriately with switch statement
         switch ((int) parent.getTag()) {
             case SHOT_LIST_TAG:
                 // Item is a shot class object
@@ -303,8 +314,8 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
         // Check if list is empty
         if (shot_List.isEmpty()) {
             ShotClass temp_Shot = new ShotClass();
-            temp_Shot.setShotEventName_Str(getContext().getString(R.string.no_shot_main_text));
-            temp_Shot.setShotNotes_Str(getContext().getString(R.string.no_shot_second_text));
+            temp_Shot.setShotShooterName_Str(getContext().getString(R.string.no_shot_main_text));
+            temp_Shot.setShotEventName_Str(getContext().getString(R.string.no_shot_second_text));
 
             shot_List.add(temp_Shot);
         }
@@ -419,7 +430,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
         String mainText_Str = getContext().getString(R.string.no_shot_main_text);
         String secondText_Str = getContext().getString(R.string.no_shot_second_text);
 
-        return (mainText_Str.equals(s.getShotEventName_Str()) && secondText_Str.equals(s.getShotNotes_Str()));
+        return (mainText_Str.equals(s.getShotShooterName_Str()) && secondText_Str.equals(s.getShotEventName_Str()));
     }
 
     private boolean isDefaultItem(EventClass e) {

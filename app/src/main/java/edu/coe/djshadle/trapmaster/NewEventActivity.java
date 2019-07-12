@@ -61,6 +61,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     private String SHOOTER_LIST_KEY;
     private String SHOOTER_SCORE_LIST_KEY;
     private final int TOTAL_NUM_SHOTS = 25;
+    private final int ROUND_SCORE_KEY = TOTAL_NUM_SHOTS;
     private final String TRAP_STATE_KEY = "TRAP_STATE_KEY";
     private final String TRAP_EXPAND_KEY = "TRAP_EXPAND_KEY";
 
@@ -118,8 +119,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         if (savedInstanceState != null) {
             trapState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
             trapExpand_Array = savedInstanceState.getIntegerArrayList(TRAP_EXPAND_KEY);
-            setAllTrapStates(trapState_Array);
-            setAllExpandStates(trapExpand_Array);
+            setCurrentTrapStates(trapState_Array);
+            setCurrentExpandStates(trapExpand_Array);
         } else {
             mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
             numRounds_Int = getIntent().getIntExtra(NUM_ROUNDS_KEY, 1);
@@ -155,11 +156,11 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             setContentView(R.layout.activity_new_event_landscape);
         }
 
-        trapState_Array = getAllTrapStates();
-        trapExpand_Array = getAllExpandStates();
+        trapState_Array = getCurrentTrapStates();
+        trapExpand_Array = getCurrentExpandStates();
         initializeViews();
-        setAllTrapStates(trapState_Array);
-        setAllExpandStates(trapExpand_Array);
+        setCurrentTrapStates(trapState_Array);
+        setCurrentExpandStates(trapExpand_Array);
 
         Log.d(TAG, "On Config Change");
     }
@@ -182,8 +183,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
 
-        trapState_Array = getAllTrapStates();
-        trapExpand_Array = getAllExpandStates();
+        trapState_Array = getCurrentTrapStates();
+        trapExpand_Array = getCurrentExpandStates();
         savedInstanceState.putIntegerArrayList(TRAP_STATE_KEY, trapState_Array);
         savedInstanceState.putIntegerArrayList(TRAP_EXPAND_KEY, trapExpand_Array);
 
@@ -209,8 +210,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         trapState_Array = savedInstanceState.getIntegerArrayList(TRAP_STATE_KEY);
         trapExpand_Array = savedInstanceState.getIntegerArrayList(TRAP_EXPAND_KEY);
-        setAllTrapStates(trapState_Array);
-        setAllExpandStates(trapExpand_Array);
+        setCurrentTrapStates(trapState_Array);
+        setCurrentExpandStates(trapExpand_Array);
 
         Log.d(TAG, "On restore instance");
     }
@@ -280,7 +281,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
             Log.d(this.getClass().getName(), "back button pressed");
-            backButtonDialog();
+            returnToHomeDialog();
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -335,17 +336,19 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                     // All traps are checked, move to next state
 
                     // Save current round trap states to shooterScores_Array
-                    saveRoundTrapStates();
+                    saveCurrentTrapStates();
 
                     if (currentRound_Int == numRounds_Int) {
                         // Move to post event dialog
-                        Toast.makeText(NewEventActivity.this, "Post Event Dialog", Toast.LENGTH_SHORT).show();
+                        postEventDialog();
                     } else {
                         // Move to next round
-                        Toast.makeText(NewEventActivity.this, "Next Round", Toast.LENGTH_SHORT).show();
 
                         // Increment current round number
                         currentRound_Int = currentRound_Int + 1;
+
+                        // Move to next round
+                        Toast.makeText(NewEventActivity.this, "Next Round", Toast.LENGTH_SHORT).show();
 
                         // Reset all trap counters for next round
                         resetAllTrapScores();
@@ -368,18 +371,18 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
                 if (currentRound_Int == 1) {
                     // Prompt user about exiting new event
-                    Toast.makeText(NewEventActivity.this, "Prompt user to exit", Toast.LENGTH_SHORT).show();
+                    returnToHomeDialog();
                 } else {
                     // Move to previous round
 
                     // Save current round trap states to shooterScores_Array
-                    saveRoundTrapStates();
+                    saveCurrentTrapStates();
 
                     // Decrement current round number
                     currentRound_Int = currentRound_Int - 1;
 
                     // Restore previous round trap states to trap score views
-                    restoreRoundTrapStates();
+                    restoreCurrentTrapStates();
                     setAllTrapRounds(currentRound_Int);
                 }
             }
@@ -446,7 +449,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         }
     }
 
-    //************************************* UI View Functions **************************************
+    //********************************** Trap Counter Functions ************************************
     @Override
     public void OnTotalHitChange() {
         /*******************************************************************************************
@@ -464,11 +467,11 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         //totalHits_Int = trapScore_View.getTotalNumberHit();
     }
 
-    private ArrayList<Integer> getAllTrapStates() {
+    private ArrayList<Integer> getCurrentTrapStates() {
         /*******************************************************************************************
-         * Function: getAllTrapStates
+         * Function: getCurrentTrapStates
          *
-         * Purpose: Function gets all the states of the trap counters and returns in a list
+         * Purpose: Function gets current states of the trap counters and returns in a list
          *
          * Parameters: None
          *
@@ -485,11 +488,11 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         return allStates_List;
     }
 
-    private void setAllTrapStates(ArrayList<Integer> allStates_List) {
+    private void setCurrentTrapStates(ArrayList<Integer> allStates_List) {
         /*******************************************************************************************
-         * Function: setAllTrapStates
+         * Function: setCurrentTrapStates
          *
-         * Purpose: Function sets all the states of the traps
+         * Purpose: Function sets current states of the traps
          *
          * Parameters: allStates_List - List of states to set the traps to
          *
@@ -508,11 +511,11 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         }
     }
 
-    private ArrayList<Integer> getAllExpandStates(){
+    private ArrayList<Integer> getCurrentExpandStates(){
         /*******************************************************************************************
-         * Function: getAllExpandStates
+         * Function: getCurrentExpandStates
          *
-         * Purpose: Function gets all the expand states of the trap counters and returns in a list
+         * Purpose: Function gets current expand states of the trap counters and returns in a list
          *
          * Parameters: None
          *
@@ -529,11 +532,11 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         return expandState_List;
     }
 
-    private void setAllExpandStates(ArrayList<Integer> expandStates_List) {
+    private void setCurrentExpandStates(ArrayList<Integer> expandStates_List) {
         /*******************************************************************************************
-         * Function: setAllExpandStates
+         * Function: setCurrentExpandStates
          *
-         * Purpose: Function sets all the expand tates of the traps
+         * Purpose: Function sets current expand states of the traps
          *
          * Parameters: expandStates_List - List of expand states to set the traps to
          *
@@ -546,11 +549,11 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         }
     }
 
-    private void saveRoundTrapStates() {
+    private void saveCurrentTrapStates() {
         /*******************************************************************************************
-         * Function: saveRoundTrapStates
+         * Function: saveCurrentTrapStates
          *
-         * Purpose: Function saves all trap states for the current round to shooterScore_Array,
+         * Purpose: Function saves trap states for the current round to shooterScore_Array,
          *          called when NEXT button is pressed
          *
          * Parameters: None
@@ -564,18 +567,20 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         // Iterate over all shooter and collect trap states for that round, save in array
         for (int i = 0; i < numShooters_Int; i++) {
-            currentRoundScores_Array.put(i, trapScoreViews_Array.get(i).getAllStates());
+            ArrayList<Integer> currentShooterScore_Array = trapScoreViews_Array.get(i).getAllStates();
+            currentShooterScore_Array.add(trapScoreViews_Array.get(i).getTotalNumberHit());
+            currentRoundScores_Array.put(i, currentShooterScore_Array);
         }
 
         // Add current round scores to the current round index of shooterScore_Array
         shooterScores_Array.put(currentRound_Int, currentRoundScores_Array);
     }
 
-    private void restoreRoundTrapStates() {
+    private void restoreCurrentTrapStates() {
         /*******************************************************************************************
-         * Function: restoreRoundTrapStates
+         * Function: restoreCurrentTrapStates
          *
-         * Purpose: Function restores all trap states for the previous round in shooterScore_Array,
+         * Purpose: Function restores trap states for the previous round in shooterScore_Array,
          *          called when PREVIOUS button is pressed
          *
          * Parameters: None
@@ -652,27 +657,6 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         }
     }
 
-    private ArrayList<Integer> getAllTrapScores() {
-        /*******************************************************************************************
-         * Function: getAllTrapScores
-         *
-         * Purpose: Function returns a list of all the trap scores in order
-         *
-         * Parameters: None
-         *
-         * Returns: tempScore_List
-         *
-         ******************************************************************************************/
-
-        ArrayList<Integer> tempScore_List = new ArrayList<>();
-
-        for (int i = 0; i < numShooters_Int; i++) {
-            tempScore_List.add(trapScoreViews_Array.get(i).getTotalNumberHit());
-        }
-
-        return  tempScore_List;
-    }
-
     //************************************ Database Functions **************************************
     private void saveScoresToDB() {
         /*******************************************************************************************
@@ -686,16 +670,27 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          ******************************************************************************************/
 
+        // Initialize db handler
         DBHandler db = new DBHandler(getApplicationContext());
 
-        for (int i = 0; i < numShooters_Int; i++) {
-            ShotClass temp_Shot = new ShotClass();
+        // Iterate over all shooters and all rounds, create a temp score object and save to db
+        for (int i = 0; i < numRounds_Int; i++) {
+            // Initialize round number for string reference
+            int tempCurRound_Int = i + 1;
+            for (int j = 0; j < numShooters_Int; j++) {
+                // Initialize temp shot object
+                ShotClass temp_Shot = new ShotClass();
+                String round_Str = "No Event Name - Round " + Integer.toString(tempCurRound_Int);
 
-            temp_Shot.setShotShooterName_Str(shooterNames_Array.get(i));
-            temp_Shot.setShotHitNum_Str(Integer.toString(trapScoreViews_Array.get(i).getTotalNumberHit()));
-            temp_Shot.setShotTotalNum_Str(Integer.toString(TOTAL_NUM_SHOTS));
+                // Set necessary fields for temp shot
+                temp_Shot.setShotShooterName_Str(shooterNames_Array.get(j));
+                temp_Shot.setShotEventName_Str(round_Str);
+                temp_Shot.setShotHitNum_Str(Integer.toString(shooterScores_Array.get(tempCurRound_Int).get(j).get(ROUND_SCORE_KEY)));
+                temp_Shot.setShotTotalNum_Str(Integer.toString(TOTAL_NUM_SHOTS));
 
-            db.insertShotInDB(temp_Shot);
+                // Insert into db
+                db.insertShotInDB(temp_Shot);
+            }
         }
     }
 
@@ -931,12 +926,14 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                 public void onClick(View view) {
                     // Perform Action on Positive button
 
+                    // Dismiss dialog
                     alertDialog.dismiss();
 
+                    // Create intent for post event activity and put all necessary extras
                     Intent postEventActivity_Intent = new Intent(NewEventActivity.this, PostEventActivity.class);
                     postEventActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
                     postEventActivity_Intent.putStringArrayListExtra(SHOOTER_LIST_KEY, shooterNames_Array);
-                    postEventActivity_Intent.putIntegerArrayListExtra(SHOOTER_SCORE_LIST_KEY, getAllTrapScores());
+                    postEventActivity_Intent.putExtra(SHOOTER_SCORE_LIST_KEY, (HashMap) shooterScores_Array);
                     startActivity(postEventActivity_Intent);
                 }
             });
@@ -958,10 +955,13 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                 public void onClick(View view) {
                     // Perform Action on Negative button
 
+                    // Dismiss dialog
                     alertDialog.dismiss();
 
+                    // Save scores to database
                     saveScoresToDB();
 
+                    // Create intent for returning to home activity and put all necessary extras
                     Intent homeActivity_Intent = new Intent(NewEventActivity.this, homeActivity.class);
                     homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
                     startActivity(homeActivity_Intent);
@@ -972,11 +972,11 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         }
     }
 
-    private void backButtonDialog() {
+    private void returnToHomeDialog() {
         /*******************************************************************************************
-         * Function: backButtonDialog
+         * Function: returnToHomeDialog
          *
-         * Purpose: Function creates a alert dialog to when back button is hit
+         * Purpose: Function creates a alert dialog to return to home and leave scoring
          *
          * Parameters: None
          *

@@ -212,15 +212,9 @@ public class ArmoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
+        // Initialize db handler and shooter and event array
+        db = new DBHandler(this);
         ArrayList<GunClass> userGun_List = db.getAllGunFromDB(mCurrentUserEmail_Str);
-
-        GunClass temp_Gun = new GunClass();
-        temp_Gun.setGunNickname_Str(getString(R.string.no_gun_main_text));
-        temp_Gun.setGunNotes_Str(getString(R.string.no_gun_second_text));
-
-        if (userGun_List.isEmpty()) {
-            userGun_List.add(temp_Gun);
-        }
 
         return userGun_List;
     }
@@ -240,6 +234,8 @@ public class ArmoryActivity extends AppCompatActivity {
         try {
             mCustomGunList_Adapt = new TrapMasterListArrayAdapter(this,
                     (ArrayList<Object>)(ArrayList<?>)(refreshGunList()));
+
+            mCustomGunList_Adapt.refreshGunArrayAdapter(refreshGunList());
 
             mGunList_View.setAdapter(mCustomGunList_Adapt);
 
@@ -262,15 +258,9 @@ public class ArmoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
+        // Initialize db handler and shooter and event array
+        db = new DBHandler(this);
         ArrayList<LoadClass> userLoad_List = db.getAllLoadFromDB(mCurrentUserEmail_Str);
-
-        LoadClass temp_Load = new LoadClass();
-        temp_Load.setLoadNickname_Str(getString(R.string.no_load_main_text));
-        temp_Load.setLoadNotes_Str(getString(R.string.no_load_second_text));
-
-        if (userLoad_List.isEmpty()) {
-            userLoad_List.add(temp_Load);
-        }
 
         return userLoad_List;
     }
@@ -290,6 +280,8 @@ public class ArmoryActivity extends AppCompatActivity {
         try {
             mCustomLoadList_Adapt = new TrapMasterListArrayAdapter(this,
                     (ArrayList<Object>)(ArrayList<?>)(refreshLoadList()));
+
+            mCustomLoadList_Adapt.refreshLoadArrayAdapter(refreshLoadList());
 
             mLoadList_View.setAdapter(mCustomLoadList_Adapt);
 

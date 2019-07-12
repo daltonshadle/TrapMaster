@@ -17,7 +17,7 @@
     <!--********************************** Default Text Strings *********************************-->
     <string name="no_event_second_text">Click add for a new event!</string>
     <string name="no_event_main_text">No events</string>
-    <string name="no_shot_second_text">Click add to start a new shoot!</string>
+    <string name="no_shot_second_text">Click add for a new shoot!</string>
     <string name="no_shot_main_text">No shoots</string>
     <string name="no_gun_second_text">Click add for a new gun!</string>
     <string name="no_gun_main_text">No guns</string>
