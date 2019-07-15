@@ -355,7 +355,7 @@ public class ShotClass implements Comparable <ShotClass> {
 
                         // Check if the text is the default text for events
                         if (item_Txt.equals(context.getString(R.string.add_event_text))) {
-                            item_Txt = context.getString(R.string.no_shot_main_text);
+                            item_Txt = ShotClass.this.shotEventName_Str;
                         }
 
                         setShotEventName_Str(item_Txt);
@@ -372,7 +372,7 @@ public class ShotClass implements Comparable <ShotClass> {
 
                         // Check if the text is the default text for events
                         if (item_Txt.equals(context.getString(R.string.add_gun_text))) {
-                            item_Txt = context.getString(R.string.no_gun_main_text);
+                            item_Txt = ShotClass.this.shotGun_Str;
                         }
 
                         setShotGun_Str(item_Txt);
@@ -389,7 +389,7 @@ public class ShotClass implements Comparable <ShotClass> {
 
                         // Check if the text is the default text for events
                         if (item_Txt.equals(context.getString(R.string.add_load_text))) {
-                            item_Txt = context.getString(R.string.no_load_main_text);
+                            item_Txt = ShotClass.this.shotLoad_Str;
                         }
 
                         setShotLoad_Str(item_Txt);
