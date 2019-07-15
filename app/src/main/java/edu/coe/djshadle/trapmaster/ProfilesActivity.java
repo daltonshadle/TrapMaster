@@ -27,12 +27,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class ProfilesActivity extends AppCompatActivity {
-
-    //********************************** Variables and Constants ***********************************
+    //***************************************** Constants ******************************************
     // General Constants
     private String ACTIVITY_TITLE;
+
+    // Key Constants
     private String CURRENT_USER_KEY;
 
+    //***************************************** Variables ******************************************
     // General Variables
     private String mCurrentUserEmail_Str = "********";
     private DBHandler db;
@@ -56,8 +58,10 @@ public class ProfilesActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
+        // Initialize constants
         initializeConstants();
 
+        // Set layout for correct orientation
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             setContentView(R.layout.activity_profiles_landscape);
         }
@@ -65,12 +69,14 @@ public class ProfilesActivity extends AppCompatActivity {
             setContentView(R.layout.activity_profiles_portrait);
         }
 
+        // Pull saved instances from previous state
         if (savedInstanceState != null) {
 
         } else {
             mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
         }
 
+        // Initialize views
         initializeViews();
     }
 
@@ -88,12 +94,15 @@ public class ProfilesActivity extends AppCompatActivity {
 
         super.onConfigurationChanged(newConfig);
 
+        // Set layout for correct orientation
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_profiles_portrait);
         } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             setContentView(R.layout.activity_profiles_landscape);
         }
 
+        // Initialize views
+        initializeViews();
     }
 
     private void initializeConstants() {

@@ -44,19 +44,24 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class EventHistoryActivity extends AppCompatActivity {
-
-    //********************************** Variables and Constants ***********************************
+    //**************************************** Constants *******************************************
     // General Constants
-    private final String TAG = "JRW";
+    private String TAG = "JRW";
     private String ACTIVITY_TITLE;
+
+    // Key Constants
     private String CURRENT_USER_KEY;
+
+    // Tag Constants
     private final int SHOT_LIST_TAG = 1;
     private final int EVENT_LIST_TAG = 2;
 
+    //**************************************** Variables *******************************************
     // General Variables
     private String mCurrentUserEmail_Str = "********";
     private DBHandler db;
     private boolean isPortrait = true;
+
     // Shot
     private TrapMasterListArrayAdapter mCustomShotList_Adapt;
 
@@ -64,8 +69,7 @@ public class EventHistoryActivity extends AppCompatActivity {
     private TrapMasterListArrayAdapter mCustomEventList_Adapt;
 
     // UI References
-    private ListView mShotList_View;
-    private ListView mEventList_View;
+    private ListView mShotList_View,  mEventList_View;
 
     //************************************* Activity Functions *************************************
     @Override
@@ -84,8 +88,10 @@ public class EventHistoryActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
+        // Initialize constants for this activity
         initializeConstants();
 
+        // Figure out orientation and layout
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
             setContentView(R.layout.activity_event_history_portrait);
             isPortrait = true;
@@ -94,12 +100,14 @@ public class EventHistoryActivity extends AppCompatActivity {
             isPortrait = false;
         }
 
+        // Pull extra information from intent
         if (savedInstanceState != null) {
 
         } else {
             mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
         }
 
+        // Initialize views
         initializeViews();
     }
 
@@ -117,6 +125,7 @@ public class EventHistoryActivity extends AppCompatActivity {
 
         super.onConfigurationChanged(newConfig);
 
+        // Figure out orientation and layout
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_event_history_portrait);
             isPortrait = true;
@@ -125,8 +134,11 @@ public class EventHistoryActivity extends AppCompatActivity {
             isPortrait = false;
         }
 
+        // Initialize views
+        initializeViews();
     }
 
+    //********************************** Initialization Functions **********************************
     private void initializeConstants() {
         /*******************************************************************************************
          * Function: initializeConstants
@@ -200,7 +212,7 @@ public class EventHistoryActivity extends AppCompatActivity {
         setTitle(ACTIVITY_TITLE);
     }
 
-    //************************************* Listview Functions *************************************
+    //************************************ List view Functions *************************************
     // Shot List
     private ArrayList<ShotClass> refreshShotList() {
         /*******************************************************************************************
@@ -314,17 +326,20 @@ public class EventHistoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
+        // Initialize variables for this function
         double screenHeight_Dbl = getResources().getDisplayMetrics().heightPixels;
         double scaleFactor_Dbl = 1;
 
         LinearLayout.LayoutParams params;
 
+        // Determine variables based on orientation
         if (isPortrait) {
             scaleFactor_Dbl = 3.5;
         } else {
             scaleFactor_Dbl = 2.0;
         }
 
+        // Set layout parameters
         params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int)(screenHeight_Dbl / scaleFactor_Dbl));
 
         mEventList_View.setLayoutParams(params);

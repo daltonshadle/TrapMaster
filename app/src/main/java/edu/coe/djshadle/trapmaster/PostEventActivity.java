@@ -52,35 +52,43 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PostEventActivity extends AppCompatActivity {
-    //********************************** Variables and Constants ***********************************
+    //***************************************** Constants ******************************************
     // General Constants
+    private final String TAG = "JRW";
     private String ACTIVITY_TITLE;
+    private String NO_GUN_STRING;
+    private String NO_LOAD_STRING;
+    private String NO_EVENT_STRING;
+    private final int TOTAL_NUM_SHOTS = 25;
+    private final int EVENT_LIST_TAG = 2;
+    private final int MAX_NUM_SHOOTERS = 5;
+
+    // Key Constants
     private String CURRENT_USER_KEY;
     private String SHOOTER_LIST_KEY;
     private String SHOOTER_SCORE_LIST_KEY;
     private String NUM_ROUNDS_KEY;
-    private String NO_GUN_STRING;
-    private String NO_LOAD_STRING;
-    private String NO_EVENT_STRING;
-    private final String TAG = "JRW";
-    private final int TOTAL_NUM_SHOTS = 25;
     private final int ROUND_SCORE_KEY = TOTAL_NUM_SHOTS;
-    private final int EVENT_LIST_TAG = 2;
-    private final int MAX_NUM_SHOOTERS = 5;
 
+    //***************************************** Variables ******************************************
     // General Variables
     DBHandler db;
     private boolean isPortrait = true;
     private String mCurrentUserEmail_Str = "*********";
-    private int numShooters_Int = 1;
+
+    // Round Variables
     private int currentRound_Int = 1;
     private int numRounds_Int = 1;
+    // 2D array of score objects, takes the form [round #][shooter #} = shot object
+    private Map<Integer, ArrayList<ShotClass>> shotRounds_Array;
+
+    // Shooter Variables
+    private int numShooters_Int = 1;
     private ArrayList<String> shooterName_List;
     // 3D array of shooter scores by round, takes the form [round #][shooter #}{score index] = hit/miss
     private Map<Integer, Map<Integer, ArrayList<Integer>>> shooterScores_Array;
-    // 2D array of score objects, takes the form [round #][shooter #} = shot object
-    private Map<Integer, ArrayList<ShotClass>> shotRounds_Array;
-    // event
+
+    // Event Variables
     private TrapMasterListArrayAdapter mCustomEventList_Adapt;
     private String mEventName_Str = "";
 
@@ -90,8 +98,6 @@ public class PostEventActivity extends AppCompatActivity {
     private ArrayList<PostEventItemClass> mShooterPostEventItems_List;
     private LinearLayout mPostEventItems_Lay;
     private ScrollView mPostEvent_Scroll;
-
-    //Google Variables
 
     //************************************* Activity Functions *************************************
     @Override
@@ -110,8 +116,10 @@ public class PostEventActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
+        // Initialize constants
         initializeConstants();
 
+        // Set layout for correct orientation
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_post_event_portrait);
             isPortrait = true;
@@ -121,6 +129,7 @@ public class PostEventActivity extends AppCompatActivity {
             isPortrait = false;
         }
 
+        // Pull saved instances from prior states
         if (savedInstanceState != null) {
 
         } else {
@@ -131,6 +140,7 @@ public class PostEventActivity extends AppCompatActivity {
             numShooters_Int = shooterName_List.size();
         }
 
+        // Initialize views
         initializeViews();
     }
 
@@ -148,6 +158,7 @@ public class PostEventActivity extends AppCompatActivity {
 
         super.onConfigurationChanged(newConfig);
 
+        // Set layout for correct orientation
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_post_event_portrait);
             isPortrait = true;
@@ -157,10 +168,11 @@ public class PostEventActivity extends AppCompatActivity {
             isPortrait = false;
         }
 
+        // Initialize views
         initializeViews();
-
     }
 
+    //*********************************** Initialize Functions *************************************
     private void initializeConstants() {
         /*******************************************************************************************
          * Function: initializeConstants
@@ -183,7 +195,6 @@ public class PostEventActivity extends AppCompatActivity {
         NO_EVENT_STRING = "No event";
     }
 
-    //************************************* UI View Functions **************************************
     private void initializeViews() {
         /*******************************************************************************************
          * Function: initializeViews
@@ -269,11 +280,13 @@ public class PostEventActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
+        // Initialize function variables
         double screenHeight_Dbl = getResources().getDisplayMetrics().heightPixels;
         double scaleFactorScroll_Dbl, scaleFactorEvent_Dbl;
 
         ConstraintLayout.LayoutParams params;
 
+        // Find current orientation and set variables accordingly
         if (isPortrait) {
             scaleFactorScroll_Dbl = 2.5;
             scaleFactorEvent_Dbl = 3.5;
@@ -283,14 +296,13 @@ public class PostEventActivity extends AppCompatActivity {
             scaleFactorEvent_Dbl = 3.5;
         }
 
+        // Set layout params for both list views
         params = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int)(screenHeight_Dbl / scaleFactorEvent_Dbl));
         params.topToBottom = mPostEvent_Scroll.getId();
-
         mEventList_View.setLayoutParams(params);
 
         params = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int)(screenHeight_Dbl / scaleFactorScroll_Dbl));
         params.topToTop = mParent_Lay.getId();
-
         mPostEvent_Scroll.setLayoutParams(params);
 
     }
@@ -345,21 +357,27 @@ public class PostEventActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
+        // Initialize function variables
         ArrayAdapter<String> temp_Adapt;
         ArrayList<GunClass> tempGun_List;
         ArrayList<String> tempStr_List = new ArrayList<>();
 
+        // Collect latest version of the database
         GlobalApplicationContext currentContext = new GlobalApplicationContext();
         final DBHandler db = new DBHandler(currentContext.getContext());
 
+        // Collect all guns from db
         tempGun_List = db.getAllGunFromDB(mCurrentUserEmail_Str);
 
+        // For each item in the db list, add the name to current list
         for (int i = 0; i < tempGun_List.size(); i++) {
             tempStr_List.add(tempGun_List.get(i).getGunNickname_Str());
         }
 
+        // Add string for no gun option
         tempStr_List.add(NO_GUN_STRING);
 
+        // Initialize array adapter
         temp_Adapt = new ArrayAdapter<>(currentContext.getContext(), android.R.layout.simple_list_item_1, tempStr_List);
 
         return temp_Adapt;
@@ -377,21 +395,27 @@ public class PostEventActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
+        // Initialize function variables
         ArrayAdapter<String> temp_Adapt;
         ArrayList<LoadClass> tempLoad_List;
         ArrayList<String> tempStr_List = new ArrayList<>();
 
+        // Collect latest version of the database
         GlobalApplicationContext currentContext = new GlobalApplicationContext();
         final DBHandler db = new DBHandler(currentContext.getContext());
 
+        // Collect all loads from db
         tempLoad_List = db.getAllLoadFromDB(mCurrentUserEmail_Str);
 
+        // For each item in the db list, add the name to current list
         for (int i = 0; i < tempLoad_List.size(); i++) {
             tempStr_List.add(tempLoad_List.get(i).getLoadNickname_Str());
         }
 
+        // Add string for no load option
         tempStr_List.add(NO_LOAD_STRING);
 
+        // Initialize array adapter
         temp_Adapt = new ArrayAdapter<>(currentContext.getContext(), android.R.layout.simple_list_item_1, tempStr_List);
 
         return temp_Adapt;
@@ -416,6 +440,7 @@ public class PostEventActivity extends AppCompatActivity {
 
             Toast.makeText(PostEventActivity.this, "Shoot saved!", Toast.LENGTH_LONG).show();
 
+            // Return to home
             Intent homeActivity_Intent = new Intent(PostEventActivity.this, homeActivity.class);
             homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
             startActivity(homeActivity_Intent);
@@ -456,6 +481,7 @@ public class PostEventActivity extends AppCompatActivity {
 
             Toast.makeText(PostEventActivity.this, "Shoot saved!", Toast.LENGTH_LONG).show();
 
+            // Return to home
             Intent homeActivity_Intent = new Intent(PostEventActivity.this, homeActivity.class);
             homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
             startActivity(homeActivity_Intent);
@@ -594,8 +620,8 @@ public class PostEventActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
+        // Try to initialize list view with list view adapter
         try {
-
             mCustomEventList_Adapt = new TrapMasterListArrayAdapter(this,
                     (ArrayList<Object>)(ArrayList<?>)(refreshEventList()));
 
@@ -607,6 +633,7 @@ public class PostEventActivity extends AppCompatActivity {
             Log.d(TAG, "no events in db for this user: " + e.toString());
         }
 
+        // Set the on click listener for items in the list
         mEventList_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

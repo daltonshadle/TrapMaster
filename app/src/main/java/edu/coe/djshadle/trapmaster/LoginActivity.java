@@ -39,24 +39,25 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.regex.Pattern;
 
 public class LoginActivity extends AppCompatActivity {
-
-    //********************************* Variables and Constants ************************************
-    //General Constants
+    //**************************************** Constants *******************************************
+    // General Constants
+    private final String TAG = "JRW";
     private String ACTIVITY_TITLE;
+    private final int MIN_PASS_LENGTH = 7;
+
+    // Key Constants
     private String CURRENT_USER_KEY;
     private String CURRENT_PASS_KEY;
-    private final int MIN_PASS_LENGTH = 7;
-    private final String TAG = "JRW";
 
-    //General Variables
+    //**************************************** Variables *******************************************
+    // General Variables
     DBHandler db;
     private String mEmail_Str;
 
     // UI References
-    private EditText mEmail_View;
-    private EditText mPassword_View;
+    private EditText mEmail_View, mPassword_View;
 
-    //Google Variables
+    // Google Variables
     FirebaseAuth auth;
 
     //************************************* Activity Functions *************************************
@@ -130,6 +131,7 @@ public class LoginActivity extends AppCompatActivity {
         mPassword_View.setText(tempPass_Str);
     }
 
+    //********************************** Initialization Functions **********************************
     private void initializeConstants() {
         /*******************************************************************************************
          * Function: initializeConstants
@@ -147,7 +149,6 @@ public class LoginActivity extends AppCompatActivity {
         CURRENT_PASS_KEY = getString(R.string.current_pass_key);
     }
 
-    //************************************* UI View Functions **************************************
     private void initializeViews() {
         /*******************************************************************************************
          * Function: initializeViews

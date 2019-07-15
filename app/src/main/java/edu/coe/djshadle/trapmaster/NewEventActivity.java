@@ -50,33 +50,40 @@ import java.util.List;
 import java.util.Map;
 
 public class NewEventActivity extends AppCompatActivity implements OnTotalHitChange {
-
-    //********************************** Variables and Constants ***********************************
+    //***************************************** Constants ******************************************
     // General Constants
     private String TAG = "JRW";
     private String ACTIVITY_TITLE;
+    private final int TOTAL_NUM_SHOTS = 25;
+    private final int ROUND_SCORE_KEY = TOTAL_NUM_SHOTS;
+
+    // Key Constants
     private String CURRENT_USER_KEY;
     private String NUM_ROUNDS_KEY;
     private String NUM_SHOOTER_KEY;
     private String SHOOTER_LIST_KEY;
     private String SHOOTER_SCORE_LIST_KEY;
-    private final int TOTAL_NUM_SHOTS = 25;
-    private final int ROUND_SCORE_KEY = TOTAL_NUM_SHOTS;
     private final String TRAP_STATE_KEY = "TRAP_STATE_KEY";
     private final String TRAP_EXPAND_KEY = "TRAP_EXPAND_KEY";
 
+    //***************************************** Constants ******************************************
     // General Variables
-    private int numShooters_Int = 1;
-    private int numRounds_Int = 1;
-    private int currentRound_Int = 1;
-    private ArrayList<String> shooterNames_Array;
-    private ArrayList<Integer> trapState_Array;
-    private ArrayList<Integer> trapExpand_Array;
     private String mCurrentUserEmail_Str = "Quick Event";
     private DBHandler db;
+
+    // Rounds
+    private int numRounds_Int = 1;
+    private int currentRound_Int = 1;
+
+    // Shooter
+    private int numShooters_Int = 1;
+    private ArrayList<String> shooterNames_Array;
     // 3D array of shooter scores by round, takes the form [round #][shooter #}{score index] = hit/miss
     private Map<Integer, Map<Integer, ArrayList<Integer>>> shooterScores_Array;
 
+    // Trap Counters
+    private ArrayList<Integer> trapState_Array;
+    private ArrayList<Integer> trapExpand_Array;
 
     // UI References
     private ArrayList<TrapScoreItemClass> trapScoreViews_Array;
@@ -84,7 +91,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     private Button mRight_Btn;
     private Button mLeft_Btn;
 
-    //Google Variables
+    // Google Variables
     FirebaseAuth auth;
 
     //************************************* Activity Functions *************************************
@@ -149,6 +156,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         super.onConfigurationChanged(newConfig);
 
+        // Set layout for correct orientation
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_new_event_portrait);
         }
@@ -156,6 +164,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             setContentView(R.layout.activity_new_event_landscape);
         }
 
+        // Collect and set trap states when configuration changes
         trapState_Array = getCurrentTrapStates();
         trapExpand_Array = getCurrentExpandStates();
         initializeViews();
@@ -172,7 +181,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          * Purpose: Function saves instances when activity is paused
          *
-         * Parameters: savedInstanceState (OUT) - provides the saved instances from current state
+         * Parameters: savedInstanceState (IN) - provides the saved instances from current state
          *
          * Returns: None
          *
@@ -228,6 +237,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          ******************************************************************************************/
 
+        // Inflate menu for new event activity
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.new_event_activity_menu, menu);
         return true;
@@ -247,6 +257,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
         int id = item.getItemId();
 
+        // switch statement for menu items
         switch (id) {
             case R.id.newEventAllHit_MenuItem:
                 // All items to hit
@@ -279,14 +290,16 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          ******************************************************************************************/
 
+        // Handle button presses
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            // Back button was pressed, prompt user with return to home dialog
             Log.d(this.getClass().getName(), "back button pressed");
             returnToHomeDialog();
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    //************************************ Initialize Functions ************************************
+    //********************************** Initialization Functions **********************************
     private void initializeConstants() {
         /*******************************************************************************************
          * Function: initializeConstants
@@ -479,8 +492,10 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          ******************************************************************************************/
 
+        // Initialize states array
         ArrayList<Integer> allStates_List = new ArrayList<>();
 
+        // Iterate over all shooters, collect current trap states in ONE array
         for (int i = 0; i < numShooters_Int; i++) {
             allStates_List.addAll(trapScoreViews_Array.get(i).getAllStates());
         }
@@ -500,8 +515,10 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          ******************************************************************************************/
 
+        // Initialize the number of states
         int numState_Int = 25;
 
+        // Iterate over all shooters, set the trap states from allStates_List
         for (int i = 0; i < numShooters_Int; i++) {
             int firstIndex_Int = (i * numState_Int);
             int lastIndex_Int = firstIndex_Int + numState_Int;
@@ -523,8 +540,10 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          ******************************************************************************************/
 
+        // Initialize expanded states array
         ArrayList<Integer> expandState_List = new ArrayList<>();
 
+        // Iterate over all shooters, collect current expanded states in ONE array
         for (int i = 0; i < numShooters_Int; i++) {
             expandState_List.add((trapScoreViews_Array.get(i).getExpandBool() ? 1 : 0));
         }
@@ -544,6 +563,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          ******************************************************************************************/
 
+        // Iterate over all shooters, set expanded states for trap counters from expandStates_List
         for (int i = 0; i < numShooters_Int; i++) {
             trapScoreViews_Array.get(i).setExpandBool(expandStates_List.get(i) != 0);
         }
@@ -606,13 +626,16 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          * Parameters: None
          *
-         * Returns: allChecked
+         * Returns: allChecked - TRUE if all trap counters are complete (no NEUTRAL), FALSE
+         *                       otherwise
          *
          ******************************************************************************************/
 
+        // Initialize bool to return
         boolean allChecked = true;
 
-        for (int i = 0; i < trapScoreViews_Array.size(); i++) {
+        // Iterate over all shooters, continue through all shooters unless one isn't fully checked
+        for (int i = 0; i < numShooters_Int; i++) {
             allChecked = trapScoreViews_Array.get(i).allChecked();
 
             if (!allChecked) {
@@ -635,6 +658,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          ******************************************************************************************/
 
+        // Iterate over all shooters, reset each trap counter to NEUTRAL
         for(int i = 0; i < numShooters_Int; i++) {
             trapScoreViews_Array.get(i).resetTrapCounter();
         }
@@ -652,6 +676,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          *
          ******************************************************************************************/
 
+        // Iterate over all shooters, set the round text for each trap counter
         for(int i = 0; i < numShooters_Int; i++) {
             trapScoreViews_Array.get(i).setRoundText(round_Int);
         }

@@ -46,16 +46,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class homeActivity extends AppCompatActivity implements View.OnClickListener {
-    //********************************* Variables and Constants ************************************
-    //General Constants
+    //**************************************** Constants *******************************************
+    // General Constants
+    private String ADD_SHOOTER_STRING;
+
+    // Key Constants
     private String CURRENT_USER_KEY;
     private String NUM_ROUNDS_KEY;
     private String NUM_SHOOTER_KEY;
     private String SHOOTER_LIST_KEY;
-    private String ADD_SHOOTER_STRING;
 
-    //General Variables
+    //**************************************** Variables *******************************************
+    // General Variables
     private String mCurrentUserEmail_Str = "********";
+
+    // New Event Dialog Variables
     private ArrayList<String> shootNameCurr_List;
     private ArrayList<String> shootNameDB_List;
     private ArrayList<String> DIALOG_MSG_TXT;
@@ -66,7 +71,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
 
     // UI References
 
-    //Google Variables
+    // Google Variables
     FirebaseAuth auth;
 
     //*********************************** Home Activity Functions **********************************
@@ -86,8 +91,10 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
 
         super.onCreate(savedInstanceState);
 
+        // Initialize constants
         initializeConstants();
 
+        // Figure out orientation and layout
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             setContentView(R.layout.activity_home_landscape);
         }
@@ -95,12 +102,14 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
             setContentView(R.layout.activity_home_portrait);
         }
 
+        // Pull extra information from intent
         if (savedInstanceState != null) {
             mCurrentUserEmail_Str = savedInstanceState.getString(CURRENT_USER_KEY);
         } else {
             mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
         }
 
+        // Initialize views
         initializeViews();
     }
 
@@ -158,12 +167,14 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
 
         super.onConfigurationChanged(newConfig);
 
+        // Figure out orientation and layout
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_home_portrait);
         } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             setContentView(R.layout.activity_home_landscape);
         }
 
+        // Initialize views
         initializeViews();
     }
 
@@ -179,6 +190,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
          *
          ******************************************************************************************/
 
+        // Inflate menu item from resources
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.home_activity_menu, menu);
         return true;
@@ -248,6 +260,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    //********************************** Initialization Functions **********************************
     private void initializeConstants() {
         /*******************************************************************************************
          * Function: initializeConstants
@@ -317,7 +330,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         auth.addAuthStateListener(authListener);
     }
 
-    //************************************** Other Functions ***************************************
+    //********************************* New Event Dialog Functions *********************************
     private void initializeNewEventDialogStrings() {
         /*******************************************************************************************
          * Function: initializeNewEventDialogStrings
@@ -372,27 +385,31 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
          *
          * Purpose: Function initializes shooter spinner for starting new event
          *
-         * Parameters: None
+         * Parameters: context - context to get current database handler
          *
-         * Returns: None
+         * Returns: tempShooter_Adapt - Array adapter initialized to shooters from DB
          *
          ******************************************************************************************/
 
+        // Initialize function variables
         ArrayAdapter<String> tempShooter_Adapt;
         ArrayList<ShooterClass> tempShooter_List;
         shootNameDB_List = new ArrayList<>();
-
         GlobalApplicationContext currentContext = new GlobalApplicationContext();
         final DBHandler db = new DBHandler(currentContext.getContext());
 
+        // Pull shooters from db
         tempShooter_List = db.getAllShooterFromDB(mCurrentUserEmail_Str);
 
+        // Iterate over all shooters and get names
         for (int i = 0; i < tempShooter_List.size(); i++) {
             shootNameDB_List.add(tempShooter_List.get(i).getShooterName_Str());
         }
 
+        // Add shooter string to list
         shootNameDB_List.add(ADD_SHOOTER_STRING);
 
+        // Set array adapter
         tempShooter_Adapt = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, shootNameDB_List);
 
         return tempShooter_Adapt;
@@ -404,20 +421,24 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
          *
          * Purpose: Function updates shooter spinner for starting new event
          *
-         * Parameters: None
+         * Parameters: context - context to get current database handler
          *
-         * Returns: None
+         * Returns: tempShooter_Adapt - Array adapter updated for shooters from DB, minus the
+         *                              shooters already in the current shooter list
          *
          ******************************************************************************************/
 
+        // Initialize array adapter
         ArrayAdapter<String> tempShooter_Adapt;
 
+        // Iterate over current shooter list, remove similar shooters from DB list
         for (int i = 0; i < shootNameCurr_List.size(); i++) {
             if (shootNameDB_List.contains(shootNameCurr_List.get(i))) {
                 shootNameDB_List.remove(shootNameCurr_List.get(i));
             }
         }
 
+        // Set array adapter
         tempShooter_Adapt = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, shootNameDB_List);
 
         return tempShooter_Adapt;
@@ -429,12 +450,13 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
          *
          * Purpose: Function updates DB List
          *
-         * Parameters: None
+         * Parameters: shooterName_Str - name of shooter to add to database list
          *
          * Returns: None
          *
          ******************************************************************************************/
 
+        // Adds shooter at correct index to database list
         int prevLastIndex_Int = shootNameDB_List.size() - 1;
         shootNameDB_List.set(prevLastIndex_Int, shooterName_Str);
         shootNameDB_List.add(ADD_SHOOTER_STRING);
@@ -453,6 +475,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
          *
          ******************************************************************************************/
 
+        // Remove the shooter that was added most recently from current shooter list
         int lastIndex_Int = shootNameCurr_List.size() - 1;
         String shooterNameRemoved_Str = shootNameCurr_List.get(lastIndex_Int);
         shootNameCurr_List.remove(lastIndex_Int);
@@ -465,7 +488,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
          *
          * Purpose: Function creates dialog and prompts user to enter info for new event
          *
-         * Parameters: None
+         * Parameters: context - current context for dialog and database
          *
          * Returns: None
          *
@@ -692,7 +715,7 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
          *
          * Purpose: Function creates dialog and prompts user to enter info for new shooter
          *
-         * Parameters: None
+         * Parameters: context - current context for dialog and database
          *
          * Returns: alertDialog - Returns an alert dialog message that was built from this
          *

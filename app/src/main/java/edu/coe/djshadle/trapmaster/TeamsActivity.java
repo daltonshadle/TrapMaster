@@ -19,12 +19,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 public class TeamsActivity extends AppCompatActivity {
-
-    //********************************** Variables and Constants ***********************************
+    //***************************************** Constants ******************************************
     // General Constants
     private String ACTIVITY_TITLE;
+
+    // Key Constants
     private String CURRENT_USER_KEY;
 
+    //***************************************** Variables ******************************************
     // General Variables
     private String mCurrentUserEmail_Str = "********";
     private DBHandler db;
@@ -48,8 +50,10 @@ public class TeamsActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
+        // Initialize constants
         initializeConstants();
 
+        // Set layout for correct orientation
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             setContentView(R.layout.activity_teams_landscape);
         }
@@ -57,12 +61,14 @@ public class TeamsActivity extends AppCompatActivity {
             setContentView(R.layout.activity_teams_portrait);
         }
 
+        // Pull saved instances from previous states
         if (savedInstanceState != null) {
 
         } else {
             mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
         }
 
+        // Initialize views
         initializeViews();
     }
 
@@ -80,12 +86,15 @@ public class TeamsActivity extends AppCompatActivity {
 
         super.onConfigurationChanged(newConfig);
 
+        // Set layout for correct orientation
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_teams_portrait);
         } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             setContentView(R.layout.activity_teams_landscape);
         }
 
+        // Initialize views
+        initializeViews();
     }
 
     private void initializeConstants() {

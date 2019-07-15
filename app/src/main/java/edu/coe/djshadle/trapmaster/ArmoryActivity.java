@@ -40,20 +40,27 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ArmoryActivity extends AppCompatActivity {
-    //********************************** Variables and Constants ***********************************
+    //***************************************** Constants ******************************************
     // General Constants
     private String TAG = "JRW";
     private String ACTIVITY_TITLE;
+
+    // Key Constants
     private String CURRENT_USER_KEY;
+
+    // Tag Constants
     private final int GUN_LIST_TAG = 3;
     private final int LOAD_LIST_TAG = 4;
 
+    //***************************************** Variables ******************************************
     // General Variables
     private String mCurrentUserEmail_Str = "********";
     private DBHandler db;
     private boolean isPortrait = true;
+
     // Gun
     private TrapMasterListArrayAdapter mCustomGunList_Adapt;
+
     // Load
     private TrapMasterListArrayAdapter mCustomLoadList_Adapt;
 
@@ -77,8 +84,10 @@ public class ArmoryActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
+        // Initialize constants
         initializeConstants();
 
+        // Figure out orientation and layout
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_armory_portrait);
             isPortrait = true;
@@ -87,12 +96,14 @@ public class ArmoryActivity extends AppCompatActivity {
             isPortrait = false;
         }
 
+        // Pull extra information from intent
         if (savedInstanceState != null) {
 
         } else {
             mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
         }
 
+        // Initialize views
         initializeViews();
     }
 
@@ -110,6 +121,7 @@ public class ArmoryActivity extends AppCompatActivity {
 
         super.onConfigurationChanged(newConfig);
 
+        // Figure out orientation and layout
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.activity_armory_portrait);
             isPortrait = true;
@@ -118,9 +130,11 @@ public class ArmoryActivity extends AppCompatActivity {
             isPortrait = false;
         }
 
+        // Initialize views
         initializeViews();
     }
 
+    //********************************** Initialization Functions **********************************
     private void initializeConstants() {
         /*******************************************************************************************
          * Function: initializeConstants
@@ -181,7 +195,7 @@ public class ArmoryActivity extends AppCompatActivity {
         });
 
 
-        // Initializing Listviews
+        // Initializing list views
         mGunList_View = findViewById(R.id.armoryGun_List);
         mLoadList_View = findViewById(R.id.armoryLoad_List);
 
@@ -198,7 +212,7 @@ public class ArmoryActivity extends AppCompatActivity {
         setTitle(ACTIVITY_TITLE);
     }
 
-    //************************************* Listview Functions *************************************
+    //************************************ List view Functions *************************************
     // Gun List
     private ArrayList<GunClass> refreshGunList() {
         /*******************************************************************************************
@@ -304,17 +318,20 @@ public class ArmoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
+        // Initialize variables for function
         double screenHeight_Dbl = getResources().getDisplayMetrics().heightPixels;
         double scaleFactor_Dbl = 1;
 
         LinearLayout.LayoutParams params;
 
+        // Define scale factor based on orientation
         if (isPortrait) {
             scaleFactor_Dbl = 3.5;
         } else {
             scaleFactor_Dbl = 2.0;
         }
 
+        // Set layout parameters
         params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int)(screenHeight_Dbl / scaleFactor_Dbl));
 
         mGunList_View.setLayoutParams(params);
