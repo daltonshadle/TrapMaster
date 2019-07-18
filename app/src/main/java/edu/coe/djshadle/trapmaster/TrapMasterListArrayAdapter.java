@@ -4,16 +4,12 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -29,7 +25,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
     private final int LOAD_LIST_TAG = 4;
 
     // Variables
-    private ArrayList<ShotClass> shotClass_List =  new ArrayList<>();
+    private ArrayList<RoundClass> shotClass_List =  new ArrayList<>();
     private ArrayList<EventClass> eventClass_List =  new ArrayList<>();
     private ArrayList<GunClass> gunClass_List =  new ArrayList<>();
     private ArrayList<LoadClass> loadClass_List =  new ArrayList<>();
@@ -58,8 +54,8 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
             Object first_Obj = objects.get(0);
 
             // Find what type of object the object list is and assign it to correct list type
-            if (first_Obj instanceof ShotClass) {
-                shotClass_List = (ArrayList<ShotClass>)(ArrayList<?>) objects;
+            if (first_Obj instanceof RoundClass) {
+                shotClass_List = (ArrayList<RoundClass>)(ArrayList<?>) objects;
             } else if (first_Obj instanceof EventClass) {
                 eventClass_List = (ArrayList<EventClass>)(ArrayList<?>) objects;
             } else if (first_Obj instanceof GunClass) {
@@ -103,7 +99,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
         switch ((int) parent.getTag()) {
             case SHOT_LIST_TAG:
                 // Item is a shot class object
-                final ShotClass current_Shot = shotClass_List.get(position);
+                final RoundClass current_Shot = shotClass_List.get(position);
 
                 String main_Str = current_Shot.getShotShooterName_Str();
                 String second_Str = current_Shot.getShotEventName_Str();
@@ -300,7 +296,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
         return listItem;
     }
 
-    public void refreshShotArrayAdapter(ArrayList<ShotClass> shot_List){
+    public void refreshShotArrayAdapter(ArrayList<RoundClass> shot_List){
         /*******************************************************************************************
          * Function: refreshShotArrayAdapter
          *
@@ -314,7 +310,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
 
         // Check if list is empty
         if (shot_List.isEmpty()) {
-            ShotClass temp_Shot = new ShotClass();
+            RoundClass temp_Shot = new RoundClass();
             temp_Shot.setShotShooterName_Str(getContext().getString(R.string.no_shot_main_text));
             temp_Shot.setShotEventName_Str(getContext().getString(R.string.no_shot_second_text));
 
@@ -416,7 +412,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
         this.notifyDataSetChanged();
     }
 
-    private boolean isDefaultItem(ShotClass s) {
+    private boolean isDefaultItem(RoundClass s) {
         /*******************************************************************************************
          * Function: isDefaultItem
          *

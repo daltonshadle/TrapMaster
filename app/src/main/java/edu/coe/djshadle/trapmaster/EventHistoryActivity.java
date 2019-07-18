@@ -31,17 +31,12 @@ import android.util.Xml;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -235,7 +230,7 @@ public class EventHistoryActivity extends AppCompatActivity {
 
     //************************************ List view Functions *************************************
     // Shot List
-    private ArrayList<ShotClass> refreshShotList() {
+    private ArrayList<RoundClass> refreshShotList() {
         /*******************************************************************************************
          * Function: refreshShotList
          *
@@ -250,12 +245,12 @@ public class EventHistoryActivity extends AppCompatActivity {
         // Initialize db handler and shooter and score arrays
         db = new DBHandler(this);
         ArrayList<ShooterClass> currentShooter_List = db.getAllShooterFromDB(mCurrentUserEmail_Str);
-        ArrayList<ShotClass> currentShot_List = new ArrayList<>();
+        ArrayList<RoundClass> currentShot_List = new ArrayList<>();
 
         // For each shooter in the db shooter list, add scores for that shooter to score list.
         for (ShooterClass shooter : currentShooter_List) {
             currentShot_List.addAll(db.getAllShotFromDB(shooter.getShooterName_Str()));
-            Collections.sort(currentShot_List, Collections.<ShotClass>reverseOrder());
+            Collections.sort(currentShot_List, Collections.<RoundClass>reverseOrder());
         }
 
         return currentShot_List;

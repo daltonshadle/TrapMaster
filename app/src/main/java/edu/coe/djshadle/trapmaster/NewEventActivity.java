@@ -46,7 +46,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class NewEventActivity extends AppCompatActivity implements OnTotalHitChange {
@@ -704,7 +703,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             int tempCurRound_Int = i + 1;
             for (int j = 0; j < numShooters_Int; j++) {
                 // Initialize temp shot object
-                ShotClass temp_Shot = new ShotClass();
+                RoundClass temp_Shot = new RoundClass();
                 String round_Str = "No Event - Round " + Integer.toString(tempCurRound_Int);
 
                 // Set necessary fields for temp shot

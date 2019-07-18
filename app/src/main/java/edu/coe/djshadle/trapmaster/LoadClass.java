@@ -33,7 +33,7 @@ public class LoadClass {
     //************************************* Private Variables **************************************
     // Object variables
     private int loadID_Int;
-    private String loadEmail_Str;
+    private int loadProfileID_Int;
     private String loadNickname_Str;
     private String loadBrand_Str;
     private String loadGauge_Str;
@@ -60,7 +60,7 @@ public class LoadClass {
          ******************************************************************************************/
 
         this.loadID_Int = -1;
-        this.loadEmail_Str = "";
+        this.loadProfileID_Int = -1;
         this.loadNickname_Str = "";
         this.loadBrand_Str = "";
         this.loadGauge_Str = "";
@@ -69,7 +69,7 @@ public class LoadClass {
         this.loadNotes_Str = "";
     }
 
-    public LoadClass(String loadEmail_Str, String loadNickname_Str,
+    public LoadClass(int loadProfileID_Int, String loadNickname_Str,
                      String loadBrand_Str, String loadGauge_Str, String loadLength_Str,
                      String loadGrain_Str, String loadNotes_Str) {
         /*******************************************************************************************
@@ -77,7 +77,7 @@ public class LoadClass {
          *
          * Purpose: Constructor for this class with parameters
          *
-         * Parameters: loadEmail_Str (IN) - email tagged with this load
+         * Parameters: loadProfileID_Int (IN) - profile ID tagged with this load
          *             loadNickname_Str (IN) - name of the load
          *             loadBrand_Str (IN) - brand tagged with the load
          *             loadGauge_Str (IN) - gauge tagged with the load
@@ -90,7 +90,7 @@ public class LoadClass {
          ******************************************************************************************/
 
         this.loadID_Int = -1;
-        this.loadEmail_Str = loadEmail_Str;
+        this.loadProfileID_Int = loadProfileID_Int;
         this.loadNickname_Str = loadNickname_Str;
         this.loadBrand_Str = loadBrand_Str;
         this.loadGauge_Str = loadGauge_Str;
@@ -110,12 +110,12 @@ public class LoadClass {
      * Returns: None
      *
      ******************************************************************************************/
-    public String getLoadEmail_Str() {
-        return loadEmail_Str;
+    public int getLoadProfileID_Int() {
+        return loadProfileID_Int;
     }
 
-    public void setLoadEmail_Str(String loadEmail_Str) {
-        this.loadEmail_Str = loadEmail_Str;
+    public void setLoadProfileID_Int(int loadProfileID_Int) {
+        this.loadProfileID_Int = loadProfileID_Int;
     }
 
     public String getLoadNickname_Str() {
@@ -263,7 +263,7 @@ public class LoadClass {
                             Toast.LENGTH_LONG).show();
 
                     // Refresh load listview
-                    adapter.refreshLoadArrayAdapter(db.getAllLoadFromDB(getLoadEmail_Str()));
+                    adapter.refreshLoadArrayAdapter(db.getAllLoadFromDB(getLoadProfileID_Int()));
                 }
             });
         }
@@ -407,7 +407,7 @@ public class LoadClass {
                     case 0:
                         // Nickname to Brand
                         boolean isLoadNicknameEmpty = itemEdt_Str.equals("");
-                        boolean isLoadNicknameInDB = db.isLoadNicknameInDB(getLoadEmail_Str(),
+                        boolean isLoadNicknameInDB = db.isLoadNicknameInDB(getLoadProfileID_Int(),
                                 itemEdt_Str, getLoadID_Int());
 
                         if (isLoadNicknameEmpty) {
@@ -467,7 +467,7 @@ public class LoadClass {
                                 Toast.LENGTH_LONG).show();
 
                         // Refresh load listview
-                        adapter.refreshLoadArrayAdapter(db.getAllLoadFromDB(getLoadEmail_Str()));
+                        adapter.refreshLoadArrayAdapter(db.getAllLoadFromDB(getLoadProfileID_Int()));
 
                         // Reset state counter
                         LOAD_DIALOG_STATE = 0;

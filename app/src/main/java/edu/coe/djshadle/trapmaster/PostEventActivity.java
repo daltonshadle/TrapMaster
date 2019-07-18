@@ -15,39 +15,24 @@
 package edu.coe.djshadle.trapmaster;
 
 //******************************************** Imports *********************************************
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,7 +65,7 @@ public class PostEventActivity extends AppCompatActivity {
     private int currentRound_Int = 1;
     private int numRounds_Int = 1;
     // 2D array of score objects, takes the form [round #][shooter #} = shot object
-    private Map<Integer, ArrayList<ShotClass>> shotRounds_Array;
+    private Map<Integer, ArrayList<RoundClass>> shotRounds_Array;
 
     // Shooter Variables
     private int numShooters_Int = 1;
@@ -512,7 +497,7 @@ public class PostEventActivity extends AppCompatActivity {
 
         // Iterate over all post event items and collect information, save to shotRounds_Array
         for (int i = 0; i < numShooters_Int; i++) {
-            ShotClass temp_shot = shotRounds_Array.get(roundNum_Int).get(i);
+            RoundClass temp_shot = shotRounds_Array.get(roundNum_Int).get(i);
             PostEventItemClass temp_post = mShooterPostEventItems_List.get(i);
 
             temp_shot.setShotGun_Str(temp_post.shooterGun_Spin.getSelectedItem().toString());
@@ -541,7 +526,7 @@ public class PostEventActivity extends AppCompatActivity {
 
         // Add info to views that are going to be used
         for (int i = 0; i < numShooters_Int; i++) {
-            ShotClass temp_shot = shotRounds_Array.get(roundNum_Int).get(i);
+            RoundClass temp_shot = shotRounds_Array.get(roundNum_Int).get(i);
             mShooterPostEventItems_List.get(i).setShooterName(temp_shot.getShotShooterName_Str());
             mShooterPostEventItems_List.get(i).setShooterCoach(mCurrentUserEmail_Str);
             mShooterPostEventItems_List.get(i).setShooterScore(Integer.parseInt(temp_shot.getShotHitNum_Str()));
@@ -569,10 +554,10 @@ public class PostEventActivity extends AppCompatActivity {
         for (int i = 0; i < numRounds_Int; i++) {
             // Initializing round_num for current round since the round numbers are 1-based
             int round_num = i + 1;
-            ArrayList<ShotClass> currentRound_array = new ArrayList<>();
+            ArrayList<RoundClass> currentRound_array = new ArrayList<>();
 
             for (int j = 0; j < numShooters_Int; j++) {
-                ShotClass temp_shot = new ShotClass();
+                RoundClass temp_shot = new RoundClass();
 
                 temp_shot.setShotShooterName_Str(shooterName_List.get(j));
                 temp_shot.setShotHitNum_Str(Integer.toString(shooterScores_Array.get(round_num).get(j).get(ROUND_SCORE_KEY)));
@@ -670,7 +655,7 @@ public class PostEventActivity extends AppCompatActivity {
             int round_num = i + 1;
 
             for (int j = 0; j < numShooters_Int; j++) {
-                ShotClass temp_shot = shotRounds_Array.get(round_num).get(i);
+                RoundClass temp_shot = shotRounds_Array.get(round_num).get(i);
                 eventName_Str = eventName_Str + " - Round " + Integer.toString(round_num);
                 temp_shot.setShotEventName_Str(eventName_Str);
                 db.insertShotInDB(temp_shot);

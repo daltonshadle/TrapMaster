@@ -32,7 +32,7 @@ public class GunClass {
     //************************************* Private Variables **************************************
     // Object variables
     private int gunID_Int;
-    private String gunEmail_Str;
+    private int gunProfileID_Int;
     private String gunNickname_Str;
     private String gunModel_Str;
     private String gunGauge_Str;
@@ -57,21 +57,21 @@ public class GunClass {
          ******************************************************************************************/
 
         this.gunID_Int = -1;
-        this.gunEmail_Str = "";
+        this.gunProfileID_Int = -1;
         this.gunNickname_Str = "";
         this.gunModel_Str = "";
         this.gunGauge_Str = "";
         this.gunNotes_Str = "";
     }
 
-    public GunClass(String gunEmail_Str, String gunNickname_Str,
+    public GunClass(int gunProfileID_Int, String gunNickname_Str,
                     String gunModel_Str, String gunGauge_Str, String gunNotes_Str) {
         /*******************************************************************************************
          * Function: GunClass
          *
          * Purpose: Constructor for this class with parameters
          *
-         * Parameters: gunEmail_Str (IN) - email tagged with this gun
+         * Parameters: gunProfileID_Int (IN) - profile ID tagged with this gun
          *             gunNickname_Str (IN) - name of the gun
          *             gunModel_Str (IN) - model of the gun
          *             gunGauge_Str (IN) - gauge of the gun
@@ -82,7 +82,7 @@ public class GunClass {
          ******************************************************************************************/
 
         this.gunID_Int = -1;
-        this.gunEmail_Str = gunEmail_Str;
+        this.gunProfileID_Int = gunProfileID_Int;
         this.gunNickname_Str = gunNickname_Str;
         this.gunModel_Str = gunModel_Str;
         this.gunGauge_Str = gunGauge_Str;
@@ -100,12 +100,12 @@ public class GunClass {
      * Returns: None
      *
      ******************************************************************************************/
-    public String getGunEmail_Str() {
-        return gunEmail_Str;
+    public int getGunProfileID_Int() {
+        return gunProfileID_Int;
     }
 
-    public void setGunEmail_Str(String gunEmail_Str) {
-        this.gunEmail_Str = gunEmail_Str;
+    public void setGunProfileID_Int(int gunProfileID_Int) {
+        this.gunProfileID_Int = gunProfileID_Int;
     }
 
     public String getGunNickname_Str() {
@@ -236,7 +236,7 @@ public class GunClass {
                             Toast.LENGTH_LONG).show();
 
                     // Refresh gun listview
-                    adapter.refreshGunArrayAdapter(db.getAllGunFromDB(getGunEmail_Str()));
+                    adapter.refreshGunArrayAdapter(db.getAllGunFromDB(getGunProfileID_Int()));
                 }
             });
         }
@@ -370,7 +370,7 @@ public class GunClass {
                     case 0:
                         // Nickname to Model
                         boolean isGunNicknameEmpty = itemEdt_Str.equals("");
-                        boolean isGunNicknameInDB = db.isGunNicknameInDB(getGunEmail_Str(), itemEdt_Str, getGunID_Int());
+                        boolean isGunNicknameInDB = db.isGunNicknameInDB(getGunProfileID_Int(), itemEdt_Str, getGunID_Int());
 
                         if (isGunNicknameEmpty) {
                             // Check if the gun nickname is empty
@@ -408,7 +408,7 @@ public class GunClass {
                             db.insertGunInDB(GunClass.this);
                         } else {
                             // User is EDITING a gun item
-                            db.updateGunInDB(GunClass.this, getGunID_Int());
+                            db.updateGunInDB(GunClass.this);
                         }
 
                         alertDialog.dismiss();
@@ -417,7 +417,7 @@ public class GunClass {
                                 Toast.LENGTH_LONG).show();
 
                         // Refresh gun listview
-                        adapter.refreshGunArrayAdapter(db.getAllGunFromDB(getGunEmail_Str()));
+                        adapter.refreshGunArrayAdapter(db.getAllGunFromDB(getGunProfileID_Int()));
 
                         // Reset state counter
                         GUN_DIALOG_STATE = 0;

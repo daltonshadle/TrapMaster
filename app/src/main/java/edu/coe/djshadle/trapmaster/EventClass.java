@@ -36,8 +36,7 @@ public class EventClass {
     //************************************* Private Variables **************************************
     // Object Variables
     private int eventID_Int;
-    private String eventEmail_Str;
-    private String eventTeam_Str;
+    private int eventProfileID_Int;
     private String eventName_Str;
     private String eventLocation_Str;
     private String eventDate_Str;
@@ -63,8 +62,7 @@ public class EventClass {
          ******************************************************************************************/
 
         this.eventID_Int = -1;
-        this.eventEmail_Str = "";
-        this.eventTeam_Str = "";
+        this.eventProfileID_Int = -1;
         this.eventName_Str = "";
         this.eventLocation_Str = "";
         this.eventDate_Str = "";
@@ -72,16 +70,14 @@ public class EventClass {
         this.eventNotes_Str = "";
     }
 
-    public EventClass(String eventEmail_Str, String eventTeam_Str,
-                      String eventName_Str, String eventLocation_Str, String eventDate_Str,
-                      String eventWeather_Str, String eventNotes_Str) {
+    public EventClass(int eventProfileID_Int, String eventName_Str, String eventLocation_Str,
+                      String eventDate_Str, String eventWeather_Str, String eventNotes_Str) {
         /*******************************************************************************************
          * Function: EventClass
          *
          * Purpose: Constructor for this class with parameters
          *
-         * Parameters: eventEmail_Str (IN) - email tagged with this event
-         *             eventTeam_Str (IN) - team tagged with the event
+         * Parameters: eventProfileID_Int (IN) - ID tagged with this event
          *             eventName_Str (IN) - name of the event
          *             eventLocation_Str (IN) - location tagged with the event
          *             eventGun_Str (IN) - gun tagged with the event
@@ -95,8 +91,7 @@ public class EventClass {
          ******************************************************************************************/
 
         this.eventID_Int = -1;
-        this.eventEmail_Str = eventEmail_Str;
-        this.eventTeam_Str = eventTeam_Str;
+        this.eventProfileID_Int = eventProfileID_Int;
         this.eventName_Str = eventName_Str;
         this.eventLocation_Str = eventLocation_Str;
         this.eventDate_Str = eventDate_Str;
@@ -115,20 +110,13 @@ public class EventClass {
      * Returns: None
      *
      ******************************************************************************************/
-    public String getEventEmail_Str() {
-        return eventEmail_Str;
+
+    public int getEventProfileID_Int() {
+        return eventProfileID_Int;
     }
 
-    public void setEventEmail_Str(String eventEmail_Str) {
-        this.eventEmail_Str = eventEmail_Str;
-    }
-
-    public String getEventTeam_Str() {
-        return eventTeam_Str;
-    }
-
-    public void setEventTeam_Str(String eventTeam_Str) {
-        this.eventTeam_Str = eventTeam_Str;
+    public void setEventProfileID_Int(int eventProfileID_Int) {
+        this.eventProfileID_Int = eventProfileID_Int;
     }
 
     public String getEventName_Str() {
@@ -303,7 +291,7 @@ public class EventClass {
                         String item_Txt = item_Edt.getText().toString();
 
                         boolean isEventNameEmpty = item_Txt.equals("");
-                        boolean isEventNameInDB = db.isEventNameInDB(getEventEmail_Str(), item_Txt, getEventID_Int());
+                        boolean isEventNameInDB = db.isEventNameInDB(getEventProfileID_Int(), item_Txt, getEventID_Int());
 
                         if (isEventNameEmpty) {
                             // Check if the event name is empty
@@ -364,7 +352,7 @@ public class EventClass {
                             db.insertEventInDB(EventClass.this);
                         } else {
                             // Editing an existing event
-                            db.updateEventInDB(EventClass.this, getEventID_Int());
+                            db.updateEventInDB(EventClass.this);
                         }
 
                         alertDialog.dismiss();
@@ -373,7 +361,7 @@ public class EventClass {
                                 Toast.LENGTH_LONG).show();
 
                         // Refresh event list view
-                        adapter.refreshEventArrayAdapter(db.getAllEventFromDB(getEventEmail_Str()));
+                        adapter.refreshEventArrayAdapter(db.getAllEventFromDB(getEventProfileID_Int()));
 
                         // Reset state counter
                         EVENT_DIALOG_STATE = 0;
@@ -521,7 +509,7 @@ public class EventClass {
                             Toast.LENGTH_LONG).show();
 
                     // Refresh event listview
-                    adapter.refreshEventArrayAdapter(db.getAllEventFromDB(getEventEmail_Str()));
+                    adapter.refreshEventArrayAdapter(db.getAllEventFromDB(getEventProfileID_Int()));
                 }
             });
         }
