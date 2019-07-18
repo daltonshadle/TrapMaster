@@ -45,7 +45,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class homeActivity extends AppCompatActivity implements View.OnClickListener {
+public class homeActivity extends AppCompatActivity{
     //**************************************** Constants *******************************************
     // General Constants
     private String ADD_SHOOTER_STRING;
@@ -219,47 +219,6 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onClick(View view) {
-        /*******************************************************************************************
-         * Function: OnClick
-         *
-         * Purpose: Function listener for buttons that provides functionality when clicked
-         *
-         * Parameters: view (IN) - is the clicked view that enacted listener
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        Intent i;
-        switch (view.getId()) {
-            case R.id.btnHomeNewEvent:
-                newEventDialog(this);
-                break;
-            case R.id.btnHomeArmory:
-                i = new Intent(this, ArmoryActivity.class);
-                i.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
-                startActivity(i);
-                break;
-            case R.id.btnHomeEventHistory:
-                i = new Intent(this, EventHistoryActivity.class);
-                i.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
-                startActivity(i);
-                break;
-            case R.id.btnHomeProfiles:
-                i = new Intent(this, ProfilesActivity.class);
-                i.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
-                startActivity(i);
-                break;
-            case R.id.btnHomeTeams:
-                i = new Intent(this, TeamsActivity.class);
-                i.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
-                startActivity(i);
-                break;
-        }
-    }
-
     //********************************** Initialization Functions **********************************
     private void initializeConstants() {
         /*******************************************************************************************
@@ -299,11 +258,45 @@ public class homeActivity extends AppCompatActivity implements View.OnClickListe
         Button mBtnProfiles = findViewById(R.id.btnHomeProfiles);
         Button mBtnTeams = findViewById(R.id.btnHomeTeams);
 
-        mBtnNewEvent.setOnClickListener(this);
-        mBtnArmory.setOnClickListener(this);
-        mBtnEventHistory.setOnClickListener(this);
-        mBtnProfiles.setOnClickListener(this);
-        mBtnTeams.setOnClickListener(this);
+        // set button on click listeners
+        mBtnNewEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                newEventDialog(homeActivity.this);
+            }
+        });
+        mBtnArmory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent armory_Intent = new Intent(homeActivity.this, ArmoryActivity.class);
+                armory_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+                startActivity(armory_Intent);
+            }
+        });
+        mBtnEventHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent eventHistory_Intent = new Intent(homeActivity.this, EventHistoryActivity.class);
+                eventHistory_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+                startActivity(eventHistory_Intent);
+            }
+        });
+        mBtnProfiles.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent profiles_Intent = new Intent(homeActivity.this, ProfilesActivity.class);
+                profiles_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+                startActivity(profiles_Intent);
+            }
+        });
+        mBtnTeams.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent teams_Intent = new Intent(homeActivity.this, TeamsActivity.class);
+                teams_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+                startActivity(teams_Intent);
+            }
+        });
 
         // Set action bar title
         try {
