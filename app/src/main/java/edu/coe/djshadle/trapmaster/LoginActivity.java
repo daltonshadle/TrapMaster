@@ -19,7 +19,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,10 +30,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.regex.Pattern;
 
@@ -195,7 +192,7 @@ public class LoginActivity extends AppCompatActivity {
         mQuickEventButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent newEventActivity_Intent = new Intent(LoginActivity.this, NewEventActivity.class);
+                Intent newEventActivity_Intent = new Intent(LoginActivity.this, NewShootingEventActivity.class);
                 newEventActivity_Intent.putExtra(getString(R.string.quick_event_flag_key), true);
                 startActivity(newEventActivity_Intent);
             }
@@ -394,11 +391,12 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             //Login was successful; continue to next activity as new user
-                            ProfileClass p = new ProfileClass(email);
+                            ProfileClass p = new ProfileClass(-1, email);
                             db.insertProfileInDB(p);
+                            p = db.getProfileFromDB(email);
 
                             Intent homeActivity_Intent = new Intent(LoginActivity.this, homeActivity.class);
-                            homeActivity_Intent.putExtra(CURRENT_USER_KEY, email);
+                            homeActivity_Intent.putExtra(CURRENT_USER_KEY, p.getProfileID_Int());
                             startActivity(homeActivity_Intent);
                             finish();
                         }

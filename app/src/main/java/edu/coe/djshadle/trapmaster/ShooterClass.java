@@ -19,6 +19,7 @@ import java.util.Arrays;
 public class ShooterClass {
     //************************************* Private Variables **************************************
     private int shooterID_Int;
+    private int shooterProfileID_Int;
     private String shooterName_Str;  //Key
 
     //************************************* Public Functions ***************************************
@@ -36,16 +37,18 @@ public class ShooterClass {
          ******************************************************************************************/
 
         this.shooterID_Int = -1;
+        this.shooterProfileID_Int = -1;
         this.shooterName_Str = "";
     }
 
-    public ShooterClass(int shooterID_Int, String shooterName_Str) {
+    public ShooterClass(int shooterID_Int, int shooterProfileID_Int, String shooterName_Str) {
         /*******************************************************************************************
          * Function: ShooterClass
          *
          * Purpose: Constructor for this class with parameters
          *
          * Parameters: shooterID_Int (IN) - database id for shooter
+         *             shooterProfileID_Int (IN) - database id for profile
          *             shooterName_Str (IN) - name for shooter
          *
          * Returns: None
@@ -53,6 +56,7 @@ public class ShooterClass {
          ******************************************************************************************/
 
         this.shooterID_Int = shooterID_Int;
+        this.shooterProfileID_Int = shooterProfileID_Int;
         this.shooterName_Str = shooterName_Str;
     }
 
@@ -82,5 +86,13 @@ public class ShooterClass {
 
     public void setShooterName_Str(String shooterName_Str) {
         this.shooterName_Str = shooterName_Str;
+    }
+
+    public int getShooterProfileID_Int() {
+        return shooterProfileID_Int;
+    }
+
+    public void setShooterProfileID_Int(int shooterProfileID_Int) {
+        this.shooterProfileID_Int = shooterProfileID_Int;
     }
 }

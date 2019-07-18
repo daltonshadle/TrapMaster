@@ -54,7 +54,8 @@ public class ArmoryActivity extends AppCompatActivity {
 
     //***************************************** Variables ******************************************
     // General Variables
-    private String mCurrentUserEmail_Str = "********";
+    private String mCurrentProfileEmail_Str = "********";
+    private int mCurrentProfileID_Int = -1;
     private DBHandler db;
     private boolean isPortrait = true;
 
@@ -98,10 +99,12 @@ public class ArmoryActivity extends AppCompatActivity {
 
         // Pull extra information from intent
         if (savedInstanceState != null) {
-
+            mCurrentProfileID_Int = savedInstanceState.getInt(CURRENT_USER_KEY);
         } else {
-            mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
+            mCurrentProfileID_Int = getIntent().getIntExtra(CURRENT_USER_KEY, -1);
         }
+
+        mCurrentProfileEmail_Str = db.getProfileFromDB(mCurrentProfileID_Int).getProfileEmail_Str();
 
         // Initialize views
         initializeViews();
@@ -149,6 +152,7 @@ public class ArmoryActivity extends AppCompatActivity {
 
         ACTIVITY_TITLE = getString(R.string.armory_activity_title);
         CURRENT_USER_KEY = getString(R.string.current_user_key);
+        db = new DBHandler(ArmoryActivity.this);
     }
 
     private void initializeViews() {
@@ -177,7 +181,7 @@ public class ArmoryActivity extends AppCompatActivity {
                 // adding a new gun
                 GunClass temp_Gun = new GunClass();
                 temp_Gun.setGunID_Int(-1);
-                temp_Gun.setGunEmail_Str(mCurrentUserEmail_Str);
+                temp_Gun.setGunProfileID_Int(mCurrentProfileID_Int);
                 temp_Gun.editGunDialog(ArmoryActivity.this, mCustomGunList_Adapt);
             }
         });
@@ -189,7 +193,7 @@ public class ArmoryActivity extends AppCompatActivity {
                 // adding a new load
                 LoadClass temp_Load = new LoadClass();
                 temp_Load.setLoadID_Int(-1);
-                temp_Load.setLoadEmail_Str(mCurrentUserEmail_Str);
+                temp_Load.setLoadProfileID_Int(mCurrentProfileID_Int);
                 temp_Load.editLoadDialog(ArmoryActivity.this, mCustomLoadList_Adapt);
             }
         });
@@ -228,7 +232,7 @@ public class ArmoryActivity extends AppCompatActivity {
 
         // Initialize db handler and shooter and event array
         db = new DBHandler(this);
-        ArrayList<GunClass> userGun_List = db.getAllGunFromDB(mCurrentUserEmail_Str);
+        ArrayList<GunClass> userGun_List = db.getAllGunFromDB(mCurrentProfileID_Int);
 
         return userGun_List;
     }
@@ -274,7 +278,7 @@ public class ArmoryActivity extends AppCompatActivity {
 
         // Initialize db handler and shooter and event array
         db = new DBHandler(this);
-        ArrayList<LoadClass> userLoad_List = db.getAllLoadFromDB(mCurrentUserEmail_Str);
+        ArrayList<LoadClass> userLoad_List = db.getAllLoadFromDB(mCurrentProfileID_Int);
 
         return userLoad_List;
     }

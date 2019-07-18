@@ -26,7 +26,7 @@
             android:name=".homeActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"/>
         <activity
-            android:name=".NewEventActivity"
+            android:name=".NewShootingEventActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity
             android:name=".EventHistoryActivity"

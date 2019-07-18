@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * FILENAME : NewEventActivity.java
+ * FILENAME : NewShootingEventActivity.java
  *
  * AUTHOR : Dalton Shadle
  *
@@ -48,7 +48,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NewEventActivity extends AppCompatActivity implements OnTotalHitChange {
+public class NewShootingEventActivity extends AppCompatActivity implements OnTotalHitChange {
     //***************************************** Constants ******************************************
     // General Constants
     private String TAG = "JRW";
@@ -65,9 +65,10 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
     private final String TRAP_STATE_KEY = "TRAP_STATE_KEY";
     private final String TRAP_EXPAND_KEY = "TRAP_EXPAND_KEY";
 
-    //***************************************** Constants ******************************************
+    //***************************************** Variables ******************************************
     // General Variables
-    private String mCurrentUserEmail_Str = "Quick Event";
+    private String mCurrentProfileEmail_Str = "*********";
+    private int mCurrentProfileID_Int = -1;
     private DBHandler db;
 
     // Rounds
@@ -128,12 +129,14 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             setCurrentTrapStates(trapState_Array);
             setCurrentExpandStates(trapExpand_Array);
         } else {
-            mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
+            mCurrentProfileID_Int = getIntent().getIntExtra(CURRENT_USER_KEY, -1);
             numRounds_Int = getIntent().getIntExtra(NUM_ROUNDS_KEY, 1);
             numShooters_Int = getIntent().getIntExtra(NUM_SHOOTER_KEY, 1);
             shooterNames_Array = getIntent().getStringArrayListExtra(SHOOTER_LIST_KEY);
             trapExpand_Array = new ArrayList<>(Collections.nCopies(5, 0));
         }
+
+        mCurrentProfileEmail_Str = db.getProfileFromDB(mCurrentProfileID_Int).getProfileEmail_Str();
 
         // Initialize views
         initializeViews();
@@ -267,7 +270,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             case R.id.newEventCancel_MenuItem:
                 // Cancel shoot, return to home
                 Intent homeActivity_Intent = new Intent(this, homeActivity.class);
-                homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+                homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentProfileID_Int);
                 startActivity(homeActivity_Intent);
                 break;
         }
@@ -317,6 +320,8 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
         NUM_SHOOTER_KEY = getString(R.string.num_shooter_key);
         SHOOTER_LIST_KEY = getString(R.string.shooter_list_key);
         SHOOTER_SCORE_LIST_KEY =  getString(R.string.shooter_score_list_key);
+
+        db = new DBHandler(NewShootingEventActivity.this);
     }
 
     private void initializeViews() {
@@ -360,7 +365,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                         currentRound_Int = currentRound_Int + 1;
 
                         // Move to next round
-                        Toast.makeText(NewEventActivity.this, "Next Round", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(NewShootingEventActivity.this, "Next Round", Toast.LENGTH_SHORT).show();
 
                         // Reset all trap counters for next round
                         resetAllTrapScores();
@@ -369,7 +374,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
                 } else {
                     // Not all traps are checked, not ready to save
-                    Toast.makeText(NewEventActivity.this,
+                    Toast.makeText(NewShootingEventActivity.this,
                             "All scoring buttons need to be checked", Toast.LENGTH_LONG).show();
                 }
             }
@@ -703,14 +708,14 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
             int tempCurRound_Int = i + 1;
             for (int j = 0; j < numShooters_Int; j++) {
                 // Initialize temp shot object
-                RoundClass temp_Shot = new RoundClass();
+                RoundClass temp_Round = new RoundClass();
                 String round_Str = "No Event - Round " + Integer.toString(tempCurRound_Int);
 
                 // Set necessary fields for temp shot
-                temp_Shot.setShotShooterName_Str(shooterNames_Array.get(j));
-                temp_Shot.setShotEventName_Str(round_Str);
-                temp_Shot.setShotHitNum_Str(Integer.toString(shooterScores_Array.get(tempCurRound_Int).get(j).get(ROUND_SCORE_KEY)));
-                temp_Shot.setShotTotalNum_Str(Integer.toString(TOTAL_NUM_SHOTS));
+                temp_Round.set(shooterNames_Array.get(j));
+                temp_Round.setShotEventName_Str(round_Str);
+                temp_Round.setShotHitNum_Str(Integer.toString(shooterScores_Array.get(tempCurRound_Int).get(j).get(ROUND_SCORE_KEY)));
+                temp_Round.setShotTotalNum_Str(Integer.toString(TOTAL_NUM_SHOTS));
 
                 // Insert into db
                 db.insertShotInDB(temp_Shot);
@@ -843,7 +848,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
          ******************************************************************************************/
 
         //authenticate user
-        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(NewEventActivity.this, new OnCompleteListener<AuthResult>() {
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(NewShootingEventActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         // If sign in fails, display a message to the user. If sign in succeeds
@@ -854,7 +859,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                             // there was an error
                             String exceptionMsg_Str = "Sign in failed! " + task.getException().getMessage();
 
-                            Toast.makeText(NewEventActivity.this, exceptionMsg_Str,
+                            Toast.makeText(NewShootingEventActivity.this, exceptionMsg_Str,
                                     Toast.LENGTH_LONG).show();
 
                             // Relaunch quick event login
@@ -862,7 +867,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                         } else {
                             // Login was successful
                             // set current user and have user press save again
-                            Toast.makeText(NewEventActivity.this, "Sign in successful!",
+                            Toast.makeText(NewShootingEventActivity.this, "Sign in successful!",
                                     Toast.LENGTH_LONG).show();
                             mCurrentUserEmail_Str = email;
                         }
@@ -954,7 +959,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                     alertDialog.dismiss();
 
                     // Create intent for post event activity and put all necessary extras
-                    Intent postEventActivity_Intent = new Intent(NewEventActivity.this, PostEventActivity.class);
+                    Intent postEventActivity_Intent = new Intent(NewShootingEventActivity.this, PostEventActivity.class);
                     postEventActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
                     postEventActivity_Intent.putExtra(NUM_ROUNDS_KEY, numRounds_Int);
                     postEventActivity_Intent.putStringArrayListExtra(SHOOTER_LIST_KEY, shooterNames_Array);
@@ -987,11 +992,11 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
                     saveScoresToDB();
 
                     // Create intent for returning to home activity and put all necessary extras
-                    Intent homeActivity_Intent = new Intent(NewEventActivity.this, homeActivity.class);
+                    Intent homeActivity_Intent = new Intent(NewShootingEventActivity.this, homeActivity.class);
                     homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
                     startActivity(homeActivity_Intent);
 
-                    NewEventActivity.this.finish();
+                    NewShootingEventActivity.this.finish();
                 }
             });
         }
@@ -1098,7 +1103,7 @@ public class NewEventActivity extends AppCompatActivity implements OnTotalHitCha
 
                     alertDialog.dismiss();
 
-                    Intent homeActivity = new Intent(NewEventActivity.this, homeActivity.class);
+                    Intent homeActivity = new Intent(NewShootingEventActivity.this, homeActivity.class);
                     homeActivity.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
                     startActivity(homeActivity);
                 }

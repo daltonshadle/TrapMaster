@@ -25,7 +25,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
     private final int LOAD_LIST_TAG = 4;
 
     // Variables
-    private ArrayList<RoundClass> shotClass_List =  new ArrayList<>();
+    private ArrayList<RoundClass> roundClass_List =  new ArrayList<>();
     private ArrayList<EventClass> eventClass_List =  new ArrayList<>();
     private ArrayList<GunClass> gunClass_List =  new ArrayList<>();
     private ArrayList<LoadClass> loadClass_List =  new ArrayList<>();
@@ -55,7 +55,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
 
             // Find what type of object the object list is and assign it to correct list type
             if (first_Obj instanceof RoundClass) {
-                shotClass_List = (ArrayList<RoundClass>)(ArrayList<?>) objects;
+                roundClass_List = (ArrayList<RoundClass>)(ArrayList<?>) objects;
             } else if (first_Obj instanceof EventClass) {
                 eventClass_List = (ArrayList<EventClass>)(ArrayList<?>) objects;
             } else if (first_Obj instanceof GunClass) {
@@ -66,7 +66,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
         }
 
         // Refresh all lists, these functions will handle all empty lists
-        refreshShotArrayAdapter(shotClass_List);
+        refreshRoundArrayAdapter(roundClass_List);
         refreshEventArrayAdapter(eventClass_List);
         refreshGunArrayAdapter(gunClass_List);
         refreshLoadArrayAdapter(loadClass_List);
@@ -99,10 +99,11 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
         switch ((int) parent.getTag()) {
             case SHOT_LIST_TAG:
                 // Item is a shot class object
-                final RoundClass current_Shot = shotClass_List.get(position);
+                final RoundClass current_Shot = roundClass_List.get(position);
 
-                String main_Str = current_Shot.getShotShooterName_Str();
-                String second_Str = current_Shot.getShotEventName_Str();
+                ShooterClass temp_Shooter = db.getShooterInDB(current_Shot.getRoundShooterID_Int());
+                String main_Str = temp_Shooter.getShooterName_Str();
+                String second_Str = Integer.toString(current_Shot.getRoundRound_Int());
 
                 // Check for default item and process accordingly
                 if (isDefaultItem(current_Shot)) {
@@ -113,7 +114,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                     listItemScore_Txt.setVisibility(View.INVISIBLE);
                 } else {
                     // Not a default item, set score
-                    listItemScore_Txt.setText(current_Shot.getShotHitNum_Str());
+                    listItemScore_Txt.setText(Integer.toString(current_Shot.getRoundScore_Int()));
                     listItemScore_Txt.setVisibility(View.VISIBLE);
                     listItemEdit_Btn.setVisibility(View.VISIBLE);
                     listItemDelete_Btn.setVisibility(View.VISIBLE);
@@ -121,7 +122,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                 }
 
                 // Set tag of list view item to be database ID
-                listItem.setTag(current_Shot.getShotID_Int());
+                listItem.setTag(current_Shot.getRoundID_Int());
 
                 if (second_Str.length() > 40) {
                     second_Str = second_Str.substring(0, 36) + "...";
@@ -134,7 +135,8 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                 listItemEdit_Btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        current_Shot.editShotDialog(parentContext, TrapMasterListArrayAdapter.this);
+                        // TODO: make editing rounds work
+                        // current_Shot.editShotDialog(parentContext, TrapMasterListArrayAdapter.this);
                     }
                 });
 
@@ -142,7 +144,8 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                 listItemDelete_Btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        current_Shot.removeShotItemDialog(parentContext, TrapMasterListArrayAdapter.this);
+                        // TODO: make removing rounds work
+                        // current_Shot.removeShotItemDialog(parentContext, TrapMasterListArrayAdapter.this);
                     }
                 });
 
@@ -276,7 +279,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                     @Override
                     public void onClick(View view) {
                         current_Load.editLoadDialog(parentContext, TrapMasterListArrayAdapter.this);
-                        refreshLoadArrayAdapter(db.getAllLoadFromDB(current_Load.getLoadEmail_Str()));
+                        refreshLoadArrayAdapter(db.getAllLoadFromDB(current_Load.getLoadProfileID_Int()));
                     }
                 });
 
@@ -296,32 +299,33 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
         return listItem;
     }
 
-    public void refreshShotArrayAdapter(ArrayList<RoundClass> shot_List){
+    public void refreshRoundArrayAdapter(ArrayList<RoundClass> round_List){
         /*******************************************************************************************
          * Function: refreshShotArrayAdapter
          *
          * Purpose: Function refreshes the list view parent with current data
          *
-         * Parameters: shot_List (IN) - list of data to refresh the adapter with
+         * Parameters: round_List (IN) - list of data to refresh the adapter with
          *
          * Returns: None
          *
          ******************************************************************************************/
 
         // Check if list is empty
-        if (shot_List.isEmpty()) {
+        if (round_List.isEmpty()) {
             RoundClass temp_Shot = new RoundClass();
-            temp_Shot.setShotShooterName_Str(getContext().getString(R.string.no_shot_main_text));
-            temp_Shot.setShotEventName_Str(getContext().getString(R.string.no_shot_second_text));
+            // TODO: fix empty list for round adpater
+            //temp_Shot.setShotShooterName_Str(getContext().getString(R.string.no_shot_main_text));
+            //temp_Shot.setShotEventName_Str(getContext().getString(R.string.no_shot_second_text));
 
-            shot_List.add(temp_Shot);
+            round_List.add(temp_Shot);
         }
 
         // Update the class list
-        shotClass_List = shot_List;
+        roundClass_List = round_List;
 
         this.clear();
-        this.addAll(shotClass_List);
+        this.addAll(roundClass_List);
         this.notifyDataSetChanged();
     }
 
@@ -427,7 +431,9 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
         String mainText_Str = getContext().getString(R.string.no_shot_main_text);
         String secondText_Str = getContext().getString(R.string.no_shot_second_text);
 
-        return (mainText_Str.equals(s.getShotShooterName_Str()) && secondText_Str.equals(s.getShotEventName_Str()));
+        // TODO: fix default item for round
+        //return (mainText_Str.equals(s.getShotShooterName_Str()) && secondText_Str.equals(s.getShotEventName_Str()));
+        return false;
     }
 
     private boolean isDefaultItem(EventClass e) {

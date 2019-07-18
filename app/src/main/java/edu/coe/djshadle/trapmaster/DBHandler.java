@@ -45,6 +45,7 @@ public class DBHandler extends SQLiteOpenHelper {
     //Shooter Table Stuff
     private static final String TABLE_SHOOTERS = "shooters";
     private static final String KEY_SHOOTER_ID = "id";
+    private static final String KEY_SHOOTER_PROFILE_ID = "shooter_ProfileID";  //Key
     private static final String KEY_SHOOTER_NAME = "shooter_Name";  //Key
 
     //Gun Table Stuff
@@ -168,6 +169,7 @@ public class DBHandler extends SQLiteOpenHelper {
         //Shooter Table
         String CREATE_SHOOTER_TABLE = "CREATE TABLE " + TABLE_SHOOTERS + " ("
                 + KEY_SHOOTER_ID + " INTEGER PRIMARY KEY,"
+                + KEY_SHOOTER_PROFILE_ID + " INTEGER,"
                 + KEY_SHOOTER_NAME + " TEXT"
                 + ")";
         db.execSQL(CREATE_SHOOTER_TABLE);
@@ -303,7 +305,37 @@ public class DBHandler extends SQLiteOpenHelper {
         if (cursor != null) {
             cursor.moveToFirst();
 
-            tempProfile.setProfileID_Str(cursor.getString(cursor.getColumnIndex(KEY_PROFILE_ID)));
+            tempProfile.setProfileID_Int(cursor.getInt(cursor.getColumnIndex(KEY_PROFILE_ID)));
+            tempProfile.setProfileEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_PROFILE_EMAIL)));
+        }
+
+        dbWhole.close();
+        return tempProfile;
+    }
+
+    public ProfileClass getProfileFromDB (int profileID_Int){
+        /*******************************************************************************************
+         * Function: getProfileFromDB
+         *
+         * Purpose: Function gets a profile based on the email provided
+         *
+         * Parameters: profileID_Int (IN) - key ID for finding profile
+         *
+         * Returns: tempProfile - variable that contains all info from database for this email
+         *          TODO: make this return false or -1 or indicate if profile not found
+         *
+         ******************************************************************************************/
+
+        ProfileClass tempProfile = new ProfileClass();
+
+        dbWhole = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_PROFILES + " WHERE " + KEY_PROFILE_ID + " = '" + profileID_Int + "'";
+        Cursor cursor = dbWhole.rawQuery(query, null);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+
+            tempProfile.setProfileID_Int(cursor.getInt(cursor.getColumnIndex(KEY_PROFILE_ID)));
             tempProfile.setProfileEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_PROFILE_EMAIL)));
         }
 
@@ -665,6 +697,7 @@ public class DBHandler extends SQLiteOpenHelper {
             Cursor cursor = dbWhole.rawQuery(query, null);
             cursor.moveToFirst();
             tempShooter.setShooterID_Int(cursor.getInt(cursor.getColumnIndex(KEY_SHOOTER_ID)));
+            tempShooter.setShooterProfileID_Int(cursor.getInt(cursor.getColumnIndex(KEY_SHOOTER_PROFILE_ID)));
             tempShooter.setShooterName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOOTER_NAME)));
         } catch (Exception e) {
             Log.d("JRW", e.toString());
@@ -697,6 +730,7 @@ public class DBHandler extends SQLiteOpenHelper {
             Cursor cursor = dbWhole.rawQuery(query, null);
             cursor.moveToFirst();
             tempShooter.setShooterID_Int(cursor.getInt(cursor.getColumnIndex(KEY_SHOOTER_ID)));
+            tempShooter.setShooterProfileID_Int(cursor.getInt(cursor.getColumnIndex(KEY_SHOOTER_PROFILE_ID)));
             tempShooter.setShooterName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOOTER_NAME)));
         } catch (Exception e) {
             Log.d("JRW", e.toString());
@@ -722,6 +756,7 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(KEY_SHOOTER_PROFILE_ID, s.getShooterProfileID_Int());
         values.put(KEY_SHOOTER_NAME, s.getShooterName_Str());
 
         dbWhole.insert(TABLE_SHOOTERS, null, values);
@@ -767,6 +802,7 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(KEY_SHOOTER_PROFILE_ID, s.getShooterProfileID_Int());
         values.put(KEY_SHOOTER_NAME, s.getShooterName_Str());
 
         String whereClaus = KEY_SHOOTER_ID + " = " + Integer.toString(s.getShooterID_Int());
@@ -775,13 +811,13 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole.close();
     }
 
-    public ArrayList<ShooterClass> getAllShooterFromDB () {
+    public ArrayList<ShooterClass> getAllShooterFromDB (int profileID_Int) {
         /*******************************************************************************************
          * Function: getAllShooterFromDB
          *
          * Purpose: Function gathers shooter information
          *
-         * Parameters: None
+         * Parameters: profileID_Int (IN) - id to base where clause on
          *
          * Returns: tempShooter_List - returns list of ShooterClass object with database information
          *
@@ -790,7 +826,8 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole = this.getReadableDatabase();
 
         ArrayList<ShooterClass> tempShooter_List = new ArrayList<>();
-        String query = "SELECT * FROM " + TABLE_SHOOTERS;
+        String query = "SELECT * FROM " + TABLE_SHOOTERS + " WHERE " + KEY_SHOOTER_PROFILE_ID +
+                " = '" + profileID_Int + "'";
 
         Cursor cursor = dbWhole.rawQuery(query, null);
 
@@ -798,6 +835,7 @@ public class DBHandler extends SQLiteOpenHelper {
             ShooterClass temp_Shooter = new ShooterClass();
 
             temp_Shooter.setShooterID_Int(cursor.getInt(cursor.getColumnIndex(KEY_SHOOTER_ID)));
+            temp_Shooter.setShooterProfileID_Int(cursor.getInt(cursor.getColumnIndex(KEY_SHOOTER_PROFILE_ID)));
             temp_Shooter.setShooterName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOOTER_NAME)));
             tempShooter_List.add(temp_Shooter);
         }
@@ -806,13 +844,14 @@ public class DBHandler extends SQLiteOpenHelper {
         return tempShooter_List;
     }
 
-    public boolean isShooterInDB (String shooterName_Str, int ID) {
+    public boolean isShooterInDB (int profileID_Int, String shooterName_Str, int ID) {
         /*******************************************************************************************
          * Function: isShooterInDB
          *
          * Purpose: Function decides if shooter name is already in db for user
          *
-         * Parameters: shooterName_Str (IN) - string to find in database
+         * Parameters: profileID_Int (IN) - ID of profile to search for shooters
+         *             shooterName_Str (IN) - string to find in database
          *             ID (IN) - ID of shooter being passed in, this is to ignore this load when checking
          *                       ID = -1 if new user
          *
@@ -824,7 +863,8 @@ public class DBHandler extends SQLiteOpenHelper {
         boolean doesShooterExist = false;
         int currentID_Int = -1;
         String currentShooterName_Str;
-        String query = "SELECT * FROM " + TABLE_SHOOTERS;
+        String query = "SELECT * FROM " + TABLE_SHOOTERS + " WHERE " + KEY_SHOOTER_PROFILE_ID +
+                " = '" + profileID_Int + "'";
 
         dbWhole = this.getReadableDatabase();
         Cursor cursor = dbWhole.rawQuery(query, null);

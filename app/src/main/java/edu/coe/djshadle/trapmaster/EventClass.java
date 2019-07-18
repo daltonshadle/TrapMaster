@@ -167,7 +167,7 @@ public class EventClass {
         this.eventID_Int = eventID_Int;
     }
 
-    //*************************************** Other Functions **************************************
+    //************************************ Edit Event Functions ************************************
     private void initializeEventDialogStrings() {
         EVENT_DIALOG_MSG = new ArrayList<String>(Arrays.asList(
                 "Enter a name for this event.",
@@ -533,4 +533,6 @@ public class EventClass {
             });
         }
     }
+
+
 }

@@ -15,7 +15,7 @@ package edu.coe.djshadle.trapmaster;
 
 public class ProfileClass {
     //************************************* Private Variables **************************************
-    private String profileID_Str;
+    private int profileID_Int;
     private String profileEmail_Str;  //Key
 
     //************************************* Public Functions ***************************************
@@ -32,42 +32,24 @@ public class ProfileClass {
          *
          ******************************************************************************************/
 
-        this.profileID_Str = "tempID";
-        this.profileEmail_Str = "tempEmail";
+        this.profileID_Int = -1;
+        this.profileEmail_Str = "";
     }
 
-    public ProfileClass(String profileEmail_Str) {
+    public ProfileClass(int profileID_Int, String profileEmail_Str) {
         /*******************************************************************************************
          * Function: ProfileClass
          *
          * Purpose: Constructor for this class with parameters
          *
-         * Parameters: profileEmail_Str (IN) - email for the profile
-         *             profilePassword_Str (IN) - password for the profile
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        this.profileID_Str = "tempID";
-        this.profileEmail_Str = profileEmail_Str;
-    }
-
-    public ProfileClass(String profileID_Str, String profileEmail_Str) {
-        /*******************************************************************************************
-         * Function: ProfileClass
-         *
-         * Purpose: Constructor for this class with parameters
-         *
-         * Parameters: profileID_Str (IN) - id of the profile
+         * Parameters: profileID_Int (IN) - database ID for object, -1 for new object in database
          *             profileEmail_Str (IN) - email for the profile
-         *             profilePassword_Str (IN) - password for the profile
          *
          * Returns: None
          *
          ******************************************************************************************/
 
-        this.profileID_Str = profileID_Str;
+        this.profileID_Int = profileID_Int;
         this.profileEmail_Str = profileEmail_Str;
     }
 
@@ -82,12 +64,12 @@ public class ProfileClass {
      * Returns: None
      *
      ******************************************************************************************/
-    public String getProfileID_Str() {
-        return profileID_Str;
+    public int getProfileID_Int() {
+        return profileID_Int;
     }
 
-    public void setProfileID_Str(String profileID_Str) {
-        this.profileID_Str = profileID_Str;
+    public void setProfileID_Int(int profileID_Int) {
+        this.profileID_Int = profileID_Int;
     }
 
     public String getProfileEmail_Str() {
