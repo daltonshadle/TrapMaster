@@ -343,7 +343,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return tempProfile;
     }
 
-    public void insertProfileInDB (ProfileClass p){
+    public long insertProfileInDB (ProfileClass p){
         /*******************************************************************************************
          * Function: insertProfileInDB
          *
@@ -351,7 +351,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: p (IN) - ProfileClass object to insert into database
          *
-         * Returns: None
+         * Returns: profileID_Long (OUT) - returns ID generated for insert, -1 if error occurred
          *
          ******************************************************************************************/
 
@@ -360,8 +360,10 @@ public class DBHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_PROFILE_EMAIL, p.getProfileEmail_Str());
 
-        dbWhole.insert(TABLE_PROFILES, null, values);
+        long profileID_Long = dbWhole.insert(TABLE_PROFILES, null, values);
         dbWhole.close();
+
+        return profileID_Long;
     }
 
     //************************************** Round Functions ***************************************
@@ -403,7 +405,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return tempRound;
     }
 
-    public void insertRoundInDB (RoundClass s) {
+    public long insertRoundInDB (RoundClass s) {
         /*******************************************************************************************
          * Function: insertRoundInDB
          *
@@ -411,7 +413,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: s (IN) - round class object that holds information to put in database
          *
-         * Returns: None
+         * Returns: roundID_Long (OUT) - returns ID generated for insert, -1 if error occurred
          *
          ******************************************************************************************/
 
@@ -426,8 +428,10 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_ROUND_HIT_MISS_STATES, s.getRoundHitMiss_Str());
         values.put(KEY_ROUND_NOTES, s.getRoundNotes_Str());
 
-        dbWhole.insert(TABLE_ROUND, null, values);
+        long roundID_Long = dbWhole.insert(TABLE_ROUND, null, values);
         dbWhole.close();
+
+        return roundID_Long;
     }
 
     public void deleteRoundInDB (int roundID_int) {
@@ -559,7 +563,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return tempMatch;
     }
 
-    public void insertMatchInDB (MatchClass m) {
+    public long insertMatchInDB (MatchClass m) {
         /*******************************************************************************************
          * Function: insertMatchInDB
          *
@@ -567,7 +571,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: m (IN) - match class object that holds information to put in database
          *
-         * Returns: None
+         * Returns: matchID_Long (OUT) - returns ID generated for insert, -1 if error occurred
          *
          ******************************************************************************************/
 
@@ -581,8 +585,10 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_MATCH_SCORE, m.getMatchScore_Int());
         values.put(KEY_MATCH_NOTES, m.getMatchNotes_Str());
 
-        dbWhole.insert(TABLE_MATCH, null, values);
+        long matchID_Long = dbWhole.insert(TABLE_MATCH, null, values);
         dbWhole.close();
+
+        return matchID_Long;
     }
 
     public void deleteMatchInDB (int matchID_Int) {
@@ -741,7 +747,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return tempShooter;
     }
 
-    public void insertShooterInDB (ShooterClass s) {
+    public long insertShooterInDB (ShooterClass s) {
         /*******************************************************************************************
          * Function: insertShooterInDB
          *
@@ -749,7 +755,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: s (IN) - shooter class object that holds information to put in database
          *
-         * Returns: None
+         * Returns: shooterID_Long (OUT) - returns ID generated for insert, -1 if error occurred
          *
          ******************************************************************************************/
 
@@ -759,8 +765,10 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_SHOOTER_PROFILE_ID, s.getShooterProfileID_Int());
         values.put(KEY_SHOOTER_NAME, s.getShooterName_Str());
 
-        dbWhole.insert(TABLE_SHOOTERS, null, values);
+        long shooterID_Long = dbWhole.insert(TABLE_SHOOTERS, null, values);
         dbWhole.close();
+
+        return shooterID_Long;
     }
 
     public void deleteShooterInDB (int shooterID_Int) {
@@ -925,7 +933,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return tempLoad;
     }
 
-    public void insertLoadInDB (LoadClass l) {
+    public long insertLoadInDB (LoadClass l) {
         /*******************************************************************************************
          * Function: insertLoadInDB
          *
@@ -933,7 +941,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: l (IN) - load class object that holds information to put in database
          *
-         * Returns: None
+         * Returns: loadID_Long (OUT) - returns ID generated for insert, -1 if error occurred
          *
          ******************************************************************************************/
 
@@ -948,8 +956,10 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_LOAD_LENGTH, l.getLoadLength_Str());
         values.put(KEY_LOAD_NOTES, l.getLoadNotes_Str());
 
-        dbWhole.insert(TABLE_LOADS, null, values);
+        long loadID_Long = dbWhole.insert(TABLE_LOADS, null, values);
         dbWhole.close();
+
+        return loadID_Long;
     }
 
     public void deleteLoadInDB (int loadID_Int) {
@@ -1121,7 +1131,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return tempGun;
     }
 
-    public void insertGunInDB (GunClass g) {
+    public long insertGunInDB (GunClass g) {
         /*******************************************************************************************
          * Function: insertGunInDB
          *
@@ -1129,7 +1139,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: g (IN) - g class object that holds information to put in database
          *
-         * Returns: None
+         * Returns: gunID_Long (OUT) - returns ID generated for insert, -1 if error occurred
          *
          ******************************************************************************************/
 
@@ -1142,8 +1152,10 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_GUN_GAUGE, g.getGunGauge_Str());
         values.put(KEY_GUN_NOTES, g.getGunNotes_Str());
 
-        dbWhole.insert(TABLE_GUNS, null, values);
+        long gunID_Long = dbWhole.insert(TABLE_GUNS, null, values);
         dbWhole.close();
+
+        return gunID_Long;
     }
 
     public void deleteGunInDB (int gunID_Int) {
@@ -1312,7 +1324,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return tempEvent;
     }
 
-    public void insertEventInDB (EventClass e) {
+    public long insertEventInDB (EventClass e) {
         /*******************************************************************************************
          * Function: insertEventInDB
          *
@@ -1320,7 +1332,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: e (IN) - event class object that holds information to put in database
          *
-         * Returns: None
+         * Returns: eventID_Long (OUT) - returns ID generated for insert, -1 if error occurred
          *
          ******************************************************************************************/
 
@@ -1334,9 +1346,10 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_EVENT_WEATHER, e.getEventWeather_Str());
         values.put(KEY_EVENT_NOTES, e.getEventNotes_Str());
 
-
-        dbWhole.insert(TABLE_EVENTS, null, values);
+        long eventID_Long = dbWhole.insert(TABLE_EVENTS, null, values);
         dbWhole.close();
+
+        return eventID_Long;
     }
 
     public void deleteEventInDB (int eventID_Int) {

@@ -74,6 +74,7 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
     // Rounds
     private int numRounds_Int = 1;
     private int currentRound_Int = 1;
+    private Map<Integer, ArrayList<RoundClass>> round_Array;
 
     // Shooter
     private int numShooters_Int = 1;
@@ -341,6 +342,7 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
 
         // Initializing shooter score array
         shooterScores_Array = new HashMap<>();
+        round_Array = new HashMap<>();
 
         // Initializing all buttons
         mRight_Btn = findViewById(R.id.newEventRight_Btn);
@@ -348,12 +350,14 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
             @Override
             public void onClick(View view) {
                 // Next Button
-
                 if (allTrapsChecked()) {
                     // All traps are checked, move to next state
 
                     // Save current round trap states to shooterScores_Array
                     saveCurrentTrapStates();
+
+                    // Save current round info to array
+                    round_Array.put(currentRound_Int, saveRoundsToArray());
 
                     if (currentRound_Int == numRounds_Int) {
                         // Move to post event dialog
@@ -687,6 +691,35 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
     }
 
     //************************************ Database Functions **************************************
+    private ArrayList<RoundClass> saveRoundsToArray(){
+        /*******************************************************************************************
+         * Function: saveRoundsToArray
+         *
+         * Purpose: Function takes info necessary to save scores to rounds array
+         *
+         * Parameters: None
+         *
+         * Returns: temp_Array (OUT) - current round information in an array element for each shooter
+         *
+         ******************************************************************************************/
+
+        // Initialize round array
+        ArrayList<RoundClass> temp_Array = new ArrayList<>();
+
+        // Iterate over all shooter and collect trap states for that round, save in array
+        for (int i = 0; i < numShooters_Int; i++) {
+            RoundClass temp_Round = new RoundClass();
+            temp_Round.setRoundHitMiss_Array(trapScoreViews_Array.get(i).getAllStates());
+            temp_Round.setRoundRound_Int(currentRound_Int);
+            temp_Round.setRoundScore_Int(trapScoreViews_Array.get(i).getTotalNumberHit());
+            temp_Round.setRoundShooterID_Int(db.getShooterInDB(shooterNames_Array.get(i)).getShooterID_Int());
+
+            temp_Array.add(temp_Round);
+        }
+
+        return temp_Array;
+    }
+
     private void saveScoresToDB() {
         /*******************************************************************************************
          * Function: saveScoreToDB
@@ -699,28 +732,37 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
          *
          ******************************************************************************************/
 
-        // Initialize db handler
-        DBHandler db = new DBHandler(getApplicationContext());
+        // Initialize function variables
+        db = new DBHandler(getApplicationContext());
 
-        // Iterate over all shooters and all rounds, create a temp score object and save to db
-        for (int i = 0; i < numRounds_Int; i++) {
-            // Initialize round number for string reference
-            int tempCurRound_Int = i + 1;
-            for (int j = 0; j < numShooters_Int; j++) {
-                // Initialize temp shot object
-                RoundClass temp_Round = new RoundClass();
-                String round_Str = "No Event - Round " + Integer.toString(tempCurRound_Int);
+        // Iterate over shooters first then rounds
+        for (int i = 0; i < numShooters_Int; i++) {
+            // Initialize round ID array for each shooter
+            ArrayList<Integer> roundID_Array = new ArrayList<>();
+            int shooterScore_Int = 0;
 
-                // Set necessary fields for temp shot
-                temp_Round.set(shooterNames_Array.get(j));
-                temp_Round.setShotEventName_Str(round_Str);
-                temp_Round.setShotHitNum_Str(Integer.toString(shooterScores_Array.get(tempCurRound_Int).get(j).get(ROUND_SCORE_KEY)));
-                temp_Round.setShotTotalNum_Str(Integer.toString(TOTAL_NUM_SHOTS));
+            for (int j = 0; j < numRounds_Int; j++) {
+                // Initialize round numbers starting at 1
+                int tempCurRound_Int = i + 1;
+                RoundClass temp_Round = round_Array.get(tempCurRound_Int).get(j);
 
-                // Insert into db
-                db.insertShotInDB(temp_Shot);
+                // Insert into db, save round ID's in array
+                long roundID_Long = db.insertRoundInDB(temp_Round);
+                roundID_Array.add((int)roundID_Long);
+                shooterScore_Int = shooterScore_Int + temp_Round.getRoundScore_Int();
             }
+
+            // Initialize match variable
+            MatchClass temp_Match = new MatchClass();
+            temp_Match.setMatchShooterID_Int(db.getShooterInDB(shooterNames_Array.get(i)).getShooterID_Int());
+            temp_Match.setMatchRoundIDS_Array(roundID_Array);
+            temp_Match.setMatchScore_Int(shooterScore_Int);
+
+            // Save match to db
+            db.insertMatchInDB(temp_Match);
         }
+
+
     }
 
     //*********************************** QuickEvent Functions *************************************
@@ -869,7 +911,7 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
                             // set current user and have user press save again
                             Toast.makeText(NewShootingEventActivity.this, "Sign in successful!",
                                     Toast.LENGTH_LONG).show();
-                            mCurrentUserEmail_Str = email;
+                            mCurrentProfileEmail_Str = email;
                         }
                     }
                 });
@@ -960,7 +1002,7 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
 
                     // Create intent for post event activity and put all necessary extras
                     Intent postEventActivity_Intent = new Intent(NewShootingEventActivity.this, PostEventActivity.class);
-                    postEventActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+                    postEventActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentProfileID_Int);
                     postEventActivity_Intent.putExtra(NUM_ROUNDS_KEY, numRounds_Int);
                     postEventActivity_Intent.putStringArrayListExtra(SHOOTER_LIST_KEY, shooterNames_Array);
                     postEventActivity_Intent.putExtra(SHOOTER_SCORE_LIST_KEY, (HashMap) shooterScores_Array);
@@ -993,7 +1035,7 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
 
                     // Create intent for returning to home activity and put all necessary extras
                     Intent homeActivity_Intent = new Intent(NewShootingEventActivity.this, homeActivity.class);
-                    homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+                    homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentProfileID_Int);
                     startActivity(homeActivity_Intent);
 
                     NewShootingEventActivity.this.finish();
@@ -1104,7 +1146,7 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
                     alertDialog.dismiss();
 
                     Intent homeActivity = new Intent(NewShootingEventActivity.this, homeActivity.class);
-                    homeActivity.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+                    homeActivity.putExtra(CURRENT_USER_KEY, mCurrentProfileID_Int);
                     startActivity(homeActivity);
                 }
             });

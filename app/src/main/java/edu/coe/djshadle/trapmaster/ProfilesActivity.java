@@ -36,7 +36,8 @@ public class ProfilesActivity extends AppCompatActivity {
 
     //***************************************** Variables ******************************************
     // General Variables
-    private String mCurrentUserEmail_Str = "********";
+    private String mCurrentProfileEmail_Str = "********";
+    private int mCurrentProfileID_Int = -1;
     private DBHandler db;
 
     // UI References
@@ -69,12 +70,14 @@ public class ProfilesActivity extends AppCompatActivity {
             setContentView(R.layout.activity_profiles_portrait);
         }
 
-        // Pull saved instances from previous state
+        // Pull extra information from intent
         if (savedInstanceState != null) {
-
+            mCurrentProfileID_Int = savedInstanceState.getInt(CURRENT_USER_KEY);
         } else {
-            mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
+            mCurrentProfileID_Int = getIntent().getIntExtra(CURRENT_USER_KEY, -1);
         }
+
+        mCurrentProfileEmail_Str = db.getProfileFromDB(mCurrentProfileID_Int).getProfileEmail_Str();
 
         // Initialize views
         initializeViews();
@@ -119,6 +122,8 @@ public class ProfilesActivity extends AppCompatActivity {
 
         ACTIVITY_TITLE = getString(R.string.profile_activity_title);
         CURRENT_USER_KEY = getString(R.string.current_user_key);
+
+        db = new DBHandler(ProfilesActivity.this);
     }
 
     private void initializeViews() {
