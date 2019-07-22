@@ -18,13 +18,13 @@ public class CheckboxListArrayAdapter extends ArrayAdapter<String> {
     // Constants
 
     // Variables
-    private ArrayList<String> string_Array =  new ArrayList<>();
-    private ArrayList<Boolean> checked_Array = new ArrayList<>();
+    private ArrayList<String> string_Array;
+    private ArrayList<Boolean> checked_Array;
     private Context adapt_Context;
 
     public CheckboxListArrayAdapter(@NonNull Context context, @NonNull ArrayList<String> objects) {
         /*******************************************************************************************
-         * Function: TrapMasterListArrayAdapter
+         * Function: CheckboxListArrayAdapter
          *
          * Purpose: Constructor for this class
          *
@@ -37,6 +37,7 @@ public class CheckboxListArrayAdapter extends ArrayAdapter<String> {
 
         super(context, 0, objects);
         string_Array = objects;
+        checked_Array = new ArrayList<>();
         adapt_Context = context;
 
         for (int i = 0; i < this.string_Array.size(); i++) {
@@ -136,8 +137,8 @@ public class CheckboxListArrayAdapter extends ArrayAdapter<String> {
                     parent,false);
 
         // Initialize all views in list view
-        CheckBox listItem_Checkbox = convertView.findViewById(R.id.list_view_item_checkbox);
-        TextView listItem_Text = convertView.findViewById(R.id.list_view_item_text);
+        CheckBox listItem_Checkbox = listItem.findViewById(R.id.list_view_item_checkbox);
+        TextView listItem_Text = listItem.findViewById(R.id.list_view_item_text);
 
         // Set TextView string
         listItem_Text.setText(string_Array.get(position));

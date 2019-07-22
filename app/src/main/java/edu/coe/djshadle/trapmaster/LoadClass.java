@@ -458,7 +458,7 @@ public class LoadClass {
                             db.insertLoadInDB(LoadClass.this);
                         } else {
                             // User is EDITING a load item
-                            db.updateLoadInDB(LoadClass.this, getLoadID_Int());
+                            db.updateLoadInDB(LoadClass.this);
                         }
 
                         alertDialog.dismiss();

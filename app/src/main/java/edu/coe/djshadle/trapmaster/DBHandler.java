@@ -302,11 +302,16 @@ public class DBHandler extends SQLiteOpenHelper {
         String query = "SELECT * FROM " + TABLE_PROFILES + " WHERE " + KEY_PROFILE_EMAIL + " = '" + email + "'";
         Cursor cursor = dbWhole.rawQuery(query, null);
 
-        if (cursor != null) {
+        if ((cursor != null) && (cursor.getCount() > 0)) {
+            // there is a user with the email in the db
             cursor.moveToFirst();
 
             tempProfile.setProfileID_Int(cursor.getInt(cursor.getColumnIndex(KEY_PROFILE_ID)));
             tempProfile.setProfileEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_PROFILE_EMAIL)));
+        } else {
+            // there is not a user in the db with this email
+            tempProfile.setProfileID_Int(-1);
+            tempProfile.setProfileEmail_Str(email);
         }
 
         dbWhole.close();
@@ -332,7 +337,7 @@ public class DBHandler extends SQLiteOpenHelper {
         String query = "SELECT * FROM " + TABLE_PROFILES + " WHERE " + KEY_PROFILE_ID + " = '" + profileID_Int + "'";
         Cursor cursor = dbWhole.rawQuery(query, null);
 
-        if (cursor != null) {
+        if ((cursor != null) && (cursor.getCount() > 0)) {
             cursor.moveToFirst();
 
             tempProfile.setProfileID_Int(cursor.getInt(cursor.getColumnIndex(KEY_PROFILE_ID)));

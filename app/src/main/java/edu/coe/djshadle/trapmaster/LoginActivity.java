@@ -15,6 +15,7 @@ package edu.coe.djshadle.trapmaster;
 
 //******************************************** Imports *********************************************
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -201,11 +202,21 @@ public class LoginActivity extends AppCompatActivity {
         // Initialize Google/Firebase Auth
         auth = FirebaseAuth.getInstance();
 
-        // If user is already signed in, go straight to the home page
         if (auth.getCurrentUser() != null) {
+            // If user is already signed in, go straight to the home page
             mEmail_Str = auth.getCurrentUser().getEmail();
+
+            // Get user from database to retrieve database ID
+            ProfileClass temp_profile = db.getProfileFromDB(mEmail_Str);
+            int profileID_Int = temp_profile.getProfileID_Int();
+
+            if (profileID_Int == -1) {
+                // User is not in database, insert into db and get db ID
+                profileID_Int = (int) db.insertProfileInDB(temp_profile);
+            }
+
             Intent homeActivity_Intent = new Intent(LoginActivity.this, homeActivity.class);
-            homeActivity_Intent.putExtra(CURRENT_USER_KEY, mEmail_Str);
+            homeActivity_Intent.putExtra(CURRENT_USER_KEY, profileID_Int);
             startActivity(homeActivity_Intent);
             finish();
         }
@@ -391,12 +402,11 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             //Login was successful; continue to next activity as new user
-                            ProfileClass p = new ProfileClass(-1, email);
-                            db.insertProfileInDB(p);
-                            p = db.getProfileFromDB(email);
+                            ProfileClass temp_profile = new ProfileClass(-1, email);
+                            int profileID_Int = (int) db.insertProfileInDB(temp_profile);
 
                             Intent homeActivity_Intent = new Intent(LoginActivity.this, homeActivity.class);
-                            homeActivity_Intent.putExtra(CURRENT_USER_KEY, p.getProfileID_Int());
+                            homeActivity_Intent.putExtra(CURRENT_USER_KEY, profileID_Int);
                             startActivity(homeActivity_Intent);
                             finish();
                         }
@@ -432,9 +442,18 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(LoginActivity.this, exceptionMsg_Str,
                                     Toast.LENGTH_LONG).show();
                         } else {
-                            //Login was successful; continue to next activity
+                            //Login was successful, get profile ID
+                            ProfileClass temp_profile = db.getProfileFromDB(email);
+                            int profileID_Int = temp_profile.getProfileID_Int();
+
+                            if (profileID_Int == -1) {
+                                // User is not in database, insert into db and get db ID
+                                profileID_Int = (int) db.insertProfileInDB(temp_profile);
+                            }
+
+                            // continue to next activity
                             Intent homeActivity_Intent = new Intent(LoginActivity.this, homeActivity.class);
-                            homeActivity_Intent.putExtra(CURRENT_USER_KEY, email);
+                            homeActivity_Intent.putExtra(CURRENT_USER_KEY, profileID_Int);
                             startActivity(homeActivity_Intent);
                             finish();
                         }

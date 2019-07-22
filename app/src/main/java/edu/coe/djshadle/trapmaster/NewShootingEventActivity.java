@@ -53,15 +53,12 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
     // General Constants
     private String TAG = "JRW";
     private String ACTIVITY_TITLE;
-    private final int TOTAL_NUM_SHOTS = 25;
-    private final int ROUND_SCORE_KEY = TOTAL_NUM_SHOTS;
 
     // Key Constants
     private String CURRENT_USER_KEY;
     private String NUM_ROUNDS_KEY;
-    private String NUM_SHOOTER_KEY;
     private String SHOOTER_LIST_KEY;
-    private String SHOOTER_SCORE_LIST_KEY;
+    private String ROUND_LIST_KEY;
     private final String TRAP_STATE_KEY = "TRAP_STATE_KEY";
     private final String TRAP_EXPAND_KEY = "TRAP_EXPAND_KEY";
 
@@ -79,8 +76,6 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
     // Shooter
     private int numShooters_Int = 1;
     private ArrayList<String> shooterNames_Array;
-    // 3D array of shooter scores by round, takes the form [round #][shooter #}{score index] = hit/miss
-    private Map<Integer, Map<Integer, ArrayList<Integer>>> shooterScores_Array;
 
     // Trap Counters
     private ArrayList<Integer> trapState_Array;
@@ -131,10 +126,10 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
             setCurrentExpandStates(trapExpand_Array);
         } else {
             mCurrentProfileID_Int = getIntent().getIntExtra(CURRENT_USER_KEY, -1);
-            numRounds_Int = getIntent().getIntExtra(NUM_ROUNDS_KEY, 1);
-            numShooters_Int = getIntent().getIntExtra(NUM_SHOOTER_KEY, 1);
             shooterNames_Array = getIntent().getStringArrayListExtra(SHOOTER_LIST_KEY);
             trapExpand_Array = new ArrayList<>(Collections.nCopies(5, 0));
+            numRounds_Int = getIntent().getIntExtra(NUM_ROUNDS_KEY, 1);
+            numShooters_Int = shooterNames_Array.size();
         }
 
         mCurrentProfileEmail_Str = db.getProfileFromDB(mCurrentProfileID_Int).getProfileEmail_Str();
@@ -318,9 +313,8 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
         ACTIVITY_TITLE = getString(R.string.new_event_activity_title);
         CURRENT_USER_KEY = getString(R.string.current_user_key);
         NUM_ROUNDS_KEY = getString(R.string.num_rounds_key);
-        NUM_SHOOTER_KEY = getString(R.string.num_shooter_key);
         SHOOTER_LIST_KEY = getString(R.string.shooter_list_key);
-        SHOOTER_SCORE_LIST_KEY =  getString(R.string.shooter_score_list_key);
+        ROUND_LIST_KEY =  getString(R.string.round_list_key);
 
         db = new DBHandler(NewShootingEventActivity.this);
     }
@@ -341,7 +335,6 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
         initializeTrapCounters();
 
         // Initializing shooter score array
-        shooterScores_Array = new HashMap<>();
         round_Array = new HashMap<>();
 
         // Initializing all buttons
@@ -353,11 +346,8 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
                 if (allTrapsChecked()) {
                     // All traps are checked, move to next state
 
-                    // Save current round trap states to shooterScores_Array
-                    saveCurrentTrapStates();
-
-                    // Save current round info to array
-                    round_Array.put(currentRound_Int, saveRoundsToArray());
+                    // Save current round trap states to round_Array
+                    round_Array.put(currentRound_Int, saveCurrentRoundsToArray());
 
                     if (currentRound_Int == numRounds_Int) {
                         // Move to post event dialog
@@ -373,7 +363,7 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
 
                         // Reset all trap counters for next round
                         resetAllTrapScores();
-                        setAllTrapRounds(currentRound_Int);
+                        setAllTrapRoundText(currentRound_Int);
                     }
 
                 } else {
@@ -396,15 +386,15 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
                 } else {
                     // Move to previous round
 
-                    // Save current round trap states to shooterScores_Array
-                    saveCurrentTrapStates();
+                    // Save current round trap states to round_Array
+                    round_Array.put(currentRound_Int, saveCurrentRoundsToArray());
 
                     // Decrement current round number
                     currentRound_Int = currentRound_Int - 1;
 
                     // Restore previous round trap states to trap score views
-                    restoreCurrentTrapStates();
-                    setAllTrapRounds(currentRound_Int);
+                    restoreCurrentRoundsToTrapCounters(currentRound_Int);
+                    setAllTrapRoundText(currentRound_Int);
                 }
             }
         });
@@ -577,55 +567,6 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
         }
     }
 
-    private void saveCurrentTrapStates() {
-        /*******************************************************************************************
-         * Function: saveCurrentTrapStates
-         *
-         * Purpose: Function saves trap states for the current round to shooterScore_Array,
-         *          called when NEXT button is pressed
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        // Initialize current round score array
-        Map<Integer, ArrayList<Integer>> currentRoundScores_Array = new HashMap<>();
-
-        // Iterate over all shooter and collect trap states for that round, save in array
-        for (int i = 0; i < numShooters_Int; i++) {
-            ArrayList<Integer> currentShooterScore_Array = trapScoreViews_Array.get(i).getAllStates();
-            currentShooterScore_Array.add(trapScoreViews_Array.get(i).getTotalNumberHit());
-            currentRoundScores_Array.put(i, currentShooterScore_Array);
-        }
-
-        // Add current round scores to the current round index of shooterScore_Array
-        shooterScores_Array.put(currentRound_Int, currentRoundScores_Array);
-    }
-
-    private void restoreCurrentTrapStates() {
-        /*******************************************************************************************
-         * Function: restoreCurrentTrapStates
-         *
-         * Purpose: Function restores trap states for the previous round in shooterScore_Array,
-         *          called when PREVIOUS button is pressed
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        // Initialize previous round score array
-        Map<Integer, ArrayList<Integer>> prevRoundScores_Array = shooterScores_Array.get(currentRound_Int);
-
-        // Iterate over all shooters and set the trap score views with previous trap states
-        for (int i = 0; i < numShooters_Int; i++) {
-            trapScoreViews_Array.get(i).setAllStates(prevRoundScores_Array.get(i));
-        }
-    }
-
     private boolean allTrapsChecked() {
         /*******************************************************************************************
          * Function: allTrapsChecked
@@ -672,9 +613,9 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
         }
     }
 
-    private void setAllTrapRounds(int round_Int) {
+    private void setAllTrapRoundText(int round_Int) {
         /*******************************************************************************************
-         * Function: setAllTrapRounds
+         * Function: setAllTrapRoundText
          *
          * Purpose: Function sets the rounds fo all trap counters
          *
@@ -691,11 +632,11 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
     }
 
     //************************************ Database Functions **************************************
-    private ArrayList<RoundClass> saveRoundsToArray(){
+    private ArrayList<RoundClass> saveCurrentRoundsToArray(){
         /*******************************************************************************************
-         * Function: saveRoundsToArray
+         * Function: saveCurrentRoundsToArray
          *
-         * Purpose: Function takes info necessary to save scores to rounds array
+         * Purpose: Function takes info necessary to save current scores to rounds array
          *
          * Parameters: None
          *
@@ -718,6 +659,25 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
         }
 
         return temp_Array;
+    }
+
+    private void restoreCurrentRoundsToTrapCounters(int roundNum_Int){
+        /*******************************************************************************************
+         * Function: restoreCurrentRoundsToTrapCounters
+         *
+         * Purpose: Function restores trap counter states from round_Array
+         *
+         * Parameters: roundNum_Int (IN) - round to set trap counter to
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Iterate over all shooters and set the trap score views with previous trap states
+        for (int i = 0; i < numShooters_Int; i++) {
+            trapScoreViews_Array.get(i).setAllStates(round_Array.get(roundNum_Int).get(i).getRoundHitMiss_Array());
+        }
+
     }
 
     private void saveScoresToDB() {
@@ -1005,7 +965,7 @@ public class NewShootingEventActivity extends AppCompatActivity implements OnTot
                     postEventActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentProfileID_Int);
                     postEventActivity_Intent.putExtra(NUM_ROUNDS_KEY, numRounds_Int);
                     postEventActivity_Intent.putStringArrayListExtra(SHOOTER_LIST_KEY, shooterNames_Array);
-                    postEventActivity_Intent.putExtra(SHOOTER_SCORE_LIST_KEY, (HashMap) shooterScores_Array);
+                    postEventActivity_Intent.putExtra(ROUND_LIST_KEY, (HashMap) round_Array);
                     startActivity(postEventActivity_Intent);
                 }
             });

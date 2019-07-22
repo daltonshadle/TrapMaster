@@ -50,28 +50,26 @@ public class PostEventActivity extends AppCompatActivity {
 
     // Key Constants
     private String CURRENT_USER_KEY;
-    private String SHOOTER_LIST_KEY;
-    private String SHOOTER_SCORE_LIST_KEY;
     private String NUM_ROUNDS_KEY;
-    private final int ROUND_SCORE_KEY = TOTAL_NUM_SHOTS;
+    private String SHOOTER_LIST_KEY;
+    private String ROUND_LIST_KEY;
 
     //***************************************** Variables ******************************************
     // General Variables
-    DBHandler db;
+    private String mCurrentProfileEmail_Str = "*********";
+    private int mCurrentProfileID_Int = -1;
     private boolean isPortrait = true;
-    private String mCurrentUserEmail_Str = "*********";
+    private DBHandler db;
 
     // Round Variables
     private int currentRound_Int = 1;
     private int numRounds_Int = 1;
     // 2D array of score objects, takes the form [round #][shooter #} = shot object
-    private Map<Integer, ArrayList<RoundClass>> shotRounds_Array;
+    private Map<Integer, ArrayList<RoundClass>> round_Array;
 
     // Shooter Variables
     private int numShooters_Int = 1;
     private ArrayList<String> shooterName_List;
-    // 3D array of shooter scores by round, takes the form [round #][shooter #}{score index] = hit/miss
-    private Map<Integer, Map<Integer, ArrayList<Integer>>> shooterScores_Array;
 
     // Event Variables
     private TrapMasterListArrayAdapter mCustomEventList_Adapt;
@@ -118,9 +116,9 @@ public class PostEventActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
 
         } else {
-            mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
+            mCurrentProfileID_Int = getIntent().getIntExtra(CURRENT_USER_KEY, -1);
             shooterName_List = getIntent().getStringArrayListExtra(SHOOTER_LIST_KEY);
-            shooterScores_Array = (HashMap) getIntent().getSerializableExtra(SHOOTER_SCORE_LIST_KEY);
+            round_Array = (HashMap) getIntent().getSerializableExtra(ROUND_LIST_KEY);
             numRounds_Int = getIntent().getIntExtra(NUM_ROUNDS_KEY, 1);
             numShooters_Int = shooterName_List.size();
         }
@@ -173,7 +171,7 @@ public class PostEventActivity extends AppCompatActivity {
         ACTIVITY_TITLE = getString(R.string.post_event_activity_title);
         CURRENT_USER_KEY = getString(R.string.current_user_key);
         SHOOTER_LIST_KEY = getString(R.string.shooter_list_key);
-        SHOOTER_SCORE_LIST_KEY = getString(R.string.shooter_score_list_key);
+        ROUND_LIST_KEY = getString(R.string.round_list_key);
         NUM_ROUNDS_KEY = getString(R.string.num_rounds_key);
         NO_GUN_STRING = "No gun";
         NO_LOAD_STRING = "No load";
@@ -208,7 +206,7 @@ public class PostEventActivity extends AppCompatActivity {
 
         // Initializing Post Event Items List
         initializeShooterPostEventItems();
-        initializeShotRoundsArray();
+        initializeRoundsArray();
         setRoundInfo(currentRound_Int);
 
         // Initializing buttons
@@ -223,7 +221,7 @@ public class PostEventActivity extends AppCompatActivity {
                 // Add event action
                 EventClass temp_Event = new EventClass();
                 temp_Event.setEventID_Int(-1);
-                temp_Event.setEventEmail_Str(mCurrentUserEmail_Str);
+                temp_Event.setEventProfileID_Int(mCurrentProfileID_Int);
                 temp_Event.editEventDialog(PostEventActivity.this, mCustomEventList_Adapt);
             }
         });
@@ -352,7 +350,7 @@ public class PostEventActivity extends AppCompatActivity {
         final DBHandler db = new DBHandler(currentContext.getContext());
 
         // Collect all guns from db
-        tempGun_List = db.getAllGunFromDB(mCurrentUserEmail_Str);
+        tempGun_List = db.getAllGunFromDB(mCurrentProfileID_Int);
 
         // For each item in the db list, add the name to current list
         for (int i = 0; i < tempGun_List.size(); i++) {
@@ -390,7 +388,7 @@ public class PostEventActivity extends AppCompatActivity {
         final DBHandler db = new DBHandler(currentContext.getContext());
 
         // Collect all loads from db
-        tempLoad_List = db.getAllLoadFromDB(mCurrentUserEmail_Str);
+        tempLoad_List = db.getAllLoadFromDB(mCurrentProfileID_Int);
 
         // For each item in the db list, add the name to current list
         for (int i = 0; i < tempLoad_List.size(); i++) {
@@ -427,7 +425,7 @@ public class PostEventActivity extends AppCompatActivity {
 
             // Return to home
             Intent homeActivity_Intent = new Intent(PostEventActivity.this, homeActivity.class);
-            homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+            homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentProfileEmail_Str);
             startActivity(homeActivity_Intent);
 
             PostEventActivity.this.finish();
@@ -468,7 +466,7 @@ public class PostEventActivity extends AppCompatActivity {
 
             // Return to home
             Intent homeActivity_Intent = new Intent(PostEventActivity.this, homeActivity.class);
-            homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+            homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentProfileEmail_Str);
             startActivity(homeActivity_Intent);
 
             PostEventActivity.this.finish();
@@ -497,14 +495,15 @@ public class PostEventActivity extends AppCompatActivity {
 
         // Iterate over all post event items and collect information, save to shotRounds_Array
         for (int i = 0; i < numShooters_Int; i++) {
-            RoundClass temp_shot = shotRounds_Array.get(roundNum_Int).get(i);
-            PostEventItemClass temp_post = mShooterPostEventItems_List.get(i);
+            RoundClass temp_Round = round_Array.get(roundNum_Int).get(i);
+            PostEventItemClass temp_Post = mShooterPostEventItems_List.get(i);
 
-            temp_shot.setShotGun_Str(temp_post.shooterGun_Spin.getSelectedItem().toString());
-            temp_shot.setShotLoad_Str(temp_post.shooterLoad_Spin.getSelectedItem().toString());
-            temp_shot.setShotNotes_Str(temp_post.shooterNotes_Edt.getText().toString());
-
-            shotRounds_Array.get(roundNum_Int).add(i, temp_shot);
+            // TODO: fix these
+//            temp_shot.setShotGun_Str(temp_post.shooterGun_Spin.getSelectedItem().toString());
+//            temp_shot.setShotLoad_Str(temp_post.shooterLoad_Spin.getSelectedItem().toString());
+//            temp_shot.setShotNotes_Str(temp_post.shooterNotes_Edt.getText().toString());
+//
+//            shotRounds_Array.get(roundNum_Int).add(i, temp_shot);
         }
 
     }
@@ -526,18 +525,20 @@ public class PostEventActivity extends AppCompatActivity {
 
         // Add info to views that are going to be used
         for (int i = 0; i < numShooters_Int; i++) {
-            RoundClass temp_shot = shotRounds_Array.get(roundNum_Int).get(i);
-            mShooterPostEventItems_List.get(i).setShooterName(temp_shot.getShotShooterName_Str());
-            mShooterPostEventItems_List.get(i).setShooterCoach(mCurrentUserEmail_Str);
-            mShooterPostEventItems_List.get(i).setShooterScore(Integer.parseInt(temp_shot.getShotHitNum_Str()));
-            mShooterPostEventItems_List.get(i).shooterGun_Spin.setSelection(initializeGunSpinnerAdapt().getPosition(temp_shot.getShotGun_Str()));
-            mShooterPostEventItems_List.get(i).shooterLoad_Spin.setSelection(initializeLoadSpinnerAdapt().getPosition(temp_shot.getShotLoad_Str()));
+            RoundClass temp_Round = round_Array.get(roundNum_Int).get(i);
+
+            // TODO: fix these too
+//            mShooterPostEventItems_List.get(i).setShooterName(temp_shot.getShotShooterName_Str());
+//            mShooterPostEventItems_List.get(i).setShooterCoach(mCurrentProfileEmail_Str);
+//            mShooterPostEventItems_List.get(i).setShooterScore(Integer.parseInt(temp_shot.getShotHitNum_Str()));
+//            mShooterPostEventItems_List.get(i).shooterGun_Spin.setSelection(initializeGunSpinnerAdapt().getPosition(temp_shot.getShotGun_Str()));
+//            mShooterPostEventItems_List.get(i).shooterLoad_Spin.setSelection(initializeLoadSpinnerAdapt().getPosition(temp_shot.getShotLoad_Str()));
         }
     }
 
-    private void initializeShotRoundsArray() {
+    private void initializeRoundsArray() {
         /*******************************************************************************************
-         * Function: initializeShotRoundsArray
+         * Function: initializeRoundsArray
          *
          * Purpose: Function initialize the shotRounds_Array with shooter information
          *
@@ -548,7 +549,7 @@ public class PostEventActivity extends AppCompatActivity {
          ******************************************************************************************/
 
         // Initialize array type
-        shotRounds_Array = new HashMap<>();
+        round_Array = new HashMap<>();
 
         // Iterate over all rounds and shooters and initialize the information in the array
         for (int i = 0; i < numRounds_Int; i++) {
@@ -559,17 +560,18 @@ public class PostEventActivity extends AppCompatActivity {
             for (int j = 0; j < numShooters_Int; j++) {
                 RoundClass temp_shot = new RoundClass();
 
-                temp_shot.setShotShooterName_Str(shooterName_List.get(j));
-                temp_shot.setShotHitNum_Str(Integer.toString(shooterScores_Array.get(round_num).get(j).get(ROUND_SCORE_KEY)));
-                temp_shot.setShotTotalNum_Str(Integer.toString(TOTAL_NUM_SHOTS));
-                temp_shot.setShotGun_Str(NO_GUN_STRING);
-                temp_shot.setShotLoad_Str(NO_LOAD_STRING);
+                // TODO: Fix these
+//                temp_shot.setShotShooterName_Str(shooterName_List.get(j));
+//                temp_shot.setShotHitNum_Str(Integer.toString(shooterScores_Array.get(round_num).get(j).get(ROUND_SCORE_KEY)));
+//                temp_shot.setShotTotalNum_Str(Integer.toString(TOTAL_NUM_SHOTS));
+//                temp_shot.setShotGun_Str(NO_GUN_STRING);
+//                temp_shot.setShotLoad_Str(NO_LOAD_STRING);
 
                 currentRound_array.add(temp_shot);
             }
 
             // Add the round of shots to the whole array
-            shotRounds_Array.put(round_num, currentRound_array);
+            round_Array.put(round_num, currentRound_array);
         }
     }
 
@@ -588,7 +590,7 @@ public class PostEventActivity extends AppCompatActivity {
 
         // Initialize db handler and shooter and event array
         db = new DBHandler(this);
-        ArrayList<EventClass> userEvent_List = db.getAllEventFromDB(mCurrentUserEmail_Str);
+        ArrayList<EventClass> userEvent_List = db.getAllEventFromDB(mCurrentProfileID_Int);
 
         return userEvent_List;
     }
@@ -655,10 +657,12 @@ public class PostEventActivity extends AppCompatActivity {
             int round_num = i + 1;
 
             for (int j = 0; j < numShooters_Int; j++) {
-                RoundClass temp_shot = shotRounds_Array.get(round_num).get(i);
+                RoundClass temp_shot = round_Array.get(round_num).get(i);
                 eventName_Str = eventName_Str + " - Round " + Integer.toString(round_num);
-                temp_shot.setShotEventName_Str(eventName_Str);
-                db.insertShotInDB(temp_shot);
+
+                // TODO: fix this function
+//                temp_shot.setShotEventName_Str(eventName_Str);
+//                db.insertShotInDB(temp_shot);
             }
         }
 

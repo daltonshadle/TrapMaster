@@ -21,6 +21,7 @@ import android.content.res.XmlResourceParser;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Xml;
 import android.view.Gravity;
 import android.view.View;
@@ -46,6 +47,7 @@ public class ShootingEventClass {
     private String NUM_ROUNDS_KEY;
     private String NUM_SHOOTER_KEY;
     private String SHOOTER_LIST_KEY;
+    private String TAG = "JRW";
 
     //************************************* Private Variables **************************************
     // Object Variables
@@ -155,7 +157,7 @@ public class ShootingEventClass {
         }
 
         // Set array adapter
-        tempShooter_Adapt = new CheckboxListArrayAdapter(currentContext, tempShooterStr_Array);
+        tempShooter_Adapt = new CheckboxListArrayAdapter(currentContext.getContext(), tempShooterStr_Array);
 
         return tempShooter_Adapt;
     }
@@ -270,10 +272,10 @@ public class ShootingEventClass {
 
                         if (checkedShooters_Array.isEmpty()) {
                             // Throw error that at least one needs to be checked
-
+                            Toast.makeText(context, "At least 1 shooter per round.", Toast.LENGTH_LONG).show();
                         } else if (checkedShooters_Array.size() > 5) {
                             // Throw error that there can only be 5 shooters
-
+                            Toast.makeText(context, "Only 5 shooters per round.", Toast.LENGTH_LONG).show();
                         } else {
                             // Get names of checked shooters
                             ArrayList<String> shooterNames_Array = new ArrayList<>();
@@ -413,6 +415,7 @@ public class ShootingEventClass {
                     } else {
                         // Shooter name is not in database, proceed
                         temp_Shooter.setShooterName_Str(shooterNameEdt_Str);
+                        temp_Shooter.setShooterProfileID_Int(shootingEventProfileID_Int);
 
                         // Add shooter to database
                         db.insertShooterInDB(temp_Shooter);
