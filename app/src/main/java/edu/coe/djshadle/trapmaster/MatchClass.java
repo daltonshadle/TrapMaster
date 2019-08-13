@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -188,6 +189,217 @@ public class MatchClass implements Comparable <MatchClass> {
 
     public void setMatchNotes_Str(String matchNotes_Str) {
         this.matchNotes_Str = matchNotes_Str;
+    }
+
+    public String toString(){
+        /*******************************************************************************************
+         * Function: toString
+         *
+         * Purpose: Function returns item as a string
+         *
+         * Parameters: None
+         *
+         * Returns: item_Str (OUT) - string representing all values of the item
+         *
+         ******************************************************************************************/
+
+        // get updated database
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+        final DBHandler db = new DBHandler(currentContext.getContext());
+
+        String item_Str = "Shooter: " + db.getShooterInDB(getMatchShooterID_Int()).getShooterName_Str() + "\n"
+                + "Event: " + db.getEventInDB(getMatchEventID_Int()).getEventName_Str() + "\n"
+                + "Score: " + Integer.toString(getMatchScore_Int()) + "\n"
+                + "Notes: " + getMatchNotes_Str();
+
+
+        return item_Str;
+    }
+
+    //************************************* Database Functions *************************************
+    public AlertDialog removeMatchItemDialog(final Context context) {
+        /*******************************************************************************************
+         * Function: removeMatchItemDialog
+         *
+         * Purpose: Function creates dialog and prompts user to remove a event item
+         *
+         * Parameters: context (IN) - Supplies the activity context to display dialog to
+         *
+         * Returns: alertDialog (OUT) - AlertDialog variable this function creates
+         *
+         ******************************************************************************************/
+
+        final String DIALOG_TITLE = "Delete Match";
+        final String DIALOG_MSG = "Are you sure you want to delete this match?";
+
+        final boolean POSITIVE_BTN = true;  // Right
+        final boolean NEUTRAL_BTN = false;   // Left
+        final boolean NEGATIVE_BTN = true;  // Middle
+
+        final String POSITIVE_BUTTON_TXT = "DELETE";
+        final String NEUTRAL_BUTTON_TXT = "";
+        final String NEGATIVE_BUTTON_TXT = "CANCEL";
+
+        final int POSITIVE_BTN_COLOR = Color.BLUE;
+        final int NEUTRAL_BTN_COLOR = Color.RED;
+        final int NEGATIVE_BTN_COLOR = Color.RED;
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+        final DBHandler db = new DBHandler(currentContext.getContext());
+
+        // Set Dialog Title
+        alertDialog.setTitle(DIALOG_TITLE);
+
+        // Set Dialog Message
+        alertDialog.setMessage(DIALOG_MSG);
+
+        // Set Buttons
+        // Positive Button, Right
+        if (POSITIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+                }
+            });
+        }
+
+        // Neutral Button, Left
+        if (NEUTRAL_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+                }
+            });
+        }
+
+        // Negative Button, Middle
+        if (NEGATIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+                }
+            });
+        }
+
+
+        new Dialog(context);
+        alertDialog.show();
+
+        // Set Buttons
+        if (POSITIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Positive button
+                    db.deleteMatchInDB(getMatchID_Int());
+
+                    alertDialog.dismiss();
+
+                    Toast.makeText(context, "Match deleted.",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        if (NEUTRAL_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Neutral button
+                }
+            });
+        }
+        if (NEGATIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Negative button
+                    alertDialog.cancel();
+                }
+            });
+        }
+
+        return alertDialog;
+    }
+
+    public AlertDialog editMatchDialog(final Context context) {
+        /*******************************************************************************************
+         * Function: editMatchDialog
+         *
+         * Purpose: Function creates dialog and prompts user to add or edit a load item, if adding
+         *          an item, ID = -1 and email = current user email
+         *
+         * Parameters: context (IN) - activity context to display dialog
+         *
+         * Returns: alertDialog (OUT) - alert dialog created by this function
+         *
+         ******************************************************************************************/
+
+        // Dialog Constants
+        String DIALOG_TITLE = "Edit Match";
+        int POSITIVE_BTN_COLOR = Color.BLUE;
+        int NEUTRAL_BTN_COLOR = Color.RED;
+
+        // Dialog Variables
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+        final DBHandler db = new DBHandler(currentContext.getContext());
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+
+        // Set Dialog Title
+        alertDialog.setTitle(DIALOG_TITLE);
+
+        // Set Dialog Message
+        alertDialog.setMessage("Message");
+
+
+        // Set Buttons
+        // Positive Button, Right
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "RIGHT", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Processed by onClick below
+            }
+        });
+
+        // Neutral Button, Left
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "LEFT", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Processed by onClick below
+            }
+        });
+
+
+        new Dialog(context);
+        alertDialog.show();
+
+        // Set Buttons
+        final Button pos_Btn = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        final Button neu_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+
+        pos_Btn.setTextColor(POSITIVE_BTN_COLOR);
+        pos_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Positive button
+
+            }
+        });
+
+        neu_Btn.setTextColor(NEUTRAL_BTN_COLOR);
+        neu_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Neutral button
+
+            }
+
+        });
+
+        return alertDialog;
     }
 
     //************************************** Compare Functions *************************************

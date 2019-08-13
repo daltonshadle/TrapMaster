@@ -10,16 +10,19 @@
     android:clickable="false"
     android:descendantFocusability="blocksDescendants"
     android:focusable="false"
-    android:focusableInTouchMode="false">
+    android:focusableInTouchMode="false"
+    android:padding="8dp">
 
-    <ImageView
-        android:id="@+id/listItem_Img"
-        android:layout_width="@dimen/ListItemImage"
-        android:layout_height="@dimen/ListItemImage"
-        android:padding="@dimen/ListItemMargin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/add_image_icon" />
+    <Button
+        android:id="@+id/listItemExpand_Btn"
+        android:layout_width="@dimen/ListItemButton"
+        android:layout_height="@dimen/ListItemButton"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/down_caret_icon"
+        app:layout_constraintBottom_toTopOf="@+id/listItemDetails_Lay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/listItemMain_Txt"
@@ -30,8 +33,9 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:text="ListItemMain"
+        android:textColor="@color/dark"
         android:textSize="@dimen/ListItemMainTextSize"
-        app:layout_constraintStart_toEndOf="@+id/listItem_Img"
+        app:layout_constraintStart_toEndOf="@+id/constraintLayout"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -39,57 +43,115 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/ListItemMargin"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:clickable="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:text="ListItemSecond"
+        android:textColor="@color/dark"
         android:textSize="@dimen/ListItemSecondTextSize"
-        app:layout_constraintStart_toEndOf="@+id/listItem_Img"
+        app:layout_constraintBottom_toTopOf="@+id/listItemDetails_Lay"
+        app:layout_constraintStart_toEndOf="@+id/constraintLayout"
         app:layout_constraintTop_toBottomOf="@+id/listItemMain_Txt" />
 
-    <ImageButton
-        android:id="@+id/listItemEdit_Btn"
-        android:layout_width="@dimen/ListItemButton"
-        android:layout_height="@dimen/ListItemButton"
-        android:layout_margin="@dimen/ListItemMargin"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/colorPrimaryDark"
-        android:scaleType="fitCenter"
-        android:src="@drawable/edit_icon"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/listItemDelete_Btn"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/listItemDelete_Btn"
-        android:layout_width="@dimen/ListItemButton"
-        android:layout_height="@dimen/ListItemButton"
-        android:layout_margin="@dimen/ListItemMargin"
+    <LinearLayout
+        android:id="@+id/listItemEditBtn_Lay"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/colorPrimaryDark"
-        android:scaleType="fitCenter"
-        android:src="@drawable/delete_icon"
+        android:background="@drawable/post_event_rounded_rectangle"
+        android:orientation="horizontal"
+        android:padding="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/listItemDetails_Lay"
+        app:layout_constraintEnd_toStartOf="@+id/listItemExpand_Btn"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/listItemEdit_Btn"
+            android:layout_width="@dimen/ListItemButton"
+            android:layout_height="@dimen/ListItemButton"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/edit_icon"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/listItemDelete_Btn"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/listItemDelete_Btn"
+            android:layout_width="@dimen/ListItemButton"
+            android:layout_height="@dimen/ListItemButton"
+            android:layout_margin="2dp"
+            android:background="@drawable/delete_icon"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/listItemDetails_Lay"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/post_event_rounded_rectangle"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
 
-    <TextView
-        android:id="@+id/listItemScore_Txt"
+        <TextView
+            android:id="@+id/listItemDetails_Txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Details"
+            android:textColor="@color/dark" />
+    </LinearLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
-        android:textAlignment="center"
-        android:textSize="@dimen/ListItemScoreTextSize"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/listItem_Img"
-        app:layout_constraintEnd_toEndOf="@+id/listItem_Img"
-        app:layout_constraintStart_toStartOf="@+id/listItem_Img"
-        app:layout_constraintTop_toTopOf="@+id/listItem_Img" />
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/post_event_circle"
+        app:layout_constraintBottom_toTopOf="@+id/listItemDetails_Lay"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/listItemScore_Txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00"
+            android:textAlignment="center"
+            android:textColor="@color/dark"
+            android:textSize="@dimen/ListItemScoreTextSize"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/listItem_Img"
+            app:layout_constraintEnd_toEndOf="@+id/listItem_Img"
+            app:layout_constraintStart_toStartOf="@+id/listItem_Img"
+            app:layout_constraintTop_toTopOf="@+id/listItem_Img" />
+
+        <ImageView
+            android:id="@+id/listItem_Img"
+            android:layout_width="@dimen/ListItemImage"
+            android:layout_height="@dimen/ListItemImage"
+            android:padding="10dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/add_image_icon" />
+    </android.support.constraint.ConstraintLayout>
 
 
 </android.support.constraint.ConstraintLayout>

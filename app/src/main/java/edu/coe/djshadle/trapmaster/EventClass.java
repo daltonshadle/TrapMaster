@@ -178,6 +178,27 @@ public class EventClass {
         this.setEventWeather_Str(temp_Event.getEventWeather_Str());
     }
 
+    public String toString(){
+        /*******************************************************************************************
+         * Function: toString
+         *
+         * Purpose: Function returns item as a string
+         *
+         * Parameters: None
+         *
+         * Returns: item_Str (OUT) - string representing all values of the item
+         *
+         ******************************************************************************************/
+
+        String item_Str = "Name: " + getEventName_Str() + "\n"
+                + "Location: " + getEventLocation_Str() + "\n"
+                + "Date: " + getEventDate_Str() + "\n"
+                + "Weather: " + getEventWeather_Str() + "\n"
+                + "Notes: " + getEventNotes_Str();
+
+        return item_Str;
+    }
+
     //************************************ Edit Event Functions ************************************
     private void initializeEventDialogStrings() {
         EVENT_DIALOG_MSG = new ArrayList<String>(Arrays.asList(
@@ -434,6 +455,232 @@ public class EventClass {
         });
     }
 
+    public AlertDialog editEventDialog(final Context context) {
+        /*******************************************************************************************
+         * Function: editEventDialog
+         *
+         * Purpose: Function creates dialog and prompts user to add or edit an event item, if adding
+         *          an item, ID = -1 and email = current user email
+         *
+         * Parameters: context (IN) - Supplies the activity context to display dialog to
+         *
+         * Returns: alertDialog (OUT) - alert dialog message this function creates
+         *
+         ******************************************************************************************/
+
+        // Dialog Constants
+        String DIALOG_TITLE = "Add New Event";
+        int POSITIVE_BTN_COLOR = Color.BLUE;
+        int NEUTRAL_BTN_COLOR = Color.RED;
+
+        // Dialog Variables
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+        final DBHandler db = new DBHandler(currentContext.getContext());
+
+        // Pre-Dialog Processing
+        if (getEventID_Int() != -1) {
+            DIALOG_TITLE = "Edit Event";
+        }
+        initializeEventDialogStrings();
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+
+        // Set Dialog Title
+        alertDialog.setTitle(DIALOG_TITLE);
+
+        // Set Dialog Message
+        alertDialog.setMessage(EVENT_DIALOG_MSG.get(EVENT_DIALOG_STATE));
+
+        // Set layout for gathering information
+        final RelativeLayout subView_RelLay = new RelativeLayout(context);
+
+        // Set views
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        final EditText item_Edt = new EditText(context);
+        item_Edt.setHint(EVENT_EDT_HINT.get(EVENT_DIALOG_STATE));
+        item_Edt.setText(getEventName_Str());
+        item_Edt.setGravity(Gravity.START);
+        item_Edt.setTextColor(Color.BLACK);
+        item_Edt.setLayoutParams(params);
+        subView_RelLay.addView(item_Edt);
+
+        final Spinner item_Spin = new Spinner(context);
+        item_Spin.setGravity(Gravity.START);
+        item_Spin.setLayoutParams(params);
+
+        final DatePicker item_Date = new DatePicker(context);
+
+
+        // Add linear layout to alert dialog
+        alertDialog.setView(subView_RelLay);
+
+        // Set Buttons
+        // Positive Button, Right
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, EVENT_POS_BTN_TXT.get(EVENT_DIALOG_STATE), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Processed by onClick below
+            }
+        });
+
+        // Neutral Button, Left
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, EVENT_NEU_BTN_TXT.get(EVENT_DIALOG_STATE), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Processed by onClick below
+            }
+        });
+
+
+        new Dialog(context);
+        alertDialog.show();
+
+        // Set Buttons
+        final Button pos_Btn = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        final Button neu_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+
+        pos_Btn.setTextColor(POSITIVE_BTN_COLOR);
+        pos_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Positive button
+                switch (EVENT_DIALOG_STATE){
+                    case 0:
+                        // Name to location
+                        String item_Txt = item_Edt.getText().toString();
+
+                        boolean isEventNameEmpty = item_Txt.equals("");
+                        boolean isEventNameInDB = db.isEventNameInDB(getEventProfileID_Int(), item_Txt, getEventID_Int());
+
+                        if (isEventNameEmpty) {
+                            // Check if the event name is empty
+                            item_Edt.setError(context.getString(R.string.error_field_required));
+                            item_Edt.requestFocus();
+                        } else if (isEventNameInDB) {
+                            // Check if the event name is already used in the database,
+                            // user cannot have 2 events with same name
+                            item_Edt.setError(context.getString(R.string.error_event_already_exists));
+                            item_Edt.requestFocus();
+                        } else {
+                            setEventName_Str(item_Txt);
+                            item_Edt.setText(getEventLocation_Str());
+                            EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
+                        }
+
+                        break;
+                    case 1:
+                        // Location to Date
+                        item_Txt = item_Edt.getText().toString();
+
+                        setEventLocation_Str(item_Txt);
+
+                        subView_RelLay.removeView(item_Edt);
+                        subView_RelLay.addView(item_Date);
+
+                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
+                        break;
+                    case 2:
+                        // Date to Weather
+                        item_Txt = item_Date.toString();
+
+                        setEventDate_Str(item_Txt);
+
+                        subView_RelLay.removeView(item_Date);
+                        subView_RelLay.addView(item_Edt);
+                        item_Edt.setText(getEventWeather_Str());
+
+                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
+                        break;
+                    case 3:
+                        // Weather to Notes
+                        item_Txt = item_Edt.getText().toString();
+
+                        setEventWeather_Str(item_Txt);
+                        item_Edt.setText(getEventNotes_Str());
+
+                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE + 1);
+                        break;
+                    case 4:
+                        // Notes to Saving event and closing dialog
+                        item_Txt = item_Edt.getText().toString();
+
+                        setEventNotes_Str(item_Txt);
+
+                        if (getEventID_Int() == -1) {
+                            // Adding a new event
+                            db.insertEventInDB(EventClass.this);
+                        } else {
+                            // Editing an existing event
+                            db.updateEventInDB(EventClass.this);
+                        }
+
+                        alertDialog.dismiss();
+
+                        Toast.makeText(context, "Event saved!",
+                                Toast.LENGTH_LONG).show();
+
+                        // Reset state counter
+                        EVENT_DIALOG_STATE = 0;
+                        break;
+                }
+
+                alertDialog.setMessage(EVENT_DIALOG_MSG.get(EVENT_DIALOG_STATE));
+                item_Edt.setHint(EVENT_EDT_HINT.get(EVENT_DIALOG_STATE));
+                pos_Btn.setText(EVENT_POS_BTN_TXT.get(EVENT_DIALOG_STATE));
+                neu_Btn.setText(EVENT_NEU_BTN_TXT.get(EVENT_DIALOG_STATE));
+            }
+        });
+
+        neu_Btn.setTextColor(NEUTRAL_BTN_COLOR);
+        neu_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Neutral button
+
+                switch (EVENT_DIALOG_STATE){
+                    case 0:
+                        // Name to cancel and close dialog
+                        alertDialog.dismiss();
+                        break;
+                    case 1:
+                        // Location to Name
+                        item_Edt.setText(getEventName_Str());
+                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
+                        break;
+                    case 2:
+                        // Date to Location
+                        item_Edt.setText(getEventLocation_Str());
+
+                        subView_RelLay.removeView(item_Date);
+                        subView_RelLay.addView(item_Edt);
+
+                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
+                        break;
+                    case 3:
+                        // Weather to Date
+                        subView_RelLay.removeView(item_Edt);
+                        subView_RelLay.addView(item_Date);
+
+                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
+                        break;
+                    case 4:
+                        // Notes to Weather
+                        item_Edt.setText(getEventWeather_Str());
+                        EVENT_DIALOG_STATE = (EVENT_DIALOG_STATE - 1);
+                        break;
+                }
+
+                alertDialog.setMessage(EVENT_DIALOG_MSG.get(EVENT_DIALOG_STATE));
+                item_Edt.setHint(EVENT_EDT_HINT.get(EVENT_DIALOG_STATE));
+                pos_Btn.setText(EVENT_POS_BTN_TXT.get(EVENT_DIALOG_STATE));
+                neu_Btn.setText(EVENT_NEU_BTN_TXT.get(EVENT_DIALOG_STATE));
+            }
+
+        });
+
+        return alertDialog;
+    }
+
     public void removeEventItemDialog(final Context context, final TrapMasterListArrayAdapter adapter) {
         /*******************************************************************************************
          * Function: removeEventItemDialog
@@ -543,6 +790,115 @@ public class EventClass {
                 }
             });
         }
+    }
+
+    public AlertDialog removeEventItemDialog(final Context context) {
+        /*******************************************************************************************
+         * Function: removeEventItemDialog
+         *
+         * Purpose: Function creates dialog and prompts user to remove a event item
+         *
+         * Parameters: context (IN) - Supplies the activity context to display dialog to
+         *
+         * Returns: alertDialog (OUT) - AlertDialog variable this function creates
+         *
+         ******************************************************************************************/
+
+        final String DIALOG_TITLE = "Delete Event";
+        final String DIALOG_MSG = "Are you sure you want to delete this event?";
+
+        final boolean POSITIVE_BTN = true;  // Right
+        final boolean NEUTRAL_BTN = false;   // Left
+        final boolean NEGATIVE_BTN = true;  // Middle
+
+        final String POSITIVE_BUTTON_TXT = "DELETE";
+        final String NEUTRAL_BUTTON_TXT = "";
+        final String NEGATIVE_BUTTON_TXT = "CANCEL";
+
+        final int POSITIVE_BTN_COLOR = Color.BLUE;
+        final int NEUTRAL_BTN_COLOR = Color.RED;
+        final int NEGATIVE_BTN_COLOR = Color.RED;
+
+        final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+        final DBHandler db = new DBHandler(currentContext.getContext());
+
+        // Set Dialog Title
+        alertDialog.setTitle(DIALOG_TITLE);
+
+        // Set Dialog Message
+        alertDialog.setMessage(DIALOG_MSG);
+
+        // Set Buttons
+        // Positive Button, Right
+        if (POSITIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, POSITIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+                }
+            });
+        }
+
+        // Neutral Button, Left
+        if (NEUTRAL_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, NEUTRAL_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+                }
+            });
+        }
+
+        // Negative Button, Middle
+        if (NEGATIVE_BTN) {
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, NEGATIVE_BUTTON_TXT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // Processed by onClick below
+                }
+            });
+        }
+
+
+        new Dialog(context);
+        alertDialog.show();
+
+        // Set Buttons
+        if (POSITIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(POSITIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Positive button
+                    db.deleteEventInDB(getEventID_Int());
+
+                    alertDialog.dismiss();
+
+                    Toast.makeText(context, "Event deleted.",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        if (NEUTRAL_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(NEUTRAL_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Neutral button
+                }
+            });
+        }
+        if (NEGATIVE_BTN) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(NEGATIVE_BTN_COLOR);
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Perform Action on Negative button
+                    alertDialog.cancel();
+                }
+            });
+        }
+
+        return alertDialog;
     }
 
     private CheckboxListArrayAdapter initializeEventArrayAdapt(ArrayList<EventClass> dbEvent_List) {

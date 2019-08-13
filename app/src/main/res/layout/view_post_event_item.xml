@@ -41,7 +41,7 @@
             android:text="00"
             android:textAlignment="center"
             android:textColor="@color/dark"
-            android:textSize="24sp" />
+            android:textSize="@dimen/ListItemScoreTextSize" />
     </LinearLayout>
 
     <LinearLayout
@@ -59,16 +59,16 @@
 
         <Button
             android:id="@+id/postEventItemGun_Btn"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/ListItemButton"
+            android:layout_height="@dimen/ListItemButton"
             android:layout_margin="2dp"
             android:layout_weight="1"
             android:background="@drawable/shotgun_icon" />
 
         <Button
             android:id="@+id/postEventItemLoad_Btn"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/ListItemButton"
+            android:layout_height="@dimen/ListItemButton"
             android:layout_marginStart="8dp"
             android:layout_marginTop="2dp"
             android:layout_marginEnd="8dp"
@@ -78,8 +78,8 @@
 
         <Button
             android:id="@+id/postEventItemNotes_Btn"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/ListItemButton"
+            android:layout_height="@dimen/ListItemButton"
             android:layout_margin="2dp"
             android:layout_weight="1"
             android:background="@drawable/edit_icon" />
@@ -87,10 +87,9 @@
 
     <Button
         android:id="@+id/postEventItemExpand_Btn"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="@dimen/ListItemButton"
+        android:layout_height="@dimen/ListItemButton"
         android:layout_margin="0dp"
-        android:layout_marginBottom="8dp"
         android:background="@drawable/down_caret_icon"
         app:layout_constraintBottom_toTopOf="@+id/postEventItemDetails_Lay"
         app:layout_constraintEnd_toEndOf="parent"
