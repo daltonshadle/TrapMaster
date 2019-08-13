@@ -30,8 +30,11 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 public class EventClass {
     //************************************* Private Variables **************************************
@@ -581,7 +584,9 @@ public class EventClass {
                         break;
                     case 2:
                         // Date to Weather
-                        item_Txt = item_Date.toString();
+                        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
+                        Date temp_Date = new Date(item_Date.getYear(), item_Date.getMonth(), item_Date.getDayOfMonth());
+                        item_Txt = sdf.format(temp_Date);
 
                         setEventDate_Str(item_Txt);
 

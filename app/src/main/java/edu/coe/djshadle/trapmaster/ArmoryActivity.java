@@ -14,32 +14,19 @@
 package edu.coe.djshadle.trapmaster;
 
 //******************************************** Imports *********************************************
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ArmoryActivity extends AppCompatActivity {
     //***************************************** Constants ******************************************
@@ -52,10 +39,6 @@ public class ArmoryActivity extends AppCompatActivity {
     // Key Constants
     private String CURRENT_USER_KEY;
 
-    // Tag Constants
-    private final int GUN_LIST_TAG = 3;
-    private final int LOAD_LIST_TAG = 4;
-
     //***************************************** Variables ******************************************
     // General Variables
     private int mCurrentProfileID_Int = -1;
@@ -63,14 +46,7 @@ public class ArmoryActivity extends AppCompatActivity {
     private DBHandler db;
     private boolean isPortrait = true;
 
-    // Gun
-    private TrapMasterListArrayAdapter mCustomGunList_Adapt;
-
-    // Load
-    private TrapMasterListArrayAdapter mCustomLoadList_Adapt;
-
     // UI References
-    private ListView mGunList_View, mLoadList_View;
     private ScrollView mGun_Scroll, mLoad_Scroll;
     private LinearLayout mGun_Lay, mLoad_Lay;
     private TabLayout armory_TabLay;
@@ -176,7 +152,7 @@ public class ArmoryActivity extends AppCompatActivity {
         db = new DBHandler(getApplicationContext());
 
         // Initialize views
-        armory_TabLay = findViewById(R.id.armory_TabLay);
+        armory_TabLay = findViewById(R.id.eventHistory_TabLay);
         mGun_Lay = findViewById(R.id.armoryGun_Lay);
         mLoad_Lay = findViewById(R.id.armoryLoad_Lay);
         mGun_Scroll = findViewById(R.id.armoryGun_Scroll);
@@ -295,13 +271,15 @@ public class ArmoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
-        // Initialize gun list from db
+        // Initialize gun list from db, remove all views from lay
         ArrayList<GunClass> dbGuns_List = refreshGunList();
+        mGun_Lay.removeAllViews();
 
         // Iterate over all guns in list and add to layout
         for (int i = 0; i < dbGuns_List.size(); i++) {
             GunClass temp_Gun = dbGuns_List.get(i);
             CustomListItemClass temp_Item = new CustomListItemClass(ArmoryActivity.this, temp_Gun.getGunProfileID_Int(), -1, temp_Gun);
+            temp_Item.setPadding(0, 6, 0, 0);
 
             mGun_Lay.addView(temp_Item);
         }
@@ -339,13 +317,15 @@ public class ArmoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
-        // Initialize load list from db
+        // Initialize load list from db, remove all views from lay
         ArrayList<LoadClass> dbLoad_List = refreshLoadList();
+        mLoad_Lay.removeAllViews();
 
         // Iterate over all loads in list and add to layout
         for (int i = 0; i < dbLoad_List.size(); i++) {
             LoadClass temp_Load = dbLoad_List.get(i);
             CustomListItemClass temp_Item = new CustomListItemClass(ArmoryActivity.this, temp_Load.getLoadProfileID_Int(), -1, temp_Load);
+            temp_Item.setPadding(0, 6, 0, 0);
 
             mLoad_Lay.addView(temp_Item);
         }

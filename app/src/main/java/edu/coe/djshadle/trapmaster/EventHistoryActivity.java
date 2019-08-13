@@ -22,6 +22,7 @@ import android.content.res.Configuration;
 import android.content.res.XmlResourceParser;
 import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,6 +37,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 
 import java.lang.reflect.Field;
@@ -48,29 +50,24 @@ public class EventHistoryActivity extends AppCompatActivity {
     // General Constants
     private String TAG = "JRW";
     private String ACTIVITY_TITLE;
+    private final int EVENT_POS = 0;
+    private final int MATCH_POS = 1;
 
-    // Key Constants
     // Key Constants
     private String CURRENT_USER_KEY;
 
-    // Tag Constants
-    private final int MATCH_LIST_TAG = 1;
-    private final int EVENT_LIST_TAG = 2;
 
     //**************************************** Variables *******************************************
     // General Variables
     private int mCurrentProfileID_Int = -1;
+    private int mCurrentTabPos_Int = EVENT_POS;
     private DBHandler db;
     private boolean isPortrait = true;
 
-    // Match
-    private TrapMasterListArrayAdapter mCustomMatchList_Adapt;
-
-    // Event
-    private TrapMasterListArrayAdapter mCustomEventList_Adapt;
-
     // UI References
-    private ListView mMatchList_View,  mEventList_View;
+    private ScrollView mEvent_Scroll, mMatch_Scroll;
+    private LinearLayout mEvent_Lay, mMatch_Lay;
+    private TabLayout eventHist_Tab;
 
     //************************************* Activity Functions *************************************
     @Override
@@ -168,43 +165,79 @@ public class EventHistoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
-        // Initializing list and database variables
+        // Initializing database variable
         db = new DBHandler(getApplicationContext());
 
-        // Initializing list view
-        mMatchList_View = findViewById(R.id.eventHistoryScore_List);
-        mEventList_View = findViewById(R.id.eventHistoryEvent_List);
+        // Initialize views
+        eventHist_Tab = findViewById(R.id.eventHistory_TabLay);
+        mMatch_Lay = findViewById(R.id.eventHistoryMatch_Lay);
+        mEvent_Lay = findViewById(R.id.eventHistoryEvent_Lay);
+        mMatch_Scroll = findViewById(R.id.eventHistoryMatch_Scroll);
+        mEvent_Scroll = findViewById(R.id.eventHistoryEvent_Scroll);
 
-        // Setting tags for list views
-        mMatchList_View.setTag(MATCH_LIST_TAG);
-        mEventList_View.setTag(EVENT_LIST_TAG);
-
-        setListViewLayoutParams();
-
-        initializeMatchListView();
-        initializeEventListView();
-
-        // Initializing buttons
-        FloatingActionButton mAddMatch = findViewById(R.id.eventHistoryAddScore_Btn);
-        FloatingActionButton mAddEvent = findViewById(R.id.eventHistoryAddEvent_Btn);
-
-        mAddMatch.setOnClickListener(new View.OnClickListener() {
+        eventHist_Tab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onClick(View view) {
-                // Prompt user with new event dialog
-                ShootingEventClass newEvent = new ShootingEventClass(mCurrentProfileID_Int,EventHistoryActivity.this);
-                newEvent.newEventDialog(EventHistoryActivity.this);
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case EVENT_POS:
+                        // set visibilities of scroll views, EVENT
+                        mEvent_Scroll.setVisibility(View.VISIBLE);
+                        mMatch_Scroll.setVisibility(View.GONE);
+
+                        Log.d(TAG, "Events Tab");
+
+                        mCurrentTabPos_Int = EVENT_POS;
+                        break;
+                    case MATCH_POS:
+                        // set visibilities of scroll views, MATCH
+                        mEvent_Scroll.setVisibility(View.GONE);
+                        mMatch_Scroll.setVisibility(View.VISIBLE);
+
+                        Log.d(TAG, "Matches Tab");
+
+                        mCurrentTabPos_Int = MATCH_POS;
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
 
-        mAddEvent.setOnClickListener(new View.OnClickListener() {
+        // Set the lists
+        setEventListLay();
+        setMatchListLay();
+
+        // Set Button
+        FloatingActionButton add_Btn = findViewById(R.id.eventHistoryAdd_Btn);
+        add_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Display add event dialog box for user input, -1 = adding a new event
-                EventClass temp_Event = new EventClass();
-                temp_Event.setEventID_Int(-1);
-                temp_Event.setEventProfileID_Int(mCurrentProfileID_Int);
-                temp_Event.editEventDialog(EventHistoryActivity.this, mCustomEventList_Adapt);
+                switch (mCurrentTabPos_Int) {
+                    case EVENT_POS:
+                        // Display add event dialog box for user input, -1 = adding a new event
+                        EventClass temp_Event = new EventClass();
+                        temp_Event.setEventID_Int(-1);
+                        temp_Event.setEventProfileID_Int(mCurrentProfileID_Int);
+                        temp_Event.editEventDialog(EventHistoryActivity.this).setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                // Reset the event list to changes in the database
+                                setEventListLay();
+                            }
+                        });
+                        break;
+                    case MATCH_POS:
+                        // TODO: Start a new event
+                        break;
+                }
             }
         });
 
@@ -240,11 +273,11 @@ public class EventHistoryActivity extends AppCompatActivity {
         return currentMatch_List;
     }
 
-    private void initializeMatchListView() {
+    private void setMatchListLay() {
         /*******************************************************************************************
-         * Function: initializeMatchListView
+         * Function: setMatchListLay
          *
-         * Purpose: Function initializes the Match list view
+         * Purpose: Function initializes the match list layout
          *
          * Parameters: None
          *
@@ -252,20 +285,18 @@ public class EventHistoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
-        try {
-            // Initialize Match adapter
-            mCustomMatchList_Adapt = new TrapMasterListArrayAdapter(this,
-                    (ArrayList<Object>)(ArrayList<?>)(refreshMatchList()), MATCH_LIST_TAG);
+        // Initialize match list from db, remove all views from lay
+        ArrayList<MatchClass> dbMatch_List = refreshMatchList();
+        mMatch_Lay.removeAllViews();
 
+        // Iterate over all matches in list and add to layout TODO: see if profile ID can be -1
+        for (int i = 0; i < dbMatch_List.size(); i++) {
+            MatchClass temp_Match = dbMatch_List.get(i);
+            CustomListItemClass temp_Item = new CustomListItemClass(EventHistoryActivity.this, -1, temp_Match.getMatchShooterID_Int(), temp_Match);
+            temp_Item.setPadding(0, 6, 0, 0);
 
-            mCustomMatchList_Adapt.refreshMatchArrayAdapter(refreshMatchList());
-
-            mMatchList_View.setAdapter(mCustomMatchList_Adapt);
-
-        } catch (Exception e){
-            Log.d("JRW", "no Matchs in db for this user: " + e.toString());
+            mMatch_Lay.addView(temp_Item);
         }
-
     }
 
     // Event List
@@ -288,11 +319,11 @@ public class EventHistoryActivity extends AppCompatActivity {
         return userEvent_List;
     }
 
-    private void initializeEventListView() {
+    private void setEventListLay() {
         /*******************************************************************************************
-         * Function: initializeEventListView
+         * Function: setEventListLay
          *
-         * Purpose: Function initializes the event list view
+         * Purpose: Function initializes the event list layout
          *
          * Parameters: None
          *
@@ -300,52 +331,18 @@ public class EventHistoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
-        try {
+        // Initialize event list from db
+        ArrayList<EventClass> dbEvent_List = refreshEventList();
+        mEvent_Lay.removeAllViews();
 
-            mCustomEventList_Adapt = new TrapMasterListArrayAdapter(this,
-                    (ArrayList<Object>)(ArrayList<?>)(refreshEventList()), EVENT_LIST_TAG);
+        // Iterate over all events in list and add to layout
+        for (int i = 0; i < dbEvent_List.size(); i++) {
+            EventClass temp_Event = dbEvent_List.get(i);
+            CustomListItemClass temp_Item = new CustomListItemClass(EventHistoryActivity.this, temp_Event.getEventProfileID_Int(), -1, temp_Event);
+            temp_Item.setPadding(0, 6, 0, 0);
 
-            mCustomEventList_Adapt.refreshEventArrayAdapter(refreshEventList());
-
-            mEventList_View.setAdapter(mCustomEventList_Adapt);
-
-        } catch (Exception e){
-            Log.d(TAG, "no events in db for this user: " + e.toString());
+            mEvent_Lay.addView(temp_Item);
         }
-    }
-
-    // Both List
-    private void setListViewLayoutParams() {
-        /*******************************************************************************************
-         * Function: setListViewLayoutParams
-         *
-         * Purpose: Function sets the layout parameters for the Match and event list view so that both
-         *          use roughly half of the display (with room for buttons)
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        // Initialize variables for this function
-        double screenHeight_Dbl = getResources().getDisplayMetrics().heightPixels;
-        double scaleFactor_Dbl = 1;
-
-        LinearLayout.LayoutParams params;
-
-        // Determine variables based on orientation
-        if (isPortrait) {
-            scaleFactor_Dbl = 3.5;
-        } else {
-            scaleFactor_Dbl = 2.0;
-        }
-
-        // Set layout parameters
-        params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int)(screenHeight_Dbl / scaleFactor_Dbl));
-
-        mEventList_View.setLayoutParams(params);
-        mMatchList_View.setLayoutParams(params);
     }
 
     

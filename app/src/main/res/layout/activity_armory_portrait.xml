@@ -2,13 +2,13 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/armory_LnrLay"
+    android:id="@+id/armory_Lay"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="edu.coe.djshadle.trapmaster.ArmoryActivity">
 
     <android.support.design.widget.TabLayout
-        android:id="@+id/armory_TabLay"
+        android:id="@+id/eventHistory_TabLay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
@@ -39,7 +39,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/armory_TabLay">
+        app:layout_constraintTop_toBottomOf="@+id/eventHistory_TabLay">
 
         <LinearLayout
             android:id="@+id/armoryGun_Lay"
@@ -57,7 +57,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/armory_TabLay">
+        app:layout_constraintTop_toBottomOf="@+id/eventHistory_TabLay">
 
         <LinearLayout
             android:id="@+id/armoryLoad_Lay"
