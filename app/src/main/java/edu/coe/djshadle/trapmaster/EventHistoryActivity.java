@@ -54,24 +54,23 @@ public class EventHistoryActivity extends AppCompatActivity {
     private String CURRENT_USER_KEY;
 
     // Tag Constants
-    private final int SHOT_LIST_TAG = 1;
+    private final int MATCH_LIST_TAG = 1;
     private final int EVENT_LIST_TAG = 2;
 
     //**************************************** Variables *******************************************
     // General Variables
-    private String mCurrentProfileEmail_Str = "********";
     private int mCurrentProfileID_Int = -1;
     private DBHandler db;
     private boolean isPortrait = true;
 
-    // Shot
-    private TrapMasterListArrayAdapter mCustomShotList_Adapt;
+    // Match
+    private TrapMasterListArrayAdapter mCustomMatchList_Adapt;
 
     // Event
     private TrapMasterListArrayAdapter mCustomEventList_Adapt;
 
     // UI References
-    private ListView mShotList_View,  mEventList_View;
+    private ListView mMatchList_View,  mEventList_View;
 
     //************************************* Activity Functions *************************************
     @Override
@@ -108,8 +107,6 @@ public class EventHistoryActivity extends AppCompatActivity {
         } else {
             mCurrentProfileID_Int = getIntent().getIntExtra(CURRENT_USER_KEY, -1);
         }
-
-        mCurrentProfileEmail_Str = db.getProfileFromDB(mCurrentProfileID_Int).getProfileEmail_Str();
 
         // Initialize views
         initializeViews();
@@ -175,23 +172,23 @@ public class EventHistoryActivity extends AppCompatActivity {
         db = new DBHandler(getApplicationContext());
 
         // Initializing list view
-        mShotList_View = findViewById(R.id.eventHistoryScore_List);
+        mMatchList_View = findViewById(R.id.eventHistoryScore_List);
         mEventList_View = findViewById(R.id.eventHistoryEvent_List);
 
         // Setting tags for list views
-        mShotList_View.setTag(SHOT_LIST_TAG);
+        mMatchList_View.setTag(MATCH_LIST_TAG);
         mEventList_View.setTag(EVENT_LIST_TAG);
 
         setListViewLayoutParams();
 
-        initializeShotListView();
+        initializeMatchListView();
         initializeEventListView();
 
         // Initializing buttons
-        FloatingActionButton mAddShot = findViewById(R.id.eventHistoryAddScore_Btn);
+        FloatingActionButton mAddMatch = findViewById(R.id.eventHistoryAddScore_Btn);
         FloatingActionButton mAddEvent = findViewById(R.id.eventHistoryAddEvent_Btn);
 
-        mAddShot.setOnClickListener(new View.OnClickListener() {
+        mAddMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Prompt user with new event dialog
@@ -216,38 +213,38 @@ public class EventHistoryActivity extends AppCompatActivity {
     }
 
     //************************************ List view Functions *************************************
-    // Shot List
-    private ArrayList<RoundClass> refreshShotList() {
+    // Match List
+    private ArrayList<MatchClass> refreshMatchList() {
         /*******************************************************************************************
-         * Function: refreshShotList
+         * Function: refreshMatchList
          *
-         * Purpose: Function returns the current list of shots for the current user
+         * Purpose: Function returns the current list of Matches for the current user
          *
          * Parameters: None
          *
-         * Returns: currentShotStr_List - a string list of shot for current user
+         * Returns: currentMatchStr_List - a string list of Match for current user
          *
          ******************************************************************************************/
 
         // Initialize db handler and shooter and score arrays
         db = new DBHandler(this);
         ArrayList<ShooterClass> currentShooter_List = db.getAllShooterFromDB(mCurrentProfileID_Int);
-        ArrayList<RoundClass> currentShot_List = new ArrayList<>();
+        ArrayList<MatchClass> currentMatch_List = new ArrayList<>();
 
         // For each shooter in the db shooter list, add scores for that shooter to score list.
         for (ShooterClass shooter : currentShooter_List) {
-            currentShot_List.addAll(db.getAllRoundsFromDB(shooter.getShooterID_Int()));
-            Collections.sort(currentShot_List, Collections.<RoundClass>reverseOrder());
+            currentMatch_List.addAll(db.getAllMatchesFromDB(shooter.getShooterID_Int()));
+            Collections.sort(currentMatch_List, Collections.<MatchClass>reverseOrder());
         }
 
-        return currentShot_List;
+        return currentMatch_List;
     }
 
-    private void initializeShotListView() {
+    private void initializeMatchListView() {
         /*******************************************************************************************
-         * Function: initializeShotListView
+         * Function: initializeMatchListView
          *
-         * Purpose: Function initializes the shot list view
+         * Purpose: Function initializes the Match list view
          *
          * Parameters: None
          *
@@ -256,17 +253,17 @@ public class EventHistoryActivity extends AppCompatActivity {
          ******************************************************************************************/
 
         try {
-            // Initialize shot adapter
-            mCustomShotList_Adapt = new TrapMasterListArrayAdapter(this,
-                    (ArrayList<Object>)(ArrayList<?>)(refreshShotList()));
+            // Initialize Match adapter
+            mCustomMatchList_Adapt = new TrapMasterListArrayAdapter(this,
+                    (ArrayList<Object>)(ArrayList<?>)(refreshMatchList()), MATCH_LIST_TAG);
 
 
-            mCustomShotList_Adapt.refreshRoundArrayAdapter(refreshShotList());
+            mCustomMatchList_Adapt.refreshMatchArrayAdapter(refreshMatchList());
 
-            mShotList_View.setAdapter(mCustomShotList_Adapt);
+            mMatchList_View.setAdapter(mCustomMatchList_Adapt);
 
         } catch (Exception e){
-            Log.d("JRW", "no shots in db for this user: " + e.toString());
+            Log.d("JRW", "no Matchs in db for this user: " + e.toString());
         }
 
     }
@@ -306,7 +303,9 @@ public class EventHistoryActivity extends AppCompatActivity {
         try {
 
             mCustomEventList_Adapt = new TrapMasterListArrayAdapter(this,
-                    (ArrayList<Object>)(ArrayList<?>)(refreshEventList()));
+                    (ArrayList<Object>)(ArrayList<?>)(refreshEventList()), EVENT_LIST_TAG);
+
+            mCustomEventList_Adapt.refreshEventArrayAdapter(refreshEventList());
 
             mEventList_View.setAdapter(mCustomEventList_Adapt);
 
@@ -320,7 +319,7 @@ public class EventHistoryActivity extends AppCompatActivity {
         /*******************************************************************************************
          * Function: setListViewLayoutParams
          *
-         * Purpose: Function sets the layout parameters for the shot and event list view so that both
+         * Purpose: Function sets the layout parameters for the Match and event list view so that both
          *          use roughly half of the display (with room for buttons)
          *
          * Parameters: None
@@ -346,7 +345,7 @@ public class EventHistoryActivity extends AppCompatActivity {
         params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int)(screenHeight_Dbl / scaleFactor_Dbl));
 
         mEventList_View.setLayoutParams(params);
-        mShotList_View.setLayoutParams(params);
+        mMatchList_View.setLayoutParams(params);
     }
 
     

@@ -570,7 +570,7 @@ public class LoadClass {
         return tempLoad_Adapt;
     }
 
-    public void chooseGunDialog(final Context context, final int profileID_Int) {
+    public AlertDialog chooseGunDialog(final Context context, final int profileID_Int) {
         /*******************************************************************************************
          * Function: chooseGunDialog
          *
@@ -581,6 +581,7 @@ public class LoadClass {
          *
          * Returns: The LoadClass variable that called this function will be set to the load chosen,
          *          if none are chosen, the variable will have the loadID = -1
+         *          alertDialog (OUT) - Alert dialog created with this function
          *
          ******************************************************************************************/
 
@@ -667,5 +668,7 @@ public class LoadClass {
             }
 
         });
+
+        return alertDialog;
     }
 }

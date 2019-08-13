@@ -16,10 +16,12 @@ package edu.coe.djshadle.trapmaster;
 
 //******************************************** Imports *********************************************
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -225,11 +227,16 @@ public class PostEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Add event button
-                mEvent.chooseEventDialog(PostEventActivity.this, mCurrentProfileID_Int);
-                if (mEvent.getEventName_Str().isEmpty()) {
-                    mEvent.setEventName_Str("Add Event");
-                }
-                mAddEvent_Btn.setText(mEvent.getEventName_Str());
+                AlertDialog event_Dialog = mEvent.chooseEventDialog(PostEventActivity.this, mCurrentProfileID_Int);
+                event_Dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        if (mEvent.getEventName_Str().isEmpty()) {
+                            mEvent.setEventName_Str("Add Event");
+                        }
+                        mAddEvent_Btn.setText(mEvent.getEventName_Str());
+                    }
+                });
             }
         });
 
@@ -258,6 +265,10 @@ public class PostEventActivity extends AppCompatActivity {
         mShooterPostEventItems_List.add((PostEventItemClass) findViewById(R.id.postEventItem_3));
         mShooterPostEventItems_List.add((PostEventItemClass) findViewById(R.id.postEventItem_4));
         mShooterPostEventItems_List.add((PostEventItemClass) findViewById(R.id.postEventItem_5));
+
+        for (int i = 0; i < numShooters_Int; i++) {
+            mShooterPostEventItems_List.get(i).setProfileID_Int(mCurrentProfileID_Int);
+        }
 
         // Remove unused views
         for (int i = MAX_NUM_SHOOTERS - 1; i >= numShooters_Int; i--) {

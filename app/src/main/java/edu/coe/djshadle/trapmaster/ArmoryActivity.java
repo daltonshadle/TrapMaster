@@ -251,7 +251,7 @@ public class ArmoryActivity extends AppCompatActivity {
 
         try {
             mCustomGunList_Adapt = new TrapMasterListArrayAdapter(this,
-                    (ArrayList<Object>)(ArrayList<?>)(refreshGunList()));
+                    (ArrayList<Object>)(ArrayList<?>)(refreshGunList()), GUN_LIST_TAG);
 
             mCustomGunList_Adapt.refreshGunArrayAdapter(refreshGunList());
 
@@ -297,7 +297,7 @@ public class ArmoryActivity extends AppCompatActivity {
 
         try {
             mCustomLoadList_Adapt = new TrapMasterListArrayAdapter(this,
-                    (ArrayList<Object>)(ArrayList<?>)(refreshLoadList()));
+                    (ArrayList<Object>)(ArrayList<?>)(refreshLoadList()), LOAD_LIST_TAG);
 
             mCustomLoadList_Adapt.refreshLoadArrayAdapter(refreshLoadList());
 

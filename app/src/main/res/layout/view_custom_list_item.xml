@@ -5,11 +5,12 @@
     android:id="@+id/listItem_ConLay"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:focusableInTouchMode="false"
+    android:background="@drawable/white_rounded_rectangle"
+    android:backgroundTint="@color/colorAccent"
     android:clickable="false"
-    android:focusable="false"
     android:descendantFocusability="blocksDescendants"
-    android:background="@drawable/post_event_list_selector">
+    android:focusable="false"
+    android:focusableInTouchMode="false">
 
     <ImageView
         android:id="@+id/listItem_Img"
@@ -25,13 +26,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/ListItemMargin"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:text="ListItemMain"
         android:textSize="@dimen/ListItemMainTextSize"
         app:layout_constraintStart_toEndOf="@+id/listItem_Img"
-        app:layout_constraintTop_toTopOf="parent"
-        android:focusableInTouchMode="false"
-        android:clickable="false"
-        android:focusable="false"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/listItemSecond_Txt"
@@ -39,13 +40,13 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/ListItemMargin"
         android:layout_marginTop="8dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:text="ListItemSecond"
         android:textSize="@dimen/ListItemSecondTextSize"
         app:layout_constraintStart_toEndOf="@+id/listItem_Img"
-        app:layout_constraintTop_toBottomOf="@+id/listItemMain_Txt"
-        android:focusableInTouchMode="false"
-        android:clickable="false"
-        android:focusable="false" />
+        app:layout_constraintTop_toBottomOf="@+id/listItemMain_Txt" />
 
     <ImageButton
         android:id="@+id/listItemEdit_Btn"
@@ -55,13 +56,12 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/colorAccent"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:scaleType="fitCenter"
+        android:src="@drawable/edit_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/listItemDelete_Btn"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/edit_icon"
-        android:scaleType="fitCenter"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/listItemDelete_Btn"
@@ -71,12 +71,12 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/colorAccent"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:scaleType="fitCenter"
+        android:src="@drawable/delete_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/delete_icon"
-        android:scaleType="fitCenter"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/listItemScore_Txt"
@@ -84,8 +84,8 @@
         android:layout_height="wrap_content"
         android:text=""
         android:textAlignment="center"
-        android:visibility="invisible"
         android:textSize="@dimen/ListItemScoreTextSize"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/listItem_Img"
         app:layout_constraintEnd_toEndOf="@+id/listItem_Img"
         app:layout_constraintStart_toStartOf="@+id/listItem_Img"

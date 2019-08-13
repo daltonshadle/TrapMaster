@@ -447,7 +447,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: roundID_int (IN) - ID number for round
          *
-         * Returns: None
+         * Returns: None TODO: fix other database items when deleted, ie reset item ID to -1
          *
          ******************************************************************************************/
 
@@ -604,7 +604,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: matchID_Int (IN) - ID number for match
          *
-         * Returns: None
+         * Returns: None TODO: fix other database items when deleted, ie reset item ID to -1
          *
          ******************************************************************************************/
 
@@ -733,7 +733,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         ShooterClass tempShooter = new ShooterClass();
         String query = "SELECT * FROM " + TABLE_SHOOTERS + " WHERE "
-                + KEY_SHOOTER_NAME + " = '" + shooterName_Str + "''";
+                + KEY_SHOOTER_NAME + " = '" + shooterName_Str + "'";
 
         dbWhole = this.getReadableDatabase();
 
@@ -784,7 +784,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: shooterID_Int (IN) - ID of shooter to remove
          *
-         * Returns: None
+         * Returns: None TODO: fix other database items when deleted, ie reset item ID to -1
          *
          ******************************************************************************************/
 
@@ -975,7 +975,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: loadID_Int (IN) - ID of load to remove
          *
-         * Returns: None
+         * Returns: None TODO: fix other database items when deleted, ie reset item ID to -1
          *
          ******************************************************************************************/
 
@@ -1171,7 +1171,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: gunID_Int (IN) - ID of gun to delete
          *
-         * Returns: None
+         * Returns: None TODO: fix other database items when deleted, ie reset item ID to -1
          *
          ******************************************************************************************/
 
@@ -1365,7 +1365,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: eventID_Int (IN) - ID of event to remove
          *
-         * Returns: None
+         * Returns: None TODO: fix other database items when deleted, ie reset item ID to -1
          *
          ******************************************************************************************/
 

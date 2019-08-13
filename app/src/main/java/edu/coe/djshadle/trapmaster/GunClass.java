@@ -508,7 +508,7 @@ public class GunClass {
         return tempGun_Adapt;
     }
 
-    public void chooseGunDialog(final Context context, final int profileID_Int) {
+    public AlertDialog chooseGunDialog(final Context context, final int profileID_Int) {
         /*******************************************************************************************
          * Function: chooseGunDialog
          *
@@ -518,7 +518,8 @@ public class GunClass {
          *             profileID_Int (IN) - profile ID for database
          *
          * Returns: The GunClass variable that called this function will be set to the gun chosen,
-         *          if none are chosen, the variable will have the gunID = -1
+         *          if none are chosen, the variable will have the gunID = -1,
+         *          alertDialog (OUT) - Alert dialog created with this function
          *
          ******************************************************************************************/
 
@@ -605,6 +606,8 @@ public class GunClass {
             }
 
         });
+
+        return alertDialog;
     }
 
 }

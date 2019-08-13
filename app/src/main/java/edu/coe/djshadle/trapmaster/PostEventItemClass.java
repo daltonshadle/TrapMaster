@@ -163,8 +163,13 @@ public class PostEventItemClass extends ConstraintLayout {
         gun_Btn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                shooter_Gun.chooseGunDialog(context, profileID_Int);
-                PostEventItemClass.this.setShooter_Gun(shooter_Gun);
+                AlertDialog gun_Dialog = shooter_Gun.chooseGunDialog(context, profileID_Int);
+                gun_Dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        PostEventItemClass.this.setShooter_Gun(shooter_Gun);
+                    }
+                });
             }
         });
 
@@ -172,8 +177,13 @@ public class PostEventItemClass extends ConstraintLayout {
         load_Btn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                shooter_Load.chooseGunDialog(context, profileID_Int);
-                PostEventItemClass.this.setShooter_Load(shooter_Load);
+                AlertDialog load_Dialog = shooter_Load.chooseGunDialog(context, profileID_Int);
+                load_Dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        PostEventItemClass.this.setShooter_Load(shooter_Load);
+                    }
+                });
             }
         });
 
@@ -279,6 +289,14 @@ public class PostEventItemClass extends ConstraintLayout {
         }
         String tempNotes_Str = "Notes: " + this.shooterNotes_Str;
         shooterNotes_Txt.setText(tempNotes_Str);
+    }
+
+    public int getProfileID_Int() {
+        return profileID_Int;
+    }
+
+    public void setProfileID_Int(int profileID_Int) {
+        this.profileID_Int = profileID_Int;
     }
 
     //*************************************** Other Functions **************************************

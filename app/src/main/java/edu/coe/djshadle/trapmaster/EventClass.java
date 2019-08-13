@@ -573,7 +573,7 @@ public class EventClass {
         return tempEvent_Adapt;
     }
 
-    public void chooseEventDialog(final Context context, final int profileID_Int) {
+    public AlertDialog chooseEventDialog(final Context context, final int profileID_Int) {
         /*******************************************************************************************
          * Function: chooseEventDialog
          *
@@ -584,6 +584,7 @@ public class EventClass {
          *
          * Returns: The EventClass variable that called this function will be set to the event chosen,
          *          if none are chosen, the variable will have the eventID = -1
+         *          alertDialog (OUT) - Alert dialog created with this function
          *
          ******************************************************************************************/
 
@@ -670,5 +671,7 @@ public class EventClass {
             }
 
         });
+
+        return alertDialog;
     }
 }
