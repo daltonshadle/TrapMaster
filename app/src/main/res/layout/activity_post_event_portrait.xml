@@ -10,7 +10,7 @@
     <ScrollView
         android:id="@+id/postEventItems_Scroll"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -83,15 +83,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <ListView
-        android:id="@+id/postEvent_List"
-        android:layout_width="match_parent"
-        android:layout_height="173dp"
-        android:choiceMode="singleChoice"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/postEventItems_Scroll" />
-
     <Button
         android:id="@+id/postEventRight_Btn"
         android:layout_width="wrap_content"
@@ -111,15 +102,5 @@
         android:text="PREVIOUS"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/postEventAddEvent_Btn"
-        android:layout_width="@dimen/CirclePlusAddButtonDim"
-        android:layout_height="@dimen/CirclePlusAddButtonDim"
-        android:layout_margin="5dp"
-        android:clickable="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/postEvent_List"
-        app:srcCompat="@drawable/black_plus_icon" />
 
 </android.support.constraint.ConstraintLayout>

@@ -21,9 +21,12 @@ import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -172,6 +175,17 @@ public class LoadClass {
 
     public void setLoadID_Int(int loadID_Str) {
         this.loadID_Int = loadID_Str;
+    }
+
+    public void setLoadFromLoad(LoadClass temp_Load) {
+        this.setLoadGrain_Str(temp_Load.getLoadGrain_Str());
+        this.setLoadGauge_Str(temp_Load.getLoadGauge_Str());
+        this.setLoadBrand_Str(temp_Load.getLoadBrand_Str());
+        this.setLoadNickname_Str(temp_Load.getLoadNickname_Str());
+        this.setLoadNotes_Str(temp_Load.getLoadNotes_Str());
+        this.setLoadLength_Str(temp_Load.getLoadLength_Str());
+        this.setLoadID_Int(temp_Load.getLoadID_Int());
+        this.setLoadProfileID_Int(temp_Load.getLoadProfileID_Int());
     }
 
     //*************************************** Other Functions **************************************
@@ -528,4 +542,130 @@ public class LoadClass {
         });
     }
 
+    private CheckboxListArrayAdapter initializeLoadArrayAdapt(ArrayList<LoadClass> dbLoad_List) {
+        /*******************************************************************************************
+         * Function: initializeLoadArrayAdapt
+         *
+         * Purpose: Function initializes load listview adapt
+         *
+         * Parameters: dbLoad_List (IN) - list of loads in DB to create adapter for
+         *
+         * Returns: tempLoad_Adapt - Array adapter initialized to loads from DB
+         *
+         ******************************************************************************************/
+
+        // Initialize function variables
+        CheckboxListArrayAdapter tempLoad_Adapt;
+        ArrayList<String> tempLoadStr_List = new ArrayList<>();
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+
+        // Iterate over all items and get names
+        for (int i = 0; i < dbLoad_List.size(); i++) {
+            tempLoadStr_List.add(dbLoad_List.get(i).getLoadNickname_Str());
+        }
+
+        // Set array adapter
+        tempLoad_Adapt = new CheckboxListArrayAdapter(currentContext.getContext(), tempLoadStr_List);
+
+        return tempLoad_Adapt;
+    }
+
+    public void chooseGunDialog(final Context context, final int profileID_Int) {
+        /*******************************************************************************************
+         * Function: chooseGunDialog
+         *
+         * Purpose: Function creates dialog and prompts user to choose a gun from the database
+         *
+         * Parameters: context (IN) - Supplies the activity context to display dialog to
+         *             profileID_Int (IN) - profile ID for database
+         *
+         * Returns: The LoadClass variable that called this function will be set to the load chosen,
+         *          if none are chosen, the variable will have the loadID = -1
+         *
+         ******************************************************************************************/
+
+        // Dialog Constants
+        String DIALOG_TITLE = "Load Picker";
+        int POSITIVE_BTN_COLOR = Color.BLUE;
+        int NEUTRAL_BTN_COLOR = Color.RED;
+
+        // Dialog Variables
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+        final DBHandler db = new DBHandler(currentContext.getContext());
+        final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+        final ArrayList<LoadClass> dbLoad_List = db.getAllLoadFromDB(profileID_Int);
+
+        // Set Dialog Title
+        alertDialog.setTitle(DIALOG_TITLE);
+
+        // Set Dialog Message
+        alertDialog.setMessage("Pick a load! (You can add loads in the Armory)");
+
+        // Set layout for gathering information
+        final RelativeLayout subView_RelLay = new RelativeLayout(context);
+
+        // Set views
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        final ListView load_List = new ListView(context);
+        final CheckboxListArrayAdapter load_Adapt = initializeLoadArrayAdapt(dbLoad_List);
+        load_List.setAdapter(load_Adapt);
+        load_List.setLayoutParams(params);
+        subView_RelLay.addView(load_List);
+
+        // Add linear layout to alert dialog
+        alertDialog.setView(subView_RelLay);
+
+        // Set Buttons
+        // Positive Button, Right
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Processed by onClick below
+            }
+        });
+
+        // Neutral Button, Left
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "CANCEL", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Processed by onClick below
+            }
+        });
+
+
+        new Dialog(context);
+        alertDialog.show();
+
+        // Set Buttons
+        final Button pos_Btn = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        final Button neu_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+
+        pos_Btn.setTextColor(POSITIVE_BTN_COLOR);
+        pos_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Positive button
+                if (load_Adapt.getCount() == 1) {
+                    // Gun selected, return that load
+                    LoadClass.this.setLoadFromLoad(dbLoad_List.get(load_Adapt.getCheckedItems().get(0)));
+                    alertDialog.dismiss();
+                } else {
+                    // Too few or many guns selected
+                    Toast.makeText(context, "Select 1 Load.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        neu_Btn.setTextColor(NEUTRAL_BTN_COLOR);
+        neu_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Neutral button
+                // Pick canceled, set ID to -1 and dismiss dialog
+                LoadClass.this.setLoadID_Int(-1);
+                alertDialog.dismiss();
+            }
+
+        });
+    }
 }

@@ -33,7 +33,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class RoundClass implements Comparable <RoundClass> {
+public class RoundClass implements Comparable <RoundClass>, java.io.Serializable {
     //************************************* Private Variables **************************************
     // Object variables
     private int roundID_Int;

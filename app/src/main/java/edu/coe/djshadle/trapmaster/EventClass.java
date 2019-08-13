@@ -25,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -165,6 +166,16 @@ public class EventClass {
 
     public void setEventID_Int(int eventID_Int) {
         this.eventID_Int = eventID_Int;
+    }
+
+    public void setEventFromEvent(EventClass temp_Event) {
+        this.setEventID_Int(temp_Event.getEventID_Int());
+        this.setEventDate_Str(temp_Event.getEventDate_Str());
+        this.setEventLocation_Str(temp_Event.getEventLocation_Str());
+        this.setEventName_Str(temp_Event.getEventName_Str());
+        this.setEventNotes_Str(temp_Event.getEventNotes_Str());
+        this.setEventProfileID_Int(temp_Event.getEventProfileID_Int());
+        this.setEventWeather_Str(temp_Event.getEventWeather_Str());
     }
 
     //************************************ Edit Event Functions ************************************
@@ -534,5 +545,130 @@ public class EventClass {
         }
     }
 
+    private CheckboxListArrayAdapter initializeEventArrayAdapt(ArrayList<EventClass> dbEvent_List) {
+        /*******************************************************************************************
+         * Function: initializeEventArrayAdapt
+         *
+         * Purpose: Function initializes event listview adapt
+         *
+         * Parameters: dbEvent_List (IN) - list of events in DB to create adapter for
+         *
+         * Returns: tempEvent_Adapt - Array adapter initialized to events from DB
+         *
+         ******************************************************************************************/
 
+        // Initialize function variables
+        CheckboxListArrayAdapter tempEvent_Adapt;
+        ArrayList<String> tempEventStr_Array = new ArrayList<>();
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+
+        // Iterate over all events and get names
+        for (int i = 0; i < dbEvent_List.size(); i++) {
+            tempEventStr_Array.add(dbEvent_List.get(i).getEventName_Str());
+        }
+
+        // Set array adapter
+        tempEvent_Adapt = new CheckboxListArrayAdapter(currentContext.getContext(), tempEventStr_Array);
+
+        return tempEvent_Adapt;
+    }
+
+    public void chooseEventDialog(final Context context, final int profileID_Int) {
+        /*******************************************************************************************
+         * Function: chooseEventDialog
+         *
+         * Purpose: Function creates dialog and prompts user to choose an event from the database
+         *
+         * Parameters: context (IN) - Supplies the activity context to display dialog to
+         *             profileID_Int (IN) - profile ID for database to access events
+         *
+         * Returns: The EventClass variable that called this function will be set to the event chosen,
+         *          if none are chosen, the variable will have the eventID = -1
+         *
+         ******************************************************************************************/
+
+        // Dialog Constants
+        String DIALOG_TITLE = "Event Picker";
+        int POSITIVE_BTN_COLOR = Color.BLUE;
+        int NEUTRAL_BTN_COLOR = Color.RED;
+
+        // Dialog Variables
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+        final DBHandler db = new DBHandler(currentContext.getContext());
+        final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+        final ArrayList<EventClass> dbEvent_List = db.getAllEventFromDB(profileID_Int);
+
+        // Set Dialog Title
+        alertDialog.setTitle(DIALOG_TITLE);
+
+        // Set Dialog Message
+        alertDialog.setMessage("Pick an event! (You can add events in Event History)");
+
+        // Set layout for gathering information
+        final RelativeLayout subView_RelLay = new RelativeLayout(context);
+
+        // Set views
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        final ListView event_List = new ListView(context);
+        final CheckboxListArrayAdapter event_Adapt = initializeEventArrayAdapt(dbEvent_List);
+        event_List.setAdapter(event_Adapt);
+        event_List.setLayoutParams(params);
+        subView_RelLay.addView(event_List);
+
+        // Add linear layout to alert dialog
+        alertDialog.setView(subView_RelLay);
+
+        // Set Buttons
+        // Positive Button, Right
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Processed by onClick below
+            }
+        });
+
+        // Neutral Button, Left
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "CANCEL", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Processed by onClick below
+            }
+        });
+
+
+        new Dialog(context);
+        alertDialog.show();
+
+        // Set Buttons
+        final Button pos_Btn = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        final Button neu_Btn = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+
+        pos_Btn.setTextColor(POSITIVE_BTN_COLOR);
+        pos_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Positive button
+                if (event_Adapt.getCount() == 1) {
+                    // Event selected, return that event
+                    EventClass.this.setEventFromEvent(dbEvent_List.get(event_Adapt.getCheckedItems().get(0)));
+                    alertDialog.dismiss();
+                } else {
+                    // Too few or many events selected
+                    Toast.makeText(context, "Select 1 Event.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        neu_Btn.setTextColor(NEUTRAL_BTN_COLOR);
+        neu_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Perform Action on Neutral button
+                // Pick canceled, set ID to -1 and dismiss dialog
+                EventClass.this.setEventID_Int(-1);
+                alertDialog.dismiss();
+            }
+
+        });
+    }
 }
