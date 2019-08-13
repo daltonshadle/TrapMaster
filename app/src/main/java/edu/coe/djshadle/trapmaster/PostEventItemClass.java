@@ -49,7 +49,6 @@ public class PostEventItemClass extends ConstraintLayout {
     private int shooterScore_Int;
     private GunClass shooter_Gun;
     private LoadClass shooter_Load;
-    private EventClass shooter_Event;
     private String shooterNotes_Str;
 
     private Boolean expand_Bool = false;
@@ -57,7 +56,6 @@ public class PostEventItemClass extends ConstraintLayout {
     // UI References
     TextView shooterName_Txt;
     TextView shooterScore_Txt;
-    TextView shooterEvent_Txt;
     TextView shooterGun_Txt;
     TextView shooterLoad_Txt;
     TextView shooterNotes_Txt;
@@ -155,22 +153,12 @@ public class PostEventItemClass extends ConstraintLayout {
         // Initialize Views
         shooterName_Txt = findViewById(R.id.postEventShooterName_Txt);
         shooterScore_Txt = findViewById(R.id.postEventScore_Txt);
-        shooterEvent_Txt = findViewById(R.id.postEventItemEvent_Txt);
         shooterGun_Txt = findViewById(R.id.postEventItemGun_Txt);
         shooterLoad_Txt = findViewById(R.id.postEventItemLoad_Txt);
         shooterNotes_Txt = findViewById(R.id.postEventItemNotes_Txt);
         final LinearLayout shooterDetails_Lay = findViewById(R.id.postEventItemDetails_Lay);
         
         // Initialize buttons
-        Button event_Btn = findViewById(R.id.postEventItemEvent_Btn);
-        event_Btn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                shooter_Event.chooseEventDialog(context, profileID_Int);
-                PostEventItemClass.this.setShooter_Event(shooter_Event);
-            }
-        });
-
         Button gun_Btn = findViewById(R.id.postEventItemGun_Btn);
         gun_Btn.setOnClickListener(new OnClickListener() {
             @Override
@@ -215,7 +203,6 @@ public class PostEventItemClass extends ConstraintLayout {
         });
         
         // Initialize class variables
-        shooter_Event = new EventClass();
         shooter_Gun = new GunClass();
         shooter_Load = new LoadClass();
         shooterNotes_Str = "";
@@ -261,6 +248,9 @@ public class PostEventItemClass extends ConstraintLayout {
 
     public void setShooter_Gun(GunClass shooter_Gun) {
         this.shooter_Gun = shooter_Gun;
+        if (this.shooter_Gun.getGunNickname_Str().isEmpty()) {
+            this.shooter_Gun.setGunNickname_Str("None");
+        }
         String tempGun_Str = "Gun: " + this.shooter_Gun.getGunNickname_Str();
         shooterGun_Txt.setText(tempGun_Str);
     }
@@ -271,18 +261,11 @@ public class PostEventItemClass extends ConstraintLayout {
 
     public void setShooter_Load(LoadClass shooter_Load) {
         this.shooter_Load = shooter_Load;
+        if (this.shooter_Load.getLoadNickname_Str().isEmpty()) {
+            this.shooter_Load.setLoadNickname_Str("None");
+        }
         String tempLoad_Str = "Load: " + this.shooter_Load.getLoadNickname_Str();
         shooterLoad_Txt.setText(tempLoad_Str);
-    }
-
-    public EventClass getShooter_Event() {
-        return shooter_Event;
-    }
-
-    public void setShooter_Event(EventClass shooter_Event) {
-        this.shooter_Event = shooter_Event;
-        String tempEvent_Str = "Event: " + this.shooter_Event.getEventName_Str();
-        shooterEvent_Txt.setText(tempEvent_Str);
     }
 
     public String getShooterNotes_Str() {
@@ -291,6 +274,9 @@ public class PostEventItemClass extends ConstraintLayout {
 
     public void setShooterNotes_Str(String shooterNotes_Str) {
         this.shooterNotes_Str = shooterNotes_Str;
+        if (this.shooterNotes_Str.isEmpty()) {
+            this.shooterNotes_Str = "None";
+        }
         String tempNotes_Str = "Notes: " + this.shooterNotes_Str;
         shooterNotes_Txt.setText(tempNotes_Str);
     }

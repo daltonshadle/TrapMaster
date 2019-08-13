@@ -58,21 +58,10 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <Button
-            android:id="@+id/postEventItemEvent_Btn"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_margin="2dp"
-            android:layout_weight="1"
-            android:background="@drawable/event_icon" />
-
-        <Button
             android:id="@+id/postEventItemGun_Btn"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="2dp"
+            android:layout_margin="2dp"
             android:layout_weight="1"
             android:background="@drawable/shotgun_icon" />
 
@@ -80,6 +69,7 @@
             android:id="@+id/postEventItemLoad_Btn"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="2dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="2dp"
@@ -120,12 +110,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:id="@+id/postEventItemEvent_Txt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Event: None" />
 
         <TextView
             android:id="@+id/postEventItemGun_Txt"
