@@ -112,6 +112,29 @@ public class CheckboxListArrayAdapter extends ArrayAdapter<String> {
         return ret;
     }
 
+    public int getCheckedCount() {
+        /*******************************************************************************************
+         * Function: getCheckedCount
+         *
+         * Purpose: Gets all indices of all checked items
+         *
+         * Parameters: None
+         *
+         * Returns: ret (OUT) - array of checked indices
+         *
+         ******************************************************************************************/
+
+        int ret = 0;
+
+        for (int i = 0; i < string_Array.size(); i++) {
+            if (checked_Array.get(i)) {
+                ret = ret + 1;
+            }
+        }
+
+        return ret;
+    }
+
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull final ViewGroup parent) {

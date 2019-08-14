@@ -971,7 +971,7 @@ public class EventClass {
 
         // Set views
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                RelativeLayout.LayoutParams.MATCH_PARENT, 250);
 
         final ListView event_List = new ListView(context);
         final CheckboxListArrayAdapter event_Adapt = initializeEventArrayAdapt(dbEvent_List);
@@ -1010,13 +1010,16 @@ public class EventClass {
             @Override
             public void onClick(View view) {
                 // Perform Action on Positive button
-                if (event_Adapt.getCount() == 1) {
+                if (event_Adapt.getCheckedCount() == 1) {
                     // Event selected, return that event
                     EventClass.this.setEventFromEvent(dbEvent_List.get(event_Adapt.getCheckedItems().get(0)));
                     alertDialog.dismiss();
-                } else {
-                    // Too few or many events selected
-                    Toast.makeText(context, "Select 1 Event.", Toast.LENGTH_SHORT).show();
+                } else if (event_Adapt.getCheckedCount() > 1) {
+                    // Too few events selected
+                    Toast.makeText(context, "Too few events selected. Select 1 event.", Toast.LENGTH_SHORT).show();
+                } else if (event_Adapt.getCheckedCount() < 1) {
+                    // Too many events selected
+                    Toast.makeText(context, "Too many items selected. Select 1 event.", Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -216,6 +216,8 @@ public class ShootingEventClass {
 
         // Shooter name listview
         final ListView shooter_ListView = new ListView(context);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 250);
+        shooter_ListView.setLayoutParams(params);
 
         // Add linear layout to alert dialog
         alertDialog.setView(subView_LnrLay);
@@ -272,10 +274,10 @@ public class ShootingEventClass {
 
                         if (checkedShooters_Array.isEmpty()) {
                             // Throw error that at least one needs to be checked
-                            Toast.makeText(context, "At least 1 shooter per round.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Too few shooters selected. Select at least 1 shooter.", Toast.LENGTH_LONG).show();
                         } else if (checkedShooters_Array.size() > 5) {
                             // Throw error that there can only be 5 shooters
-                            Toast.makeText(context, "Only 5 shooters per round.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Too many shooters selected. Select up to 5 shooters.", Toast.LENGTH_LONG).show();
                         } else {
                             // Get names of checked shooters
                             ArrayList<String> shooterNames_Array = new ArrayList<>();

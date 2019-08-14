@@ -10,4 +10,5 @@
     <color name="selectorGrey">#DBDBDB</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="white">#FFFFFF</color>
+    <color name="steelGray">#6D6D6D</color>
 </resources>

@@ -447,7 +447,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: roundID_int (IN) - ID number for round
          *
-         * Returns: None TODO: fix other database items when deleted, ie reset item ID to -1
+         * Returns: None
          *
          ******************************************************************************************/
 
@@ -455,7 +455,9 @@ public class DBHandler extends SQLiteOpenHelper {
 
         String whereClause_Str = "(" + KEY_ROUND_ID + " = '" + roundID_int + "')";
         try {
+            RoundClass delete_Round = getRoundInDB(roundID_int);
             dbWhole.delete(TABLE_ROUND, whereClause_Str, null);
+            updateDBAfterRoundDeletion(delete_Round);
         } catch (Exception e) {
             Log.d("JRW", e.toString());
         }
@@ -528,6 +530,48 @@ public class DBHandler extends SQLiteOpenHelper {
 
         dbWhole.close();
         return tempRound_List;
+    }
+
+    public void updateDBAfterRoundDeletion (RoundClass delete_Round) {
+        /*******************************************************************************************
+         * Function: updateDBAfterRoundDeletion
+         *
+         * Purpose: Function updates database after match is deleted
+         *
+         * Parameters: delete_Round (IN) - round object to be deleted from database
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Get the most recent database
+        dbWhole = this.getWritableDatabase();
+
+        // Update Matches
+        String query = "SELECT * FROM " + TABLE_MATCH + " WHERE "
+                + KEY_MATCH_SHOOTER_ID + " = " + Integer.toString(delete_Round.getRoundShooterID_Int());
+
+        Cursor cursor = dbWhole.rawQuery(query, null);
+
+        // Iterate over each match that shares a shooter ID
+        Boolean roundFound_Bool = false;
+        while (cursor.moveToNext() && !roundFound_Bool) {
+            // Initialize match variable
+            MatchClass temp_Match = getMatchInDB(cursor.getInt(cursor.getColumnIndex(KEY_MATCH_ID)));
+
+            // Check if the match has the round ID in it. If it does, delete it and update Match
+            ArrayList<Integer> roundID_List = temp_Match.getMatchRoundIDS_Array();
+            if (roundID_List.contains(delete_Round.getRoundID_Int())) {
+                roundID_List.remove(Integer.valueOf(delete_Round.getRoundID_Int()));
+                temp_Match.setMatchRoundIDS_Array(roundID_List);
+                temp_Match.setMatchScore_Int(temp_Match.getMatchScore_Int() - delete_Round.getRoundScore_Int());
+                updateMatchInDB(temp_Match);
+                roundFound_Bool = true;
+            }
+        }
+
+        // close database
+        dbWhole.close();
     }
 
     //************************************** Match Functions ***************************************
@@ -604,7 +648,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: matchID_Int (IN) - ID number for match
          *
-         * Returns: None TODO: fix other database items when deleted, ie reset item ID to -1
+         * Returns: None
          *
          ******************************************************************************************/
 
@@ -612,7 +656,10 @@ public class DBHandler extends SQLiteOpenHelper {
 
         String whereClause_Str = "(" + KEY_MATCH_ID + " = '" + matchID_Int + "')";
         try {
+            MatchClass temp_Match = getMatchInDB(matchID_Int);
+            ArrayList<Integer> tempRoundID_List = temp_Match.getMatchRoundIDS_Array();
             dbWhole.delete(TABLE_MATCH, whereClause_Str, null);
+            updateDBAfterMatchDeletion(tempRoundID_List);
         } catch (Exception e) {
             Log.d("JRW", e.toString());
         }
@@ -683,6 +730,30 @@ public class DBHandler extends SQLiteOpenHelper {
 
         dbWhole.close();
         return tempMatch_List;
+    }
+
+    public void updateDBAfterMatchDeletion (ArrayList<Integer> roundID_list) {
+        /*******************************************************************************************
+         * Function: updateDBAfterMatchDeletion
+         *
+         * Purpose: Function updates database after match is deleted
+         *
+         * Parameters: roundID_list (IN) - database ID of the rounds to delete
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Get the most recent database
+        dbWhole = this.getWritableDatabase();
+
+        // Update Rounds
+        for (int roundID_Int : roundID_list) {
+            deleteRoundInDB(roundID_Int);
+        }
+
+        // close database
+        dbWhole.close();
     }
 
     //************************************** Shooter Functions *************************************
@@ -784,7 +855,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: shooterID_Int (IN) - ID of shooter to remove
          *
-         * Returns: None TODO: fix other database items when deleted, ie reset item ID to -1
+         * Returns: None
          *
          ******************************************************************************************/
 
@@ -793,6 +864,7 @@ public class DBHandler extends SQLiteOpenHelper {
         String whereClause_Str = "(" + KEY_SHOOTER_ID + " = '" + Integer.toString(shooterID_Int) + "')";
         try {
             dbWhole.delete(TABLE_SHOOTERS, whereClause_Str, null);
+            updateDBAfterShooterDeletion(shooterID_Int);
         } catch (Exception e) {
             Log.d("JRW", e.toString());
         }
@@ -899,6 +971,41 @@ public class DBHandler extends SQLiteOpenHelper {
         return doesShooterExist;
     }
 
+    public void updateDBAfterShooterDeletion (int shooterID_Int) {
+        /*******************************************************************************************
+         * Function: updateDBAfterShooterDeletion
+         *
+         * Purpose: Function updates database after shooter is deleted
+         *
+         * Parameters: shooterID_Int (IN) - database ID of the shooter that was deleted
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Get the most recent database
+        dbWhole = this.getWritableDatabase();
+
+        // Update Matches
+        String whereClause_Str = "(" + KEY_MATCH_SHOOTER_ID + " = '" + shooterID_Int + "')";
+        try {
+            dbWhole.delete(TABLE_MATCH, whereClause_Str, null);
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        // Update Rounds
+        whereClause_Str = "(" + KEY_ROUND_SHOOTER_ID + " = '" + shooterID_Int + "')";
+        try {
+            dbWhole.delete(TABLE_ROUND, whereClause_Str, null);
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        // close database
+        dbWhole.close();
+    }
+
     //*************************************** Load Functions ***************************************
     public LoadClass getLoadInDB (int loadID_Int) {
         /*******************************************************************************************
@@ -975,7 +1082,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: loadID_Int (IN) - ID of load to remove
          *
-         * Returns: None TODO: fix other database items when deleted, ie reset item ID to -1
+         * Returns: None
          *
          ******************************************************************************************/
 
@@ -984,6 +1091,7 @@ public class DBHandler extends SQLiteOpenHelper {
         String whereClause_Str = "(" + KEY_LOAD_ID + " = '" + Integer.toString(loadID_Int) + "')";
         try {
             dbWhole.delete(TABLE_LOADS, whereClause_Str, null);
+            updateDBAfterLoadDeletion(loadID_Int);
         } catch (Exception e) {
             Log.d("JRW", e.toString());
         }
@@ -1099,6 +1207,38 @@ public class DBHandler extends SQLiteOpenHelper {
         return doesNicknameExist;
     }
 
+    public void updateDBAfterLoadDeletion (int loadID_Int) {
+        /*******************************************************************************************
+         * Function: updateDBAfterLoadDeletion
+         *
+         * Purpose: Function updates database after load is deleted
+         *
+         * Parameters: loadID_Int (IN) - database ID of the load that was deleted
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Get the most recent database
+        dbWhole = this.getWritableDatabase();
+
+        // Update Rounds
+        String query = "SELECT * FROM " + TABLE_ROUND + " WHERE " + KEY_ROUND_LOAD_ID +
+                " = '" + loadID_Int + "'";
+
+        Cursor cursor = dbWhole.rawQuery(query, null);
+
+        // Iterate over each item in the cursor and update the loadID to -1
+        while (cursor.moveToNext()) {
+            RoundClass temp_Round = getRoundInDB(cursor.getInt(cursor.getColumnIndex(KEY_ROUND_ID)));
+            temp_Round.setRoundLoadID_Int(-1);
+            updateRoundInDB(temp_Round);
+        }
+
+        // close database
+        dbWhole.close();
+    }
+
     //**************************************** Gun Functions ***************************************
     public GunClass getGunInDB (int gunID_Int) {
         /*******************************************************************************************
@@ -1171,7 +1311,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: gunID_Int (IN) - ID of gun to delete
          *
-         * Returns: None TODO: fix other database items when deleted, ie reset item ID to -1
+         * Returns: None
          *
          ******************************************************************************************/
 
@@ -1180,6 +1320,7 @@ public class DBHandler extends SQLiteOpenHelper {
         String whereClause_Str = "(" + KEY_GUN_ID + " = '" + Integer.toString(gunID_Int) + "')";
         try {
             dbWhole.delete(TABLE_GUNS, whereClause_Str, null);
+            updateDBAfterGunDeletion(gunID_Int);
         } catch (Exception e) {
             Log.d("JRW", e.toString());
         }
@@ -1291,6 +1432,38 @@ public class DBHandler extends SQLiteOpenHelper {
         return doesNicknameExist;
     }
 
+    public void updateDBAfterGunDeletion (int gunID_Int) {
+        /*******************************************************************************************
+         * Function: updateDBAfterGunDeletion
+         *
+         * Purpose: Function updates database after gun is deleted
+         *
+         * Parameters: gunID_Int (IN) - database ID of the gun that was deleted
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Get the most recent database
+        dbWhole = this.getWritableDatabase();
+
+        // Update Rounds
+        String query = "SELECT * FROM " + TABLE_ROUND + " WHERE " + KEY_ROUND_GUN_ID +
+                " = '" + gunID_Int + "'";
+
+        Cursor cursor = dbWhole.rawQuery(query, null);
+
+        // Iterate over each item in the cursor and update the gunID to -1
+        while (cursor.moveToNext()) {
+            RoundClass temp_Round = getRoundInDB(cursor.getInt(cursor.getColumnIndex(KEY_ROUND_ID)));
+            temp_Round.setRoundGunID_Int(-1);
+            updateRoundInDB(temp_Round);
+        }
+
+        // close database
+        dbWhole.close();
+    }
+
     //************************************** Event Functions ***************************************
     public EventClass getEventInDB (int eventID_Int) {
         /*******************************************************************************************
@@ -1365,7 +1538,7 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: eventID_Int (IN) - ID of event to remove
          *
-         * Returns: None TODO: fix other database items when deleted, ie reset item ID to -1
+         * Returns: None
          *
          ******************************************************************************************/
 
@@ -1374,6 +1547,7 @@ public class DBHandler extends SQLiteOpenHelper {
         String whereClause_Str = "(" + KEY_EVENT_ID + " = '" + Integer.toString(eventID_Int) + "')";
         try {
             dbWhole.delete(TABLE_EVENTS, whereClause_Str, null);
+            updateDBAfterEventDeletion(eventID_Int);
         } catch (Exception e) {
             Log.d("JRW", e.toString());
         }
@@ -1488,5 +1662,37 @@ public class DBHandler extends SQLiteOpenHelper {
 
         dbWhole.close();
         return doesEventNameExist;
+    }
+
+    public void updateDBAfterEventDeletion (int eventID_Int) {
+        /*******************************************************************************************
+         * Function: updateDBAfterEventDeletion
+         *
+         * Purpose: Function updates database after event is deleted
+         *
+         * Parameters: eventID_Int (IN) - database ID of the event that was deleted
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Get the most recent database
+        dbWhole = this.getWritableDatabase();
+
+        // Update Rounds
+        String query = "SELECT * FROM " + TABLE_MATCH + " WHERE " + KEY_MATCH_EVENT_ID +
+                " = '" + eventID_Int + "'";
+
+        Cursor cursor = dbWhole.rawQuery(query, null);
+
+        // Iterate over each item in the cursor and update the eventID to -1
+        while (cursor.moveToNext()) {
+            MatchClass temp_Match = getMatchInDB(cursor.getInt(cursor.getColumnIndex(KEY_MATCH_ID)));
+            temp_Match.setMatchEventID_Int(-1);
+            updateMatchInDB(temp_Match);
+        }
+
+        // close database
+        dbWhole.close();
     }
 }

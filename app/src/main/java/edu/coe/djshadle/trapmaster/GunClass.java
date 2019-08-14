@@ -857,7 +857,7 @@ public class GunClass {
 
         // Set views
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                RelativeLayout.LayoutParams.MATCH_PARENT, 250);
 
         final ListView gun_List = new ListView(context);
         final CheckboxListArrayAdapter gun_Adapt = initializeGunArrayAdapt(dbGun_List);
@@ -896,13 +896,16 @@ public class GunClass {
             @Override
             public void onClick(View view) {
                 // Perform Action on Positive button
-                if (gun_Adapt.getCount() == 1) {
+                if (gun_Adapt.getCheckedCount() == 1) {
                     // Gun selected, return that gun
                     GunClass.this.setGunFromGun(dbGun_List.get(gun_Adapt.getCheckedItems().get(0)));
                     alertDialog.dismiss();
-                } else {
-                    // Too few or many guns selected
-                    Toast.makeText(context, "Select 1 Gun.", Toast.LENGTH_SHORT).show();
+                } else if (gun_Adapt.getCheckedCount() < 1) {
+                    // Too few guns selected
+                    Toast.makeText(context, "Too few guns selected. Select 1 gun.", Toast.LENGTH_SHORT).show();
+                } else if (gun_Adapt.getCheckedCount() > 1) {
+                    // Too many guns selected
+                    Toast.makeText(context, "Too many guns selected. Select 1 gun.", Toast.LENGTH_SHORT).show();
                 }
             }
         });

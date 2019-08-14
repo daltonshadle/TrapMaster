@@ -946,7 +946,7 @@ public class LoadClass {
 
         // Set views
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                RelativeLayout.LayoutParams.MATCH_PARENT, 250);
 
         final ListView load_List = new ListView(context);
         final CheckboxListArrayAdapter load_Adapt = initializeLoadArrayAdapt(dbLoad_List);
@@ -985,13 +985,16 @@ public class LoadClass {
             @Override
             public void onClick(View view) {
                 // Perform Action on Positive button
-                if (load_Adapt.getCount() == 1) {
+                if (load_Adapt.getCheckedCount() == 1) {
                     // Gun selected, return that load
                     LoadClass.this.setLoadFromLoad(dbLoad_List.get(load_Adapt.getCheckedItems().get(0)));
                     alertDialog.dismiss();
-                } else {
-                    // Too few or many guns selected
-                    Toast.makeText(context, "Select 1 Load.", Toast.LENGTH_SHORT).show();
+                } else if (load_Adapt.getCheckedCount() < 1) {
+                    // Too few guns selected
+                    Toast.makeText(context, "Too few loads selected. Select 1 load.", Toast.LENGTH_SHORT).show();
+                } else if (load_Adapt.getCheckedCount() > 1) {
+                    // Too many guns selected
+                    Toast.makeText(context, "Too many loads selected. Select 1 load.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
