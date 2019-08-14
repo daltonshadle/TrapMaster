@@ -5,6 +5,7 @@
     android:id="@+id/armory_Lay"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/steelGray"
     tools:context="edu.coe.djshadle.trapmaster.ArmoryActivity">
 
     <android.support.design.widget.TabLayout
