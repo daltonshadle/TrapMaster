@@ -86,21 +86,21 @@
 
     <Button
         android:id="@+id/postEventRight_Btn"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_width="@dimen/NextPrevButton"
+        android:layout_height="@dimen/NextPrevButton"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="NEXT"
+        android:background="@drawable/right_caret_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/postEventLeft_Btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/NextPrevButton"
+        android:layout_height="@dimen/NextPrevButton"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
-        android:text="PREVIOUS"
+        android:background="@drawable/left_caret_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

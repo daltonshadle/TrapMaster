@@ -166,7 +166,7 @@ public class CheckboxListArrayAdapter extends ArrayAdapter<String> {
         // Set TextView string
         listItem_Text.setText(string_Array.get(position));
 
-        // Set Checkbox listener
+        // Set Checkbox and OnClick listeners
         final int item_Int = position;
         listItem_Checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -174,6 +174,13 @@ public class CheckboxListArrayAdapter extends ArrayAdapter<String> {
                 checked_Array.set(item_Int, b);
             }
         });
+        listItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checked_Array.set(item_Int, !checked_Array.get(item_Int));
+            }
+        });
+        listItem_Text.setClickable(false);
 
         return listItem;
     }

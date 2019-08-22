@@ -12,6 +12,7 @@
     <!-- Armory Dimensions -->
 
     <!-- New Event Dimensions -->
+    <dimen name="NextPrevButton">40dp</dimen>
 
     <!-- Event History Dimensions -->
 
