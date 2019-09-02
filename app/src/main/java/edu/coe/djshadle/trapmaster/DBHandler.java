@@ -21,7 +21,6 @@
 package edu.coe.djshadle.trapmaster;
 
 //******************************************** Imports *********************************************
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -34,76 +33,84 @@ import java.util.ArrayList;
 public class DBHandler extends SQLiteOpenHelper {
     //********************************** Variables and Constants ***********************************
     //Database Variables & Constants
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     private static final String DATABASE_NAME = "trapMasterDB.db";
     private SQLiteDatabase dbWhole;
 
     //Profile Table Stuff
     private static final String TABLE_PROFILES = "profiles";
     private static final String KEY_PROFILE_ID = "id";
-    private static final String KEY_PROFILE_USERNAME = "profileUsername";  //Key
+    private static final String KEY_PROFILE_EMAIL = "profile_Email";  //Key
 
     //Shooter Table Stuff
     private static final String TABLE_SHOOTERS = "shooters";
     private static final String KEY_SHOOTER_ID = "id";
-    private static final String KEY_SHOOTER_NAME = "shooterName";  //Key
-    private static final String KEY_SHOOTER_COACH = "shooterCoach";
-    private static final String KEY_SHOOTER_TEAM_NAME = "shooterTeamName";
+    private static final String KEY_SHOOTER_PROFILE_ID = "shooter_ProfileID";  //Key
+    private static final String KEY_SHOOTER_NAME = "shooter_Name";  //Key
 
     //Gun Table Stuff
     private static final String TABLE_GUNS = "guns";
     private static final String KEY_GUN_ID = "id";
-    private static final String KEY_GUN_PROFILE_NAME = "gunProfName";  //Key
-    private static final String KEY_GUN_NICKNAME = "gunNickname";
-    private static final String KEY_GUN_MODEL = "gunModel";
-    private static final String KEY_GUN_GAUGE = "gunGauge";
-    private static final String KEY_GUN_NOTES = "gunNotes";
+    private static final String KEY_GUN_PROFILE_ID = "gun_ProfileID";  //Key
+    private static final String KEY_GUN_NICKNAME = "gun_Nickname";
+    private static final String KEY_GUN_MODEL = "gun_Model";
+    private static final String KEY_GUN_GAUGE = "gun_Gauge";
+    private static final String KEY_GUN_NOTES = "gun_Notes";
 
     //Load Table Stuff
     private static final String TABLE_LOADS = "loads";
     private static final String KEY_LOAD_ID = "id";
-    private static final String KEY_LOAD_PROFILE_NAME = "loadProfName";  //Key
-    private static final String KEY_LOAD_NICKNAME = "loadNickname";
-    private static final String KEY_LOAD_BRAND = "loadBrand";
-    private static final String KEY_LOAD_GAUGE = "loadGauge";
-    private static final String KEY_LOAD_LENGTH = "loadLength";
-    private static final String KEY_LOAD_GRAIN = "loadGrain";
-    private static final String KEY_LOAD_NOTES = "loadNotes";
+    private static final String KEY_LOAD_PROFILE_ID = "load_ProfileID";  //Key
+    private static final String KEY_LOAD_NICKNAME = "load_Nickname";
+    private static final String KEY_LOAD_BRAND = "load_Brand";
+    private static final String KEY_LOAD_GAUGE = "load_Gauge";
+    private static final String KEY_LOAD_LENGTH = "load_Length";
+    private static final String KEY_LOAD_GRAIN = "load_Grain";
+    private static final String KEY_LOAD_NOTES = "load_Notes";
+
+    //Round Table Stuff
+    private static final String TABLE_ROUND = "ROUND";
+    private static final String KEY_ROUND_ID = "id";
+    private static final String KEY_ROUND_SHOOTER_ID = "ROUND_ShooterID";  //Key
+    private static final String KEY_ROUND_ROUND = "ROUND_Round";
+    private static final String KEY_ROUND_SCORE = "ROUND_Score";
+    private static final String KEY_ROUND_HIT_MISS_STATES = "ROUND_HitMiss";
+    private static final String KEY_ROUND_GUN_ID = "ROUND_GunID";
+    private static final String KEY_ROUND_LOAD_ID = "ROUND_LoadID";
+    private static final String KEY_ROUND_NOTES = "ROUND_Notes";
+
+    //Match Table Stuff
+    private static final String TABLE_MATCH = "matches";
+    private static final String KEY_MATCH_ID = "id";
+    private static final String KEY_MATCH_SHOOTER_ID = "match_ShooterID";  //Key
+    private static final String KEY_MATCH_TEAM_ID = "match_TeamID";
+    private static final String KEY_MATCH_EVENT_ID = "match_EventID";
+    private static final String KEY_MATCH_ROUND_IDS = "match_RoundIDs";
+    private static final String KEY_MATCH_SCORE = "match_Score";
+    private static final String KEY_MATCH_NOTES = "match_Notes";
 
     //Event Table Stuff
     private static final String TABLE_EVENTS = "events";
     private static final String KEY_EVENT_ID = "id";
-    private static final String KEY_EVENT_PROFILE_NAME = "eventProfName";  //Key
-    private static final String KEY_EVENT_TEAM_NAME = "eventTeamName";
-    private static final String KEY_EVENT_NAME = "eventName";
-    private static final String KEY_EVENT_LOCATION = "eventLocation";
-    private static final String KEY_EVENT_DATE = "eventDate";
-    private static final String KEY_EVENT_WEATHER = "eventWeather";
-    private static final String KEY_EVENT_NOTES = "eventNotes";
+    private static final String KEY_EVENT_PROFILE_ID = "event_ProfilfeID";  //Key
+    private static final String KEY_EVENT_NAME = "event_Name";
+    private static final String KEY_EVENT_LOCATION = "event_Location";
+    private static final String KEY_EVENT_DATE = "event_Date";
+    private static final String KEY_EVENT_WEATHER = "event_Weather";
+    private static final String KEY_EVENT_NOTES = "event_Notes";
 
     //Location Table Stuff
     private static final String TABLE_LOCATION = "location";
     private static final String KEY_LOCATION_ID = "id";
-    private static final String KEY_LOCATION_PROFILE_NAME = "locationProfName";  //Key
-    private static final String KEY_LOCATION_NAME = "locationName";
+    private static final String KEY_LOCATION_PROFILE_ID = "location_ProfileID";  //Key
+    private static final String KEY_LOCATION_NAME = "location_Name";
 
-    //Shot Table Stuff
-    private static final String TABLE_SHOT= "shot";
-    private static final String KEY_SHOT_ID = "id";
-    private static final String KEY_SHOT_SHOOTER_NAME = "shotShooterName";  //Key
-    private static final String KEY_SHOT_EVENT_NAME = "shotEventName";
-    private static final String KEY_SHOT_NUMBER = "shotNumber";
-    private static final String KEY_SHOT_HIT_MISS = "shotHitMiss";
-    private static final String KEY_SHOT_GUN = "shotGun";
-    private static final String KEY_SHOT_LOAD = "shotLoad";
-    private static final String KEY_SHOT_NOTES = "shotNotes";
-
-    //TeamTable Stuff
+    //Team Table Stuff
     private static final String TABLE_TEAM = "team";
     private static final String KEY_TEAM_ID = "id";
-    private static final String KEY_TEAM_NAME = "teamName";  //Key
-    private static final String KEY_TEAM_COACH = "teamCoach"; // Key?
-    private static final String KEY_TEAM_LIST = "teamList";
+    private static final String KEY_TEAM_NAME = "team_Name";  //Key
+    private static final String KEY_TEAM_COACH = "team_Coach"; // Key?
+    private static final String KEY_TEAM_LIST = "team_List";
 
     //************************************ General DB Functions ************************************
     public DBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -155,23 +162,22 @@ public class DBHandler extends SQLiteOpenHelper {
         //Profile Table
         String CREATE_PROFILE_TABLE = "CREATE TABLE " + TABLE_PROFILES + " ("
                 + KEY_PROFILE_ID + " INTEGER PRIMARY KEY,"
-                + KEY_PROFILE_USERNAME + " TEXT"
+                + KEY_PROFILE_EMAIL + " TEXT"
                 + ")";
         db.execSQL(CREATE_PROFILE_TABLE);
 
         //Shooter Table
         String CREATE_SHOOTER_TABLE = "CREATE TABLE " + TABLE_SHOOTERS + " ("
                 + KEY_SHOOTER_ID + " INTEGER PRIMARY KEY,"
-                + KEY_SHOOTER_NAME + " TEXT,"
-                + KEY_SHOOTER_COACH + " TEXT,"
-                + KEY_SHOOTER_TEAM_NAME + " TEXT"
+                + KEY_SHOOTER_PROFILE_ID + " INTEGER,"
+                + KEY_SHOOTER_NAME + " TEXT"
                 + ")";
         db.execSQL(CREATE_SHOOTER_TABLE);
 
         //Gun Table
         String CREATE_GUN_TABLE = "CREATE TABLE " + TABLE_GUNS + " ("
                 + KEY_GUN_ID + " INTEGER PRIMARY KEY,"
-                + KEY_GUN_PROFILE_NAME + " TEXT,"
+                + KEY_GUN_PROFILE_ID + " INTEGER,"
                 + KEY_GUN_NICKNAME + " TEXT,"
                 + KEY_GUN_MODEL + " TEXT,"
                 + KEY_GUN_GAUGE + " TEXT,"
@@ -182,7 +188,7 @@ public class DBHandler extends SQLiteOpenHelper {
         //Load Table
         String CREATE_LOAD_TABLE = "CREATE TABLE " + TABLE_LOADS + " ("
                 + KEY_LOAD_ID + " INTEGER PRIMARY KEY,"
-                + KEY_LOAD_PROFILE_NAME + " TEXT,"
+                + KEY_LOAD_PROFILE_ID + " INTEGER,"
                 + KEY_LOAD_NICKNAME + " TEXT,"
                 + KEY_LOAD_BRAND + " TEXT,"
                 + KEY_LOAD_GAUGE + " TEXT,"
@@ -195,8 +201,7 @@ public class DBHandler extends SQLiteOpenHelper {
         //Event Table Stuff
         String CREATE_EVENT_TABLE = "CREATE TABLE " + TABLE_EVENTS + " ("
                 + KEY_EVENT_ID + " INTEGER PRIMARY KEY,"
-                + KEY_EVENT_PROFILE_NAME + " TEXT,"
-                + KEY_EVENT_TEAM_NAME + " TEXT,"
+                + KEY_EVENT_PROFILE_ID + " INTEGER,"
                 + KEY_EVENT_NAME + " TEXT,"
                 + KEY_EVENT_LOCATION + " TEXT,"
                 + KEY_EVENT_DATE + " TEXT,"
@@ -208,23 +213,35 @@ public class DBHandler extends SQLiteOpenHelper {
         //Location Table
         String CREATE_LOCATION_TABLE = "CREATE TABLE " + TABLE_LOCATION + " ("
                 + KEY_LOCATION_ID + " INTEGER PRIMARY KEY,"
-                + KEY_LOCATION_PROFILE_NAME + " TEXT,"
+                + KEY_LOCATION_PROFILE_ID + " INTEGER,"
                 + KEY_LOCATION_NAME + " TEXT"
                 + ")";
         db.execSQL(CREATE_LOCATION_TABLE);
 
-        //Shot Table
-        String CREATE_SHOT_TABLE = "CREATE TABLE " + TABLE_SHOT + " ("
-                + KEY_SHOT_ID + " INTEGER PRIMARY KEY,"
-                + KEY_SHOT_SHOOTER_NAME + " TEXT,"
-                + KEY_SHOT_EVENT_NAME + " TEXT,"
-                + KEY_SHOT_NUMBER + " TEXT,"
-                + KEY_SHOT_HIT_MISS + " TEXT,"
-                + KEY_SHOT_GUN + " TEXT,"
-                + KEY_SHOT_LOAD + " TEXT,"
-                + KEY_SHOT_NOTES + " TEXT"
+        //Round Table
+        String CREATE_ROUND_TABLE = "CREATE TABLE " + TABLE_ROUND + " ("
+                + KEY_ROUND_ID + " INTEGER PRIMARY KEY,"
+                + KEY_ROUND_SHOOTER_ID + " INTEGER,"
+                + KEY_ROUND_ROUND + " INTEGER,"
+                + KEY_ROUND_SCORE + " INTEGER,"
+                + KEY_ROUND_HIT_MISS_STATES + " TEXT,"
+                + KEY_ROUND_GUN_ID + " INTEGER,"
+                + KEY_ROUND_LOAD_ID + " INTEGER,"
+                + KEY_ROUND_NOTES + " TEXT"
                 + ")";
-        db.execSQL(CREATE_SHOT_TABLE);
+        db.execSQL(CREATE_ROUND_TABLE);
+
+        //Match Table
+        String CREATE_MATCH_TABLE = "CREATE TABLE " + TABLE_MATCH + " ("
+                + KEY_MATCH_ID + " INTEGER PRIMARY KEY,"
+                + KEY_MATCH_SHOOTER_ID + " INTEGER,"
+                + KEY_MATCH_TEAM_ID + " INTEGER,"
+                + KEY_MATCH_EVENT_ID + " INTEGER,"
+                + KEY_MATCH_ROUND_IDS + " TEXT,"
+                + KEY_MATCH_SCORE + " INTEGER,"
+                + KEY_MATCH_NOTES + " TEXT"
+                + ")";
+        db.execSQL(CREATE_MATCH_TABLE);
 
         //Team Table
         String CREATE_TEAM_TABLE = "CREATE TABLE " + TABLE_TEAM + " ("
@@ -259,7 +276,8 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOADS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATION);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SHOT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ROUND);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MATCH);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEAM);
         onCreate(db);
     }
@@ -281,21 +299,56 @@ public class DBHandler extends SQLiteOpenHelper {
         ProfileClass tempProfile = new ProfileClass();
 
         dbWhole = this.getReadableDatabase();
-        String query = "SELECT * FROM " + TABLE_PROFILES + " WHERE " + KEY_PROFILE_USERNAME + " = '" + email + "'";
+        String query = "SELECT * FROM " + TABLE_PROFILES + " WHERE " + KEY_PROFILE_EMAIL + " = '" + email + "'";
         Cursor cursor = dbWhole.rawQuery(query, null);
 
-        if (cursor != null) {
+        if ((cursor != null) && (cursor.getCount() > 0)) {
+            // there is a user with the email in the db
             cursor.moveToFirst();
 
-            tempProfile.setProfileID_Str(cursor.getString(cursor.getColumnIndex(KEY_PROFILE_ID)));
-            tempProfile.setProfileEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_PROFILE_USERNAME)));
+            tempProfile.setProfileID_Int(cursor.getInt(cursor.getColumnIndex(KEY_PROFILE_ID)));
+            tempProfile.setProfileEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_PROFILE_EMAIL)));
+        } else {
+            // there is not a user in the db with this email
+            tempProfile.setProfileID_Int(-1);
+            tempProfile.setProfileEmail_Str(email);
         }
 
         dbWhole.close();
         return tempProfile;
     }
 
-    public void insertProfileInDB (ProfileClass p){
+    public ProfileClass getProfileFromDB (int profileID_Int){
+        /*******************************************************************************************
+         * Function: getProfileFromDB
+         *
+         * Purpose: Function gets a profile based on the email provided
+         *
+         * Parameters: profileID_Int (IN) - key ID for finding profile
+         *
+         * Returns: tempProfile - variable that contains all info from database for this email
+         *          TODO: make this return false or -1 or indicate if profile not found
+         *
+         ******************************************************************************************/
+
+        ProfileClass tempProfile = new ProfileClass();
+
+        dbWhole = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_PROFILES + " WHERE " + KEY_PROFILE_ID + " = '" + profileID_Int + "'";
+        Cursor cursor = dbWhole.rawQuery(query, null);
+
+        if ((cursor != null) && (cursor.getCount() > 0)) {
+            cursor.moveToFirst();
+
+            tempProfile.setProfileID_Int(cursor.getInt(cursor.getColumnIndex(KEY_PROFILE_ID)));
+            tempProfile.setProfileEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_PROFILE_EMAIL)));
+        }
+
+        dbWhole.close();
+        return tempProfile;
+    }
+
+    public long insertProfileInDB (ProfileClass p){
         /*******************************************************************************************
          * Function: insertProfileInDB
          *
@@ -303,92 +356,96 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: p (IN) - ProfileClass object to insert into database
          *
-         * Returns: None
+         * Returns: profileID_Long (OUT) - returns ID generated for insert, -1 if error occurred
          *
          ******************************************************************************************/
 
         dbWhole = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_PROFILE_USERNAME, p.getProfileEmail_Str());
+        values.put(KEY_PROFILE_EMAIL, p.getProfileEmail_Str());
 
-        dbWhole.insert(TABLE_PROFILES, null, values);
+        long profileID_Long = dbWhole.insert(TABLE_PROFILES, null, values);
         dbWhole.close();
+
+        return profileID_Long;
     }
 
-    //*************************************** Shot Functions ***************************************
-    public ShotClass getShotInDB (int shotID_Int) {
+    //************************************** Round Functions ***************************************
+    public RoundClass getRoundInDB (int roundID_Int) {
         /*******************************************************************************************
-         * Function: getShotInDB
+         * Function: getRoundInDB
          *
          * Purpose: Function returns the ID number of a shot in the database
          *
-         * Parameters: shotID_Int (IN) - ID of the shot information to return
+         * Parameters: roundID_Int (IN) - ID of the round information to return
          *
-         * Returns: temp_Shot - Information of the shot stored at shotID_Int
+         * Returns: tempRound - Information of the shot stored at shotID_Int
          *
          ******************************************************************************************/
 
-        ShotClass temp_Shot = new ShotClass();
-        String query = "SELECT * FROM " + TABLE_SHOT + " WHERE "
-                + KEY_SHOT_ID + " = " + Integer.toString(shotID_Int);
+        RoundClass tempRound = new RoundClass();
+        String query = "SELECT * FROM " + TABLE_ROUND + " WHERE "
+                + KEY_ROUND_ID + " = " + Integer.toString(roundID_Int);
 
         dbWhole = this.getReadableDatabase();
 
         try {
             Cursor cursor = dbWhole.rawQuery(query, null);
             cursor.moveToFirst();
-            temp_Shot.setShotID_Int(cursor.getInt(cursor.getColumnIndex(KEY_SHOT_ID)));
-            temp_Shot.setShotShooterName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_SHOOTER_NAME)));
-            temp_Shot.setShotEventName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_EVENT_NAME)));
-            temp_Shot.setShotHitNum_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_HIT_MISS)));
-            temp_Shot.setShotTotalNum_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_NUMBER)));
-            temp_Shot.setShotGun_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_GUN)));
-            temp_Shot.setShotLoad_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_LOAD)));
-            temp_Shot.setShotNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_NOTES)));
+            tempRound.setRoundID_Int(cursor.getInt(cursor.getColumnIndex(KEY_ROUND_ID)));
+            tempRound.setRoundShooterID_Int(cursor.getInt(cursor.getColumnIndex(KEY_ROUND_SHOOTER_ID)));
+            tempRound.setRoundGunID_Int(cursor.getInt(cursor.getColumnIndex(KEY_ROUND_GUN_ID)));
+            tempRound.setRoundLoadID_Int(cursor.getInt(cursor.getColumnIndex(KEY_ROUND_LOAD_ID)));
+            tempRound.setRoundScore_Int(cursor.getInt(cursor.getColumnIndex(KEY_ROUND_SCORE)));
+            tempRound.setRoundRound_Int(cursor.getInt(cursor.getColumnIndex(KEY_ROUND_ROUND)));
+            tempRound.setRoundHitMiss_Array(cursor.getString(cursor.getColumnIndex(KEY_ROUND_HIT_MISS_STATES)));
+            tempRound.setRoundNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_ROUND_NOTES)));
         } catch (Exception e) {
             Log.d("JRW", e.toString());
         }
 
         dbWhole.close();
 
-        return temp_Shot;
+        return tempRound;
     }
 
-    public void insertShotInDB (ShotClass s) {
+    public long insertRoundInDB (RoundClass s) {
         /*******************************************************************************************
-         * Function: insertShotInDB
+         * Function: insertRoundInDB
          *
-         * Purpose: Function inserts information from ShotClass object into database
+         * Purpose: Function inserts information from RoundClass object into database
          *
-         * Parameters: s (IN) - shot class object that holds information to put in database
+         * Parameters: s (IN) - round class object that holds information to put in database
          *
-         * Returns: None
+         * Returns: roundID_Long (OUT) - returns ID generated for insert, -1 if error occurred
          *
          ******************************************************************************************/
 
         dbWhole = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_SHOT_SHOOTER_NAME, s.getShotShooterName_Str());
-        values.put(KEY_SHOT_EVENT_NAME, s.getShotEventName_Str());
-        values.put(KEY_SHOT_NUMBER, s.getShotTotalNum_Str());
-        values.put(KEY_SHOT_HIT_MISS, s.getShotHitNum_Str());
-        values.put(KEY_SHOT_GUN, s.getShotGun_Str());
-        values.put(KEY_SHOT_LOAD, s.getShotLoad_Str());
-        values.put(KEY_SHOT_NOTES, s.getShotNotes_Str());
+        values.put(KEY_ROUND_SHOOTER_ID, s.getRoundShooterID_Int());
+        values.put(KEY_ROUND_GUN_ID, s.getRoundGunID_Int());
+        values.put(KEY_ROUND_LOAD_ID, s.getRoundLoadID_Int());
+        values.put(KEY_ROUND_SCORE, s.getRoundScore_Int());
+        values.put(KEY_ROUND_ROUND, s.getRoundRound_Int());
+        values.put(KEY_ROUND_HIT_MISS_STATES, s.getRoundHitMiss_Str());
+        values.put(KEY_ROUND_NOTES, s.getRoundNotes_Str());
 
-        dbWhole.insert(TABLE_SHOT, null, values);
+        long roundID_Long = dbWhole.insert(TABLE_ROUND, null, values);
         dbWhole.close();
+
+        return roundID_Long;
     }
 
-    public void deleteShotInDB (int shotID_int) {
+    public void deleteRoundInDB (int roundID_int) {
         /*******************************************************************************************
-         * Function: deleteShotInDB
+         * Function: deleteRoundInDB
          *
-         * Purpose: Function deletes item from database based on email and shotID_Int
+         * Purpose: Function deletes item from database based on roundID_int
          *
-         * Parameters: shotID_int (IN) - ID number fo shot
+         * Parameters: roundID_int (IN) - ID number for round
          *
          * Returns: None
          *
@@ -396,9 +453,11 @@ public class DBHandler extends SQLiteOpenHelper {
 
         dbWhole = this.getWritableDatabase();
 
-        String whereClause_Str = "(" + KEY_SHOT_ID + " = '" + shotID_int + "')";
+        String whereClause_Str = "(" + KEY_ROUND_ID + " = '" + roundID_int + "')";
         try {
-            dbWhole.delete(TABLE_SHOT, whereClause_Str, null);
+            RoundClass delete_Round = getRoundInDB(roundID_int);
+            dbWhole.delete(TABLE_ROUND, whereClause_Str, null);
+            updateDBAfterRoundDeletion(delete_Round);
         } catch (Exception e) {
             Log.d("JRW", e.toString());
         }
@@ -406,9 +465,9 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole.close();
     }
 
-    public void updateShotInDB (ShotClass s) {
+    public void updateRoundInDB (RoundClass s) {
         /*******************************************************************************************
-         * Function: updateShotInDB
+         * Function: updateRoundInDB
          *
          * Purpose: Function updates item from database based on database ID
          *
@@ -421,56 +480,280 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_SHOT_SHOOTER_NAME, s.getShotShooterName_Str());
-        values.put(KEY_SHOT_EVENT_NAME, s.getShotEventName_Str());
-        values.put(KEY_SHOT_NUMBER, s.getShotTotalNum_Str());
-        values.put(KEY_SHOT_HIT_MISS, s.getShotHitNum_Str());
-        values.put(KEY_SHOT_GUN, s.getShotGun_Str());
-        values.put(KEY_SHOT_LOAD, s.getShotLoad_Str());
-        values.put(KEY_SHOT_NOTES, s.getShotNotes_Str());
+        values.put(KEY_ROUND_SHOOTER_ID, s.getRoundShooterID_Int());
+        values.put(KEY_ROUND_GUN_ID, s.getRoundGunID_Int());
+        values.put(KEY_ROUND_LOAD_ID, s.getRoundLoadID_Int());
+        values.put(KEY_ROUND_SCORE, s.getRoundScore_Int());
+        values.put(KEY_ROUND_ROUND, s.getRoundRound_Int());
+        values.put(KEY_ROUND_HIT_MISS_STATES, s.getRoundHitMiss_Str());
+        values.put(KEY_ROUND_NOTES, s.getRoundNotes_Str());
 
-        String whereClaus = KEY_SHOT_ID + " = " + Integer.toString(s.getShotID_Int());
+        String whereClaus = KEY_ROUND_ID + " = " + Integer.toString(s.getRoundID_Int());
 
-        dbWhole.update(TABLE_SHOT, values, whereClaus, null);
+        dbWhole.update(TABLE_ROUND, values, whereClaus, null);
         dbWhole.close();
     }
 
-    public ArrayList<ShotClass> getAllShotFromDB (String shooterName) {
+    public ArrayList<RoundClass> getAllRoundsFromDB (int shooterID_Int) {
         /*******************************************************************************************
-         * Function: getAllShotFromDB
+         * Function: getAllRoundsFromDB
          *
-         * Purpose: Function gathers shot information based on shooter name provided
+         * Purpose: Function gathers round information based on shooter ID provided
          *
-         * Parameters: shooterName (IN) - key string for receiving shot information
+         * Parameters: shooterID_Int (IN) - key ID for receiving round information
          *
-         * Returns: tempShot - returns list of ShotClass object with database information
+         * Returns: tempRound_List - returns list of RoundClass object with database information
          *
          ******************************************************************************************/
 
         dbWhole = this.getReadableDatabase();
 
-        ArrayList<ShotClass> tempShot_List = new ArrayList<>();
-        String query = "SELECT * FROM " + TABLE_SHOT + " WHERE " + KEY_SHOT_SHOOTER_NAME +
-                " = '" + shooterName + "'";
+        ArrayList<RoundClass> tempRound_List = new ArrayList<>();
+        String query = "SELECT * FROM " + TABLE_ROUND + " WHERE " + KEY_ROUND_SHOOTER_ID +
+                " = '" + shooterID_Int + "'";
 
         Cursor cursor = dbWhole.rawQuery(query, null);
 
         while (cursor.moveToNext()) {
-            ShotClass tempShot = new ShotClass();
-            tempShot.setShotID_Int(cursor.getInt(cursor.getColumnIndex(KEY_SHOT_ID)));
-            tempShot.setShotShooterName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_SHOOTER_NAME)));
-            tempShot.setShotEventName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_EVENT_NAME)));
-            tempShot.setShotTotalNum_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_NUMBER)));
-            tempShot.setShotHitNum_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_HIT_MISS)));
-            tempShot.setShotGun_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_GUN)));
-            tempShot.setShotLoad_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_LOAD)));
-            tempShot.setShotNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOT_NOTES)));
+            RoundClass tempRound = new RoundClass();
+            tempRound.setRoundID_Int(cursor.getInt(cursor.getColumnIndex(KEY_ROUND_ID)));
+            tempRound.setRoundShooterID_Int(cursor.getInt(cursor.getColumnIndex(KEY_ROUND_SHOOTER_ID)));
+            tempRound.setRoundGunID_Int(cursor.getInt(cursor.getColumnIndex(KEY_ROUND_GUN_ID)));
+            tempRound.setRoundLoadID_Int(cursor.getInt(cursor.getColumnIndex(KEY_ROUND_LOAD_ID)));
+            tempRound.setRoundScore_Int(cursor.getInt(cursor.getColumnIndex(KEY_ROUND_SCORE)));
+            tempRound.setRoundRound_Int(cursor.getInt(cursor.getColumnIndex(KEY_ROUND_ROUND)));
+            tempRound.setRoundHitMiss_Array(cursor.getString(cursor.getColumnIndex(KEY_ROUND_HIT_MISS_STATES)));
+            tempRound.setRoundNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_ROUND_NOTES)));
 
-            tempShot_List.add(tempShot);
+            tempRound_List.add(tempRound);
         }
 
         dbWhole.close();
-        return tempShot_List;
+        return tempRound_List;
+    }
+
+    public void updateDBAfterRoundDeletion (RoundClass delete_Round) {
+        /*******************************************************************************************
+         * Function: updateDBAfterRoundDeletion
+         *
+         * Purpose: Function updates database after match is deleted
+         *
+         * Parameters: delete_Round (IN) - round object to be deleted from database
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Get the most recent database
+        dbWhole = this.getWritableDatabase();
+
+        // Update Matches
+        String query = "SELECT * FROM " + TABLE_MATCH + " WHERE "
+                + KEY_MATCH_SHOOTER_ID + " = " + Integer.toString(delete_Round.getRoundShooterID_Int());
+
+        Cursor cursor = dbWhole.rawQuery(query, null);
+
+        // Iterate over each match that shares a shooter ID
+        Boolean roundFound_Bool = false;
+        while (cursor.moveToNext() && !roundFound_Bool) {
+            // Initialize match variable
+            MatchClass temp_Match = getMatchInDB(cursor.getInt(cursor.getColumnIndex(KEY_MATCH_ID)));
+
+            // Check if the match has the round ID in it. If it does, delete it and update Match
+            ArrayList<Integer> roundID_List = temp_Match.getMatchRoundIDS_Array();
+            if (roundID_List.contains(delete_Round.getRoundID_Int())) {
+                roundID_List.remove(Integer.valueOf(delete_Round.getRoundID_Int()));
+                temp_Match.setMatchRoundIDS_Array(roundID_List);
+                temp_Match.setMatchScore_Int(temp_Match.getMatchScore_Int() - delete_Round.getRoundScore_Int());
+                updateMatchInDB(temp_Match);
+                roundFound_Bool = true;
+            }
+        }
+
+        // close database
+        dbWhole.close();
+    }
+
+    //************************************** Match Functions ***************************************
+    public MatchClass getMatchInDB (int matchID_Int) {
+        /*******************************************************************************************
+         * Function: getMatchInDB
+         *
+         * Purpose: Function returns the ID number of a match in the database
+         *
+         * Parameters: matchID_Int (IN) - ID of the match information to return
+         *
+         * Returns: tempMatch - Information of the match stored at matchID_Int
+         *
+         ******************************************************************************************/
+
+        MatchClass tempMatch = new MatchClass();
+        String query = "SELECT * FROM " + TABLE_MATCH + " WHERE "
+                + KEY_MATCH_ID + " = " + Integer.toString(matchID_Int);
+
+        dbWhole = this.getReadableDatabase();
+
+        try {
+            Cursor cursor = dbWhole.rawQuery(query, null);
+            cursor.moveToFirst();
+            tempMatch.setMatchID_Int(cursor.getInt(cursor.getColumnIndex(KEY_MATCH_ID)));
+            tempMatch.setMatchShooterID_Int(cursor.getInt(cursor.getColumnIndex(KEY_MATCH_SHOOTER_ID)));
+            tempMatch.setMatchTeamID_Int(cursor.getInt(cursor.getColumnIndex(KEY_MATCH_TEAM_ID)));
+            tempMatch.setMatchEventID_Int(cursor.getInt(cursor.getColumnIndex(KEY_MATCH_EVENT_ID)));
+            tempMatch.setMatchRoundIDS_Array(cursor.getString(cursor.getColumnIndex(KEY_MATCH_ROUND_IDS)));
+            tempMatch.setMatchScore_Int(cursor.getInt(cursor.getColumnIndex(KEY_MATCH_SCORE)));
+            tempMatch.setMatchNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_MATCH_NOTES)));
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        dbWhole.close();
+
+        return tempMatch;
+    }
+
+    public long insertMatchInDB (MatchClass m) {
+        /*******************************************************************************************
+         * Function: insertMatchInDB
+         *
+         * Purpose: Function inserts information from MatchClass object into database
+         *
+         * Parameters: m (IN) - match class object that holds information to put in database
+         *
+         * Returns: matchID_Long (OUT) - returns ID generated for insert, -1 if error occurred
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_MATCH_SHOOTER_ID, m.getMatchShooterID_Int());
+        values.put(KEY_MATCH_TEAM_ID, m.getMatchTeamID_Int());
+        values.put(KEY_MATCH_EVENT_ID, m.getMatchEventID_Int());
+        values.put(KEY_MATCH_ROUND_IDS, m.getMatchRoundIDS_Str());
+        values.put(KEY_MATCH_SCORE, m.getMatchScore_Int());
+        values.put(KEY_MATCH_NOTES, m.getMatchNotes_Str());
+
+        long matchID_Long = dbWhole.insert(TABLE_MATCH, null, values);
+        dbWhole.close();
+
+        return matchID_Long;
+    }
+
+    public void deleteMatchInDB (int matchID_Int) {
+        /*******************************************************************************************
+         * Function: deleteMatchInDB
+         *
+         * Purpose: Function deletes item from database based on matchID_Int
+         *
+         * Parameters: matchID_Int (IN) - ID number for match
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getWritableDatabase();
+
+        String whereClause_Str = "(" + KEY_MATCH_ID + " = '" + matchID_Int + "')";
+        try {
+            MatchClass temp_Match = getMatchInDB(matchID_Int);
+            ArrayList<Integer> tempRoundID_List = temp_Match.getMatchRoundIDS_Array();
+            dbWhole.delete(TABLE_MATCH, whereClause_Str, null);
+            updateDBAfterMatchDeletion(tempRoundID_List);
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        dbWhole.close();
+    }
+
+    public void updateMatchInDB (MatchClass m) {
+        /*******************************************************************************************
+         * Function: updateMatchInDB
+         *
+         * Purpose: Function updates item from database based on database ID
+         *
+         * Parameters: m (IN) - object that holds information for updating item in the database
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_MATCH_SHOOTER_ID, m.getMatchShooterID_Int());
+        values.put(KEY_MATCH_TEAM_ID, m.getMatchTeamID_Int());
+        values.put(KEY_MATCH_EVENT_ID, m.getMatchEventID_Int());
+        values.put(KEY_MATCH_ROUND_IDS, m.getMatchRoundIDS_Str());
+        values.put(KEY_MATCH_SCORE, m.getMatchScore_Int());
+        values.put(KEY_MATCH_NOTES, m.getMatchNotes_Str());
+
+        String whereClaus = KEY_MATCH_ID + " = " + Integer.toString(m.getMatchID_Int());
+
+        dbWhole.update(TABLE_MATCH, values, whereClaus, null);
+        dbWhole.close();
+    }
+
+    public ArrayList<MatchClass> getAllMatchesFromDB (int shooterID_Int) {
+        /*******************************************************************************************
+         * Function: getAllMatchesFromDB
+         *
+         * Purpose: Function gathers match information based on shooter ID provided
+         *
+         * Parameters: shooterID_Int (IN) - key ID for receiving information
+         *
+         * Returns: tempMatch_List - returns list of objects with database information
+         *
+         ******************************************************************************************/
+
+        dbWhole = this.getReadableDatabase();
+
+        ArrayList<MatchClass> tempMatch_List = new ArrayList<>();
+        String query = "SELECT * FROM " + TABLE_MATCH + " WHERE " + KEY_MATCH_SHOOTER_ID +
+                " = '" + shooterID_Int + "'";
+
+        Cursor cursor = dbWhole.rawQuery(query, null);
+
+        while (cursor.moveToNext()) {
+            MatchClass tempMatch = new MatchClass();
+            tempMatch.setMatchID_Int(cursor.getInt(cursor.getColumnIndex(KEY_MATCH_ID)));
+            tempMatch.setMatchShooterID_Int(cursor.getInt(cursor.getColumnIndex(KEY_MATCH_SHOOTER_ID)));
+            tempMatch.setMatchTeamID_Int(cursor.getInt(cursor.getColumnIndex(KEY_MATCH_TEAM_ID)));
+            tempMatch.setMatchEventID_Int(cursor.getInt(cursor.getColumnIndex(KEY_MATCH_EVENT_ID)));
+            tempMatch.setMatchRoundIDS_Array(cursor.getString(cursor.getColumnIndex(KEY_MATCH_ROUND_IDS)));
+            tempMatch.setMatchScore_Int(cursor.getInt(cursor.getColumnIndex(KEY_MATCH_SCORE)));
+            tempMatch.setMatchNotes_Str(cursor.getString(cursor.getColumnIndex(KEY_MATCH_NOTES)));
+
+            tempMatch_List.add(tempMatch);
+        }
+
+        dbWhole.close();
+        return tempMatch_List;
+    }
+
+    public void updateDBAfterMatchDeletion (ArrayList<Integer> roundID_list) {
+        /*******************************************************************************************
+         * Function: updateDBAfterMatchDeletion
+         *
+         * Purpose: Function updates database after match is deleted
+         *
+         * Parameters: roundID_list (IN) - database ID of the rounds to delete
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Get the most recent database
+        dbWhole = this.getWritableDatabase();
+
+        // Update Rounds
+        for (int roundID_Int : roundID_list) {
+            deleteRoundInDB(roundID_Int);
+        }
+
+        // close database
+        dbWhole.close();
     }
 
     //************************************** Shooter Functions *************************************
@@ -496,9 +779,8 @@ public class DBHandler extends SQLiteOpenHelper {
             Cursor cursor = dbWhole.rawQuery(query, null);
             cursor.moveToFirst();
             tempShooter.setShooterID_Int(cursor.getInt(cursor.getColumnIndex(KEY_SHOOTER_ID)));
+            tempShooter.setShooterProfileID_Int(cursor.getInt(cursor.getColumnIndex(KEY_SHOOTER_PROFILE_ID)));
             tempShooter.setShooterName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOOTER_NAME)));
-            tempShooter.setShooterCoach_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOOTER_COACH)));
-            tempShooter.setShooterTeamNameArray_fromString(cursor.getString(cursor.getColumnIndex(KEY_SHOOTER_TEAM_NAME)));
         } catch (Exception e) {
             Log.d("JRW", e.toString());
         }
@@ -522,7 +804,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         ShooterClass tempShooter = new ShooterClass();
         String query = "SELECT * FROM " + TABLE_SHOOTERS + " WHERE "
-                + KEY_SHOOTER_NAME + " = '" + shooterName_Str + "''";
+                + KEY_SHOOTER_NAME + " = '" + shooterName_Str + "'";
 
         dbWhole = this.getReadableDatabase();
 
@@ -530,9 +812,8 @@ public class DBHandler extends SQLiteOpenHelper {
             Cursor cursor = dbWhole.rawQuery(query, null);
             cursor.moveToFirst();
             tempShooter.setShooterID_Int(cursor.getInt(cursor.getColumnIndex(KEY_SHOOTER_ID)));
+            tempShooter.setShooterProfileID_Int(cursor.getInt(cursor.getColumnIndex(KEY_SHOOTER_PROFILE_ID)));
             tempShooter.setShooterName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOOTER_NAME)));
-            tempShooter.setShooterCoach_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOOTER_COACH)));
-            tempShooter.setShooterTeamNameArray_fromString(cursor.getString(cursor.getColumnIndex(KEY_SHOOTER_TEAM_NAME)));
         } catch (Exception e) {
             Log.d("JRW", e.toString());
         }
@@ -542,7 +823,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return tempShooter;
     }
 
-    public void insertShooterInDB (ShooterClass s) {
+    public long insertShooterInDB (ShooterClass s) {
         /*******************************************************************************************
          * Function: insertShooterInDB
          *
@@ -550,19 +831,20 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: s (IN) - shooter class object that holds information to put in database
          *
-         * Returns: None
+         * Returns: shooterID_Long (OUT) - returns ID generated for insert, -1 if error occurred
          *
          ******************************************************************************************/
 
         dbWhole = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(KEY_SHOOTER_PROFILE_ID, s.getShooterProfileID_Int());
         values.put(KEY_SHOOTER_NAME, s.getShooterName_Str());
-        values.put(KEY_SHOOTER_COACH, s.getShooterCoach_Str());
-        values.put(KEY_SHOOTER_TEAM_NAME, s.getShooterTeamNameArray_toString());
 
-        dbWhole.insert(TABLE_SHOOTERS, null, values);
+        long shooterID_Long = dbWhole.insert(TABLE_SHOOTERS, null, values);
         dbWhole.close();
+
+        return shooterID_Long;
     }
 
     public void deleteShooterInDB (int shooterID_Int) {
@@ -582,6 +864,7 @@ public class DBHandler extends SQLiteOpenHelper {
         String whereClause_Str = "(" + KEY_SHOOTER_ID + " = '" + Integer.toString(shooterID_Int) + "')";
         try {
             dbWhole.delete(TABLE_SHOOTERS, whereClause_Str, null);
+            updateDBAfterShooterDeletion(shooterID_Int);
         } catch (Exception e) {
             Log.d("JRW", e.toString());
         }
@@ -589,14 +872,13 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole.close();
     }
 
-    public void updateShooterInDB (ShooterClass s, int shooterID_Int) {
+    public void updateShooterInDB (ShooterClass s) {
         /*******************************************************************************************
          * Function: updateShooterInDB
          *
          * Purpose: Function updates item from database based on database ID
          *
          * Parameters: s (IN) - object that holds information for updating item in the database
-         *             shooterID_Int (IN) - ID number of the item in the database
          *
          * Returns: None
          *
@@ -605,23 +887,22 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(KEY_SHOOTER_PROFILE_ID, s.getShooterProfileID_Int());
         values.put(KEY_SHOOTER_NAME, s.getShooterName_Str());
-        values.put(KEY_SHOOTER_COACH, s.getShooterCoach_Str());
-        values.put(KEY_SHOOTER_TEAM_NAME, s.getShooterTeamNameArray_toString());
 
-        String whereClaus = KEY_SHOOTER_ID + " = " + Integer.toString(shooterID_Int);
+        String whereClaus = KEY_SHOOTER_ID + " = " + Integer.toString(s.getShooterID_Int());
 
         dbWhole.update(TABLE_SHOOTERS, values, whereClaus, null);
         dbWhole.close();
     }
 
-    public ArrayList<ShooterClass> getAllShooterFromDB (String email) {
+    public ArrayList<ShooterClass> getAllShooterFromDB (int profileID_Int) {
         /*******************************************************************************************
          * Function: getAllShooterFromDB
          *
-         * Purpose: Function gathers shooter information based on email provided
+         * Purpose: Function gathers shooter information
          *
-         * Parameters: email (IN) - key string for receiving information
+         * Parameters: profileID_Int (IN) - id to base where clause on
          *
          * Returns: tempShooter_List - returns list of ShooterClass object with database information
          *
@@ -630,8 +911,8 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole = this.getReadableDatabase();
 
         ArrayList<ShooterClass> tempShooter_List = new ArrayList<>();
-        String query = "SELECT * FROM " + TABLE_SHOOTERS + " WHERE " + KEY_SHOOTER_COACH + " = '"
-                + email + "'";
+        String query = "SELECT * FROM " + TABLE_SHOOTERS + " WHERE " + KEY_SHOOTER_PROFILE_ID +
+                " = '" + profileID_Int + "'";
 
         Cursor cursor = dbWhole.rawQuery(query, null);
 
@@ -639,10 +920,8 @@ public class DBHandler extends SQLiteOpenHelper {
             ShooterClass temp_Shooter = new ShooterClass();
 
             temp_Shooter.setShooterID_Int(cursor.getInt(cursor.getColumnIndex(KEY_SHOOTER_ID)));
+            temp_Shooter.setShooterProfileID_Int(cursor.getInt(cursor.getColumnIndex(KEY_SHOOTER_PROFILE_ID)));
             temp_Shooter.setShooterName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOOTER_NAME)));
-            temp_Shooter.setShooterCoach_Str(email);
-            temp_Shooter.setShooterTeamNameArray_fromString(cursor.getString(cursor.getColumnIndex(KEY_SHOOTER_TEAM_NAME)));
-
             tempShooter_List.add(temp_Shooter);
         }
 
@@ -650,50 +929,13 @@ public class DBHandler extends SQLiteOpenHelper {
         return tempShooter_List;
     }
 
-    public ArrayList<ShooterClass> getAllShooterFromDBTeam (String teamName) {
-        /*******************************************************************************************
-         * Function: getAllShooterFromDBTeam
-         *
-         * Purpose: Function gathers shooter information based on teamName provided
-         *
-         * Parameters: teamName (IN) - key string for receiving information
-         *
-         * Returns: tempShooter_List - returns list of ShooterClass object with database information
-         *
-         ******************************************************************************************/
-
-        dbWhole = this.getReadableDatabase();
-
-        ArrayList<ShooterClass> tempShooter_List = new ArrayList<>();
-        String query = "SELECT * FROM " + TABLE_SHOOTERS;
-
-        Cursor cursor = dbWhole.rawQuery(query, null);
-
-        while (cursor.moveToNext()) {
-            String teamName_List = cursor.getString(cursor.getColumnIndex(KEY_SHOOTER_TEAM_NAME));
-
-            if (teamName_List.contains(teamName)) {
-                ShooterClass temp_Shooter = new ShooterClass();
-
-                temp_Shooter.setShooterID_Int(cursor.getInt(cursor.getColumnIndex(KEY_SHOOTER_ID)));
-                temp_Shooter.setShooterName_Str(cursor.getString(cursor.getColumnIndex(KEY_SHOOTER_NAME)));
-                temp_Shooter.setShooterTeamNameArray_fromString(cursor.getString(cursor.getColumnIndex(KEY_SHOOTER_TEAM_NAME)));
-
-                tempShooter_List.add(temp_Shooter);
-            }
-        }
-
-        dbWhole.close();
-        return tempShooter_List;
-    }
-
-    public boolean isShooterInDB (String email, String shooterName_Str, int ID) {
+    public boolean isShooterInDB (int profileID_Int, String shooterName_Str, int ID) {
         /*******************************************************************************************
          * Function: isShooterInDB
          *
          * Purpose: Function decides if shooter name is already in db for user
          *
-         * Parameters: email (IN) - key string for finding profile
+         * Parameters: profileID_Int (IN) - ID of profile to search for shooters
          *             shooterName_Str (IN) - string to find in database
          *             ID (IN) - ID of shooter being passed in, this is to ignore this load when checking
          *                       ID = -1 if new user
@@ -706,8 +948,8 @@ public class DBHandler extends SQLiteOpenHelper {
         boolean doesShooterExist = false;
         int currentID_Int = -1;
         String currentShooterName_Str;
-        String query = "SELECT * FROM " + TABLE_SHOOTERS + " WHERE "
-                + KEY_SHOOTER_COACH + " = '" + email + "'";
+        String query = "SELECT * FROM " + TABLE_SHOOTERS + " WHERE " + KEY_SHOOTER_PROFILE_ID +
+                " = '" + profileID_Int + "'";
 
         dbWhole = this.getReadableDatabase();
         Cursor cursor = dbWhole.rawQuery(query, null);
@@ -727,6 +969,41 @@ public class DBHandler extends SQLiteOpenHelper {
 
         dbWhole.close();
         return doesShooterExist;
+    }
+
+    public void updateDBAfterShooterDeletion (int shooterID_Int) {
+        /*******************************************************************************************
+         * Function: updateDBAfterShooterDeletion
+         *
+         * Purpose: Function updates database after shooter is deleted
+         *
+         * Parameters: shooterID_Int (IN) - database ID of the shooter that was deleted
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Get the most recent database
+        dbWhole = this.getWritableDatabase();
+
+        // Update Matches
+        String whereClause_Str = "(" + KEY_MATCH_SHOOTER_ID + " = '" + shooterID_Int + "')";
+        try {
+            dbWhole.delete(TABLE_MATCH, whereClause_Str, null);
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        // Update Rounds
+        whereClause_Str = "(" + KEY_ROUND_SHOOTER_ID + " = '" + shooterID_Int + "')";
+        try {
+            dbWhole.delete(TABLE_ROUND, whereClause_Str, null);
+        } catch (Exception e) {
+            Log.d("JRW", e.toString());
+        }
+
+        // close database
+        dbWhole.close();
     }
 
     //*************************************** Load Functions ***************************************
@@ -752,7 +1029,7 @@ public class DBHandler extends SQLiteOpenHelper {
             Cursor cursor = dbWhole.rawQuery(query, null);
             cursor.moveToFirst();
             tempLoad.setLoadID_Int(cursor.getInt(cursor.getColumnIndex(KEY_LOAD_ID)));
-            tempLoad.setLoadEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_PROFILE_NAME)));
+            tempLoad.setLoadProfileID_Int(cursor.getInt(cursor.getColumnIndex(KEY_LOAD_PROFILE_ID)));
             tempLoad.setLoadNickname_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_NICKNAME)));
             tempLoad.setLoadBrand_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_BRAND)));
             tempLoad.setLoadGauge_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_GAUGE)));
@@ -768,7 +1045,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return tempLoad;
     }
 
-    public void insertLoadInDB (LoadClass l) {
+    public long insertLoadInDB (LoadClass l) {
         /*******************************************************************************************
          * Function: insertLoadInDB
          *
@@ -776,14 +1053,14 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: l (IN) - load class object that holds information to put in database
          *
-         * Returns: None
+         * Returns: loadID_Long (OUT) - returns ID generated for insert, -1 if error occurred
          *
          ******************************************************************************************/
 
         dbWhole = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_LOAD_PROFILE_NAME, l.getLoadEmail_Str());
+        values.put(KEY_LOAD_PROFILE_ID, l.getLoadProfileID_Int());
         values.put(KEY_LOAD_NICKNAME, l.getLoadNickname_Str());
         values.put(KEY_LOAD_BRAND, l.getLoadBrand_Str());
         values.put(KEY_LOAD_GAUGE, l.getLoadGauge_Str());
@@ -791,8 +1068,10 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_LOAD_LENGTH, l.getLoadLength_Str());
         values.put(KEY_LOAD_NOTES, l.getLoadNotes_Str());
 
-        dbWhole.insert(TABLE_LOADS, null, values);
+        long loadID_Long = dbWhole.insert(TABLE_LOADS, null, values);
         dbWhole.close();
+
+        return loadID_Long;
     }
 
     public void deleteLoadInDB (int loadID_Int) {
@@ -812,6 +1091,7 @@ public class DBHandler extends SQLiteOpenHelper {
         String whereClause_Str = "(" + KEY_LOAD_ID + " = '" + Integer.toString(loadID_Int) + "')";
         try {
             dbWhole.delete(TABLE_LOADS, whereClause_Str, null);
+            updateDBAfterLoadDeletion(loadID_Int);
         } catch (Exception e) {
             Log.d("JRW", e.toString());
         }
@@ -819,14 +1099,13 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole.close();
     }
 
-    public void updateLoadInDB (LoadClass l, int loadID_Int) {
+    public void updateLoadInDB (LoadClass l) {
         /*******************************************************************************************
          * Function: updateLoadInDB
          *
          * Purpose: Function updates item from database based on database ID
          *
          * Parameters: l (IN) - object that holds information for updating item in the database
-         *             loadID_Int (IN) - ID number of the item in the database
          *
          * Returns: None
          *
@@ -835,7 +1114,7 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_LOAD_PROFILE_NAME, l.getLoadEmail_Str());
+        values.put(KEY_LOAD_PROFILE_ID, l.getLoadProfileID_Int());
         values.put(KEY_LOAD_NICKNAME, l.getLoadNickname_Str());
         values.put(KEY_LOAD_BRAND, l.getLoadBrand_Str());
         values.put(KEY_LOAD_GAUGE, l.getLoadGauge_Str());
@@ -843,13 +1122,13 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_LOAD_LENGTH, l.getLoadLength_Str());
         values.put(KEY_LOAD_NOTES, l.getLoadNotes_Str());
 
-        String whereClaus = KEY_LOAD_ID + " = " + Integer.toString(loadID_Int);
+        String whereClaus = KEY_LOAD_ID + " = " + Integer.toString(l.getLoadID_Int());
 
         dbWhole.update(TABLE_LOADS, values, whereClaus, null);
         dbWhole.close();
     }
 
-    public ArrayList<LoadClass> getAllLoadFromDB (String email) {
+    public ArrayList<LoadClass> getAllLoadFromDB (int profileID_Int) {
         /*******************************************************************************************
          * Function: getAllLoadFromDB
          *
@@ -864,15 +1143,15 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole = this.getReadableDatabase();
 
         ArrayList<LoadClass> tempLoad_List = new ArrayList<>();
-        String query = "SELECT * FROM " + TABLE_LOADS + " WHERE " + KEY_LOAD_PROFILE_NAME +
-                " = '" + email + "'";
+        String query = "SELECT * FROM " + TABLE_LOADS + " WHERE " + KEY_LOAD_PROFILE_ID +
+                " = '" + profileID_Int + "'";
 
         Cursor cursor = dbWhole.rawQuery(query, null);
 
         while (cursor.moveToNext()) {
             LoadClass tempLoad = new LoadClass();
             tempLoad.setLoadID_Int(cursor.getInt(cursor.getColumnIndex(KEY_LOAD_ID)));
-            tempLoad.setLoadEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_PROFILE_NAME)));
+            tempLoad.setLoadProfileID_Int(cursor.getInt(cursor.getColumnIndex(KEY_LOAD_PROFILE_ID)));
             tempLoad.setLoadNickname_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_NICKNAME)));
             tempLoad.setLoadBrand_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_BRAND)));
             tempLoad.setLoadGauge_Str(cursor.getString(cursor.getColumnIndex(KEY_LOAD_GAUGE)));
@@ -887,13 +1166,13 @@ public class DBHandler extends SQLiteOpenHelper {
         return tempLoad_List;
     }
 
-    public boolean isLoadNicknameInDB (String email, String nickname, int ID) {
+    public boolean isLoadNicknameInDB (int profileID_Int, String nickname, int ID) {
         /*******************************************************************************************
          * Function: isLoadNicknameInDB
          *
          * Purpose: Function decides if nickname is already in db for user
          *
-         * Parameters: email (IN) - key string for finding profile
+         * Parameters: profileID_Int (IN) - key int for finding profile
          *             nickname (IN) - string to find in database
          *             ID (IN) - ID of load being passed in, this is to ignore this load when checking
          *
@@ -906,7 +1185,7 @@ public class DBHandler extends SQLiteOpenHelper {
         int currentID = -1;
         String currentNickname;
         String query = "SELECT * FROM " + TABLE_LOADS + " WHERE "
-                + KEY_LOAD_PROFILE_NAME + " = '" + email + "'";
+                + KEY_LOAD_PROFILE_ID + " = '" + profileID_Int + "'";
 
         dbWhole = this.getReadableDatabase();
         Cursor cursor = dbWhole.rawQuery(query, null);
@@ -926,6 +1205,38 @@ public class DBHandler extends SQLiteOpenHelper {
 
         dbWhole.close();
         return doesNicknameExist;
+    }
+
+    public void updateDBAfterLoadDeletion (int loadID_Int) {
+        /*******************************************************************************************
+         * Function: updateDBAfterLoadDeletion
+         *
+         * Purpose: Function updates database after load is deleted
+         *
+         * Parameters: loadID_Int (IN) - database ID of the load that was deleted
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Get the most recent database
+        dbWhole = this.getWritableDatabase();
+
+        // Update Rounds
+        String query = "SELECT * FROM " + TABLE_ROUND + " WHERE " + KEY_ROUND_LOAD_ID +
+                " = '" + loadID_Int + "'";
+
+        Cursor cursor = dbWhole.rawQuery(query, null);
+
+        // Iterate over each item in the cursor and update the loadID to -1
+        while (cursor.moveToNext()) {
+            RoundClass temp_Round = getRoundInDB(cursor.getInt(cursor.getColumnIndex(KEY_ROUND_ID)));
+            temp_Round.setRoundLoadID_Int(-1);
+            updateRoundInDB(temp_Round);
+        }
+
+        // close database
+        dbWhole.close();
     }
 
     //**************************************** Gun Functions ***************************************
@@ -951,7 +1262,7 @@ public class DBHandler extends SQLiteOpenHelper {
             Cursor cursor = dbWhole.rawQuery(query, null);
             cursor.moveToFirst();
             tempGun.setGunID_Int(cursor.getInt(cursor.getColumnIndex(KEY_GUN_ID)));
-            tempGun.setGunEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_PROFILE_NAME)));
+            tempGun.setGunProfileID_Int(cursor.getInt(cursor.getColumnIndex(KEY_GUN_PROFILE_ID)));
             tempGun.setGunNickname_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_NICKNAME)));
             tempGun.setGunModel_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_MODEL)));
             tempGun.setGunGauge_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_GAUGE)));
@@ -965,7 +1276,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return tempGun;
     }
 
-    public void insertGunInDB (GunClass g) {
+    public long insertGunInDB (GunClass g) {
         /*******************************************************************************************
          * Function: insertGunInDB
          *
@@ -973,21 +1284,23 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: g (IN) - g class object that holds information to put in database
          *
-         * Returns: None
+         * Returns: gunID_Long (OUT) - returns ID generated for insert, -1 if error occurred
          *
          ******************************************************************************************/
 
         dbWhole = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_GUN_PROFILE_NAME, g.getGunEmail_Str());
+        values.put(KEY_GUN_PROFILE_ID, g.getGunProfileID_Int());
         values.put(KEY_GUN_NICKNAME, g.getGunNickname_Str());
         values.put(KEY_GUN_MODEL, g.getGunModel_Str());
         values.put(KEY_GUN_GAUGE, g.getGunGauge_Str());
         values.put(KEY_GUN_NOTES, g.getGunNotes_Str());
 
-        dbWhole.insert(TABLE_GUNS, null, values);
+        long gunID_Long = dbWhole.insert(TABLE_GUNS, null, values);
         dbWhole.close();
+
+        return gunID_Long;
     }
 
     public void deleteGunInDB (int gunID_Int) {
@@ -1007,6 +1320,7 @@ public class DBHandler extends SQLiteOpenHelper {
         String whereClause_Str = "(" + KEY_GUN_ID + " = '" + Integer.toString(gunID_Int) + "')";
         try {
             dbWhole.delete(TABLE_GUNS, whereClause_Str, null);
+            updateDBAfterGunDeletion(gunID_Int);
         } catch (Exception e) {
             Log.d("JRW", e.toString());
         }
@@ -1014,14 +1328,13 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole.close();
     }
 
-    public void updateGunInDB (GunClass g, int gunID_Int) {
+    public void updateGunInDB (GunClass g) {
         /*******************************************************************************************
          * Function: updateGunInDB
          *
          * Purpose: Function updates item from database based on database ID
          *
          * Parameters: g (IN) - object that holds information for updating item in the database
-         *             gunID_Int (IN) - ID number of the item in the database
          *
          * Returns: None
          *
@@ -1030,42 +1343,42 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_GUN_PROFILE_NAME, g.getGunEmail_Str());
+        values.put(KEY_GUN_PROFILE_ID, g.getGunProfileID_Int());
         values.put(KEY_GUN_NICKNAME, g.getGunNickname_Str());
         values.put(KEY_GUN_MODEL, g.getGunModel_Str());
         values.put(KEY_GUN_GAUGE, g.getGunGauge_Str());
         values.put(KEY_GUN_NOTES, g.getGunNotes_Str());
 
-        String whereClaus = KEY_GUN_ID + " = " + Integer.toString(gunID_Int);
+        String whereClaus = KEY_GUN_ID + " = " + Integer.toString(g.getGunID_Int());
 
         dbWhole.update(TABLE_GUNS, values, whereClaus, null);
         dbWhole.close();
     }
 
-    public ArrayList<GunClass> getAllGunFromDB (String email) {
+    public ArrayList<GunClass> getAllGunFromDB (int profileID_Int) {
         /*******************************************************************************************
          * Function: getAllGunFromDB
          *
-         * Purpose: Function gathers gun information based on email provided
+         * Purpose: Function gathers gun information based on ID provided
          *
-         * Parameters: email (IN) - key string for receiving gun information
+         * Parameters: profileID_Int (IN) - key ID for receiving gun information
          *
-         * Returns: tempShot - returns list of GunClass object with database information
+         * Returns: tempGun_List - returns list of GunClass object with database information
          *
          ******************************************************************************************/
 
         dbWhole = this.getReadableDatabase();
 
         ArrayList<GunClass> tempGun_List = new ArrayList<>();
-        String query = "SELECT * FROM " + TABLE_GUNS + " WHERE " + KEY_GUN_PROFILE_NAME +
-                " = '" + email + "'";
+        String query = "SELECT * FROM " + TABLE_GUNS + " WHERE " + KEY_GUN_PROFILE_ID +
+                " = '" + profileID_Int + "'";
 
         Cursor cursor = dbWhole.rawQuery(query, null);
 
         while (cursor.moveToNext()) {
             GunClass tempGun = new GunClass();
             tempGun.setGunID_Int(cursor.getInt(cursor.getColumnIndex(KEY_GUN_ID)));
-            tempGun.setGunEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_PROFILE_NAME)));
+            tempGun.setGunProfileID_Int(cursor.getInt(cursor.getColumnIndex(KEY_GUN_PROFILE_ID)));
             tempGun.setGunNickname_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_NICKNAME)));
             tempGun.setGunModel_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_MODEL)));
             tempGun.setGunGauge_Str(cursor.getString(cursor.getColumnIndex(KEY_GUN_GAUGE)));
@@ -1078,13 +1391,13 @@ public class DBHandler extends SQLiteOpenHelper {
         return tempGun_List;
     }
 
-    public boolean isGunNicknameInDB (String email, String nickname, int ID) {
+    public boolean isGunNicknameInDB (int profileID_Int, String nickname, int ID) {
         /*******************************************************************************************
          * Function: isGunNicknameInDB
          *
          * Purpose: Function decides if nickname is already in db for user
          *
-         * Parameters: email (IN) - key string for finding profile
+         * Parameters: profileID_Int (IN) - key ID for finding profile
          *             nickname (IN) - string to find in database
          *             ID (IN) - ID of gun being passed in, this is to ignore this gun when checking
          *
@@ -1097,7 +1410,7 @@ public class DBHandler extends SQLiteOpenHelper {
         int currentID = -1;
         String currentNickname;
         String query = "SELECT * FROM " + TABLE_GUNS
-                + " WHERE " + KEY_GUN_PROFILE_NAME + " = '" + email + "'";
+                + " WHERE " + KEY_GUN_PROFILE_ID + " = '" + profileID_Int + "'";
 
         dbWhole = this.getReadableDatabase();
         Cursor cursor = dbWhole.rawQuery(query, null);
@@ -1119,12 +1432,44 @@ public class DBHandler extends SQLiteOpenHelper {
         return doesNicknameExist;
     }
 
+    public void updateDBAfterGunDeletion (int gunID_Int) {
+        /*******************************************************************************************
+         * Function: updateDBAfterGunDeletion
+         *
+         * Purpose: Function updates database after gun is deleted
+         *
+         * Parameters: gunID_Int (IN) - database ID of the gun that was deleted
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Get the most recent database
+        dbWhole = this.getWritableDatabase();
+
+        // Update Rounds
+        String query = "SELECT * FROM " + TABLE_ROUND + " WHERE " + KEY_ROUND_GUN_ID +
+                " = '" + gunID_Int + "'";
+
+        Cursor cursor = dbWhole.rawQuery(query, null);
+
+        // Iterate over each item in the cursor and update the gunID to -1
+        while (cursor.moveToNext()) {
+            RoundClass temp_Round = getRoundInDB(cursor.getInt(cursor.getColumnIndex(KEY_ROUND_ID)));
+            temp_Round.setRoundGunID_Int(-1);
+            updateRoundInDB(temp_Round);
+        }
+
+        // close database
+        dbWhole.close();
+    }
+
     //************************************** Event Functions ***************************************
     public EventClass getEventInDB (int eventID_Int) {
         /*******************************************************************************************
          * Function: getEventInDB
          *
-         * Purpose: Function returns the ID number of a event in the database
+         * Purpose: Function returns an event in the database by the ID number
          *
          * Parameters: eventID_Int (IN) - ID of the event information to return
          *
@@ -1142,8 +1487,7 @@ public class DBHandler extends SQLiteOpenHelper {
             Cursor cursor = dbWhole.rawQuery(query, null);
             cursor.moveToFirst();
             tempEvent.setEventID_Int(cursor.getInt(cursor.getColumnIndex(KEY_EVENT_ID)));
-            tempEvent.setEventEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_PROFILE_NAME)));
-            tempEvent.setEventTeam_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_TEAM_NAME)));
+            tempEvent.setEventProfileID_Int(cursor.getInt(cursor.getColumnIndex(KEY_EVENT_PROFILE_ID)));
             tempEvent.setEventName_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_NAME)));
             tempEvent.setEventLocation_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_LOCATION)));
             tempEvent.setEventDate_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_DATE)));
@@ -1158,7 +1502,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return tempEvent;
     }
 
-    public void insertEventInDB (EventClass e) {
+    public long insertEventInDB (EventClass e) {
         /*******************************************************************************************
          * Function: insertEventInDB
          *
@@ -1166,24 +1510,24 @@ public class DBHandler extends SQLiteOpenHelper {
          *
          * Parameters: e (IN) - event class object that holds information to put in database
          *
-         * Returns: None
+         * Returns: eventID_Long (OUT) - returns ID generated for insert, -1 if error occurred
          *
          ******************************************************************************************/
 
         dbWhole = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_EVENT_PROFILE_NAME, e.getEventEmail_Str());
-        values.put(KEY_EVENT_TEAM_NAME, e.getEventTeam_Str());
+        values.put(KEY_EVENT_PROFILE_ID, e.getEventProfileID_Int());
         values.put(KEY_EVENT_NAME, e.getEventName_Str());
         values.put(KEY_EVENT_LOCATION, e.getEventLocation_Str());
         values.put(KEY_EVENT_DATE, e.getEventDate_Str());
         values.put(KEY_EVENT_WEATHER, e.getEventWeather_Str());
         values.put(KEY_EVENT_NOTES, e.getEventNotes_Str());
 
-
-        dbWhole.insert(TABLE_EVENTS, null, values);
+        long eventID_Long = dbWhole.insert(TABLE_EVENTS, null, values);
         dbWhole.close();
+
+        return eventID_Long;
     }
 
     public void deleteEventInDB (int eventID_Int) {
@@ -1203,6 +1547,7 @@ public class DBHandler extends SQLiteOpenHelper {
         String whereClause_Str = "(" + KEY_EVENT_ID + " = '" + Integer.toString(eventID_Int) + "')";
         try {
             dbWhole.delete(TABLE_EVENTS, whereClause_Str, null);
+            updateDBAfterEventDeletion(eventID_Int);
         } catch (Exception e) {
             Log.d("JRW", e.toString());
         }
@@ -1210,7 +1555,7 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole.close();
     }
 
-    public void updateEventInDB (EventClass e, int eventID_Int) {
+    public void updateEventInDB (EventClass e) {
         /*******************************************************************************************
          * Function: updateEventInDB
          *
@@ -1226,27 +1571,26 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_EVENT_PROFILE_NAME, e.getEventEmail_Str());
-        values.put(KEY_EVENT_TEAM_NAME, e.getEventTeam_Str());
+        values.put(KEY_EVENT_PROFILE_ID, e.getEventProfileID_Int());
         values.put(KEY_EVENT_NAME, e.getEventName_Str());
         values.put(KEY_EVENT_LOCATION, e.getEventLocation_Str());
         values.put(KEY_EVENT_DATE, e.getEventDate_Str());
         values.put(KEY_EVENT_WEATHER, e.getEventWeather_Str());
         values.put(KEY_EVENT_NOTES, e.getEventNotes_Str());
 
-        String whereClaus = KEY_EVENT_ID + " = " + Integer.toString(eventID_Int);
+        String whereClaus = KEY_EVENT_ID + " = " + Integer.toString(e.getEventID_Int());
 
         dbWhole.update(TABLE_EVENTS, values, whereClaus, null);
         dbWhole.close();
     }
 
-    public ArrayList<EventClass> getAllEventFromDB (String email) {
+    public ArrayList<EventClass> getAllEventFromDB (int profileID_Int) {
         /*******************************************************************************************
          * Function: getAllEventFromDB
          *
          * Purpose: Function gathers event information based on email provided
          *
-         * Parameters: email (IN) - key string for receiving event information
+         * Parameters: profileID_Int (IN) - key ID for receiving event information
          *
          * Returns: tempEvent_List - returns list of EventClass object with database information
          *
@@ -1255,8 +1599,8 @@ public class DBHandler extends SQLiteOpenHelper {
         dbWhole = this.getReadableDatabase();
 
         ArrayList<EventClass> tempEvent_List = new ArrayList<>();
-        String query = "SELECT * FROM " + TABLE_EVENTS + " WHERE " + KEY_EVENT_PROFILE_NAME +
-                " = '" + email + "'";
+        String query = "SELECT * FROM " + TABLE_EVENTS + " WHERE " + KEY_EVENT_PROFILE_ID +
+                " = '" + profileID_Int + "'";
 
         Cursor cursor = dbWhole.rawQuery(query, null);
 
@@ -1264,8 +1608,7 @@ public class DBHandler extends SQLiteOpenHelper {
             EventClass tempEvent = new EventClass();
 
             tempEvent.setEventID_Int(cursor.getInt(cursor.getColumnIndex(KEY_EVENT_ID)));
-            tempEvent.setEventEmail_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_PROFILE_NAME)));
-            tempEvent.setEventTeam_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_TEAM_NAME)));
+            tempEvent.setEventProfileID_Int(cursor.getInt(cursor.getColumnIndex(KEY_EVENT_PROFILE_ID)));
             tempEvent.setEventName_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_NAME)));
             tempEvent.setEventLocation_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_LOCATION)));
             tempEvent.setEventDate_Str(cursor.getString(cursor.getColumnIndex(KEY_EVENT_DATE)));
@@ -1279,13 +1622,13 @@ public class DBHandler extends SQLiteOpenHelper {
         return tempEvent_List;
     }
 
-    public boolean isEventNameInDB (String email, String eventName, int ID) {
+    public boolean isEventNameInDB (int profileID_Int, String eventName, int ID) {
         /*******************************************************************************************
          * Function: isEventNameInDB
          *
          * Purpose: Function decides if event name is already in db for user
          *
-         * Parameters: email (IN) - key string for finding profile
+         * Parameters: profileID_Int (IN) - key ID for finding profile
          *             eventName (IN) - string to find in database
          *             ID (IN) - ID of gun being passed in, this is to ignore this gun when checking,
          *                       if it is -1, it means event name is being added
@@ -1299,7 +1642,7 @@ public class DBHandler extends SQLiteOpenHelper {
         int currentID = -1;
         String currentEventName;
         String query = "SELECT * FROM " + TABLE_EVENTS
-                + " WHERE " + KEY_EVENT_PROFILE_NAME + " = '" + email + "'";
+                + " WHERE " + KEY_EVENT_PROFILE_ID + " = '" + profileID_Int + "'";
 
         dbWhole = this.getReadableDatabase();
         Cursor cursor = dbWhole.rawQuery(query, null);
@@ -1319,5 +1662,37 @@ public class DBHandler extends SQLiteOpenHelper {
 
         dbWhole.close();
         return doesEventNameExist;
+    }
+
+    public void updateDBAfterEventDeletion (int eventID_Int) {
+        /*******************************************************************************************
+         * Function: updateDBAfterEventDeletion
+         *
+         * Purpose: Function updates database after event is deleted
+         *
+         * Parameters: eventID_Int (IN) - database ID of the event that was deleted
+         *
+         * Returns: None
+         *
+         ******************************************************************************************/
+
+        // Get the most recent database
+        dbWhole = this.getWritableDatabase();
+
+        // Update Rounds
+        String query = "SELECT * FROM " + TABLE_MATCH + " WHERE " + KEY_MATCH_EVENT_ID +
+                " = '" + eventID_Int + "'";
+
+        Cursor cursor = dbWhole.rawQuery(query, null);
+
+        // Iterate over each item in the cursor and update the eventID to -1
+        while (cursor.moveToNext()) {
+            MatchClass temp_Match = getMatchInDB(cursor.getInt(cursor.getColumnIndex(KEY_MATCH_ID)));
+            temp_Match.setMatchEventID_Int(-1);
+            updateMatchInDB(temp_Match);
+        }
+
+        // close database
+        dbWhole.close();
     }
 }

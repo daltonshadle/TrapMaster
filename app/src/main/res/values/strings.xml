@@ -7,6 +7,7 @@
     <string name="current_user_key">USER_KEY</string>
     <string name="current_pass_key">PASS_KEY</string>
     <string name="current_user_email">current_user_email</string>
+    <string name="feature_will_be_implemented_toast">This will be implemented soon!</string>
 
     <!--************************************* Score Strings *************************************-->
     <string name="hit_string">HIT</string>
@@ -29,8 +30,11 @@
     <string name="add_gun_text">Add guns in the armory!</string>
     <string name="add_load_text">Add loads in the armory!</string>
 
+    <!--************************************** Home Strings *************************************-->
+    <string name="home_activity_title">Trap Master</string>
+
     <!--************************************* Login Strings *************************************-->
-    <string name="login_activity_title">Sign in</string>
+    <string name="login_activity_title">Trap Master</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>
@@ -56,7 +60,7 @@
     <string name="num_shooter_key">number_shooters</string>
     <string name="num_rounds_key">number_rounds</string>
     <string name="shooter_list_key">shooter_list_key</string>
-    <string name="shooter_score_list_key">shooter_score_list_key</string>
+    <string name="round_list_key">round_list_key</string>
 
     <!--********************************** Post Event Strings ***********************************-->
     <string name="post_event_activity_title">Post Event</string>

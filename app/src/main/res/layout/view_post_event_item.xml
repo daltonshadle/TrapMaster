@@ -13,75 +13,121 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:text="Name"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@color/dark"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/postEventItemDetails_Lay"
+        app:layout_constraintStart_toEndOf="@+id/postEventScore_Lay"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/postEventShooterScore_Txt"
+    <LinearLayout
+        android:id="@+id/postEventScore_Lay"
+        android:layout_width="@dimen/CirclePlusAddButtonDim"
+        android:layout_height="@dimen/CirclePlusAddButtonDim"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/post_event_circle"
+        app:layout_constraintBottom_toTopOf="@+id/postEventItemDetails_Lay"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/postEventScore_Txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|center_horizontal|center_vertical"
+            android:text="00"
+            android:textAlignment="center"
+            android:textColor="@color/dark"
+            android:textSize="@dimen/ListItemScoreTextSize" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/postEventItemBtn_Lay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
-        android:text="Score"
+        android:layout_margin="4dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/post_event_rounded_rectangle"
+        android:orientation="horizontal"
+        android:padding="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/postEventItemDetails_Lay"
+        app:layout_constraintEnd_toStartOf="@+id/postEventItemExpand_Btn"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/postEventItemGun_Btn"
+            android:layout_width="@dimen/ListItemButton"
+            android:layout_height="@dimen/ListItemButton"
+            android:layout_margin="2dp"
+            android:layout_weight="1"
+            android:background="@drawable/shotgun_icon" />
+
+        <Button
+            android:id="@+id/postEventItemLoad_Btn"
+            android:layout_width="@dimen/ListItemButton"
+            android:layout_height="@dimen/ListItemButton"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="2dp"
+            android:layout_weight="1"
+            android:background="@drawable/shotgun_shell_icon" />
+
+        <Button
+            android:id="@+id/postEventItemNotes_Btn"
+            android:layout_width="@dimen/ListItemButton"
+            android:layout_height="@dimen/ListItemButton"
+            android:layout_margin="2dp"
+            android:layout_weight="1"
+            android:background="@drawable/edit_icon" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/postEventItemExpand_Btn"
+        android:layout_width="@dimen/ListItemButton"
+        android:layout_height="@dimen/ListItemButton"
+        android:layout_margin="0dp"
+        android:background="@drawable/down_caret_icon"
+        app:layout_constraintBottom_toTopOf="@+id/postEventItemDetails_Lay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/postEventNotes_Edt"
-        android:background="@drawable/white_rounded_rectangle"
+    <LinearLayout
+        android:id="@+id/postEventItemDetails_Lay"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="4dp"
-        android:padding="4dp"
-        android:ems="10"
-        android:hint="Notes"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/postEventShooterName_Txt" />
-
-    <RelativeLayout
-        android:id="@+id/postEventGunSpinBackground_Lay"
-        android:background="@drawable/white_rounded_rectangle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/postEventLoadSpinBackground_Lay"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/postEventNotes_Edt">
-
-        <Spinner
-            android:id="@+id/postEventGun_Spin"
-            android:layout_width="match_parent"
-            android:layout_height="30dp" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/postEventLoadSpinBackground_Lay"
-        android:background="@drawable/white_rounded_rectangle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_height="match_parent"
+        android:layout_margin="0dp"
+        android:background="@drawable/post_event_rounded_rectangle"
+        android:orientation="vertical"
+        android:paddingStart="6dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/postEventGunSpinBackground_Lay"
-        app:layout_constraintTop_toBottomOf="@+id/postEventNotes_Edt">
+        app:layout_constraintStart_toStartOf="parent">
 
-        <Spinner
-            android:id="@+id/postEventLoad_Spin"
+        <TextView
+            android:id="@+id/postEventItemGun_Txt"
             android:layout_width="match_parent"
-            android:layout_height="30dp" />
-    </RelativeLayout>
+            android:layout_height="wrap_content"
+            android:text="Gun: None" />
+
+        <TextView
+            android:id="@+id/postEventItemLoad_Txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Load: None" />
+
+        <TextView
+            android:id="@+id/postEventItemNotes_Txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Notes: None" />
+    </LinearLayout>
+
 
 </android.support.constraint.ConstraintLayout>

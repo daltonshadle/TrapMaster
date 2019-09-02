@@ -4,16 +4,12 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -23,13 +19,13 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
     //************************************* Private Variables **************************************
     // Constants
     private final String TAG = "JRW";
-    private final int SHOT_LIST_TAG = 1;
+    private final int MATCH_LIST_TAG = 1;
     private final int EVENT_LIST_TAG = 2;
     private final int GUN_LIST_TAG = 3;
     private final int LOAD_LIST_TAG = 4;
 
     // Variables
-    private ArrayList<ShotClass> shotClass_List =  new ArrayList<>();
+    private ArrayList<MatchClass> matchClass_List =  new ArrayList<>();
     private ArrayList<EventClass> eventClass_List =  new ArrayList<>();
     private ArrayList<GunClass> gunClass_List =  new ArrayList<>();
     private ArrayList<LoadClass> loadClass_List =  new ArrayList<>();
@@ -37,7 +33,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
 
     //************************************* Public Functions ***************************************
     // Constructors
-    public TrapMasterListArrayAdapter(@NonNull Context context, @NonNull ArrayList<Object> objects) {
+    public TrapMasterListArrayAdapter(@NonNull Context context, @NonNull ArrayList<Object> objects, int type_tag) {
         /*******************************************************************************************
          * Function: TrapMasterListArrayAdapter
          *
@@ -53,27 +49,26 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
 
         mCurrentContext = context;
 
-        if (!objects.isEmpty()) {
-            // List is not empty
-            Object first_Obj = objects.get(0);
-
-            // Find what type of object the object list is and assign it to correct list type
-            if (first_Obj instanceof ShotClass) {
-                shotClass_List = (ArrayList<ShotClass>)(ArrayList<?>) objects;
-            } else if (first_Obj instanceof EventClass) {
+        // Assign adapter based on type_tag
+        switch (type_tag) {
+            case MATCH_LIST_TAG:
+                matchClass_List = (ArrayList<MatchClass>)(ArrayList<?>) objects;
+                refreshMatchArrayAdapter(matchClass_List);
+                break;
+            case EVENT_LIST_TAG:
                 eventClass_List = (ArrayList<EventClass>)(ArrayList<?>) objects;
-            } else if (first_Obj instanceof GunClass) {
+                refreshEventArrayAdapter(eventClass_List);
+                break;
+            case GUN_LIST_TAG:
                 gunClass_List = (ArrayList<GunClass>)(ArrayList<?>) objects;
-            } else if (first_Obj instanceof LoadClass) {
+                refreshGunArrayAdapter(gunClass_List);
+                break;
+            case LOAD_LIST_TAG:
                 loadClass_List = (ArrayList<LoadClass>)(ArrayList<?>) objects;
-            }
+                refreshLoadArrayAdapter(loadClass_List);
+                break;
         }
 
-        // Refresh all lists, these functions will handle all empty lists
-        refreshShotArrayAdapter(shotClass_List);
-        refreshEventArrayAdapter(eventClass_List);
-        refreshGunArrayAdapter(gunClass_List);
-        refreshLoadArrayAdapter(loadClass_List);
     }
 
     @NonNull
@@ -101,15 +96,16 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
 
         // Handle each type of list item appropriately with switch statement
         switch ((int) parent.getTag()) {
-            case SHOT_LIST_TAG:
-                // Item is a shot class object
-                final ShotClass current_Shot = shotClass_List.get(position);
+            case MATCH_LIST_TAG:
+                // Item is a Match class object
+                final MatchClass current_Match = matchClass_List.get(position);
 
-                String main_Str = current_Shot.getShotShooterName_Str();
-                String second_Str = current_Shot.getShotEventName_Str();
+                ShooterClass temp_Shooter = db.getShooterInDB(current_Match.getMatchShooterID_Int());
+                String main_Str = temp_Shooter.getShooterName_Str();
+                String second_Str = db.getEventInDB(current_Match.getMatchEventID_Int()).getEventName_Str();
 
                 // Check for default item and process accordingly
-                if (isDefaultItem(current_Shot)) {
+                if (isDefaultItem(current_Match)) {
                     // Make unnecessary views invisible
                     listItem_Img.setVisibility(View.INVISIBLE);
                     listItemEdit_Btn.setVisibility(View.INVISIBLE);
@@ -117,7 +113,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                     listItemScore_Txt.setVisibility(View.INVISIBLE);
                 } else {
                     // Not a default item, set score
-                    listItemScore_Txt.setText(current_Shot.getShotHitNum_Str());
+                    listItemScore_Txt.setText(Integer.toString(current_Match.getMatchScore_Int()));
                     listItemScore_Txt.setVisibility(View.VISIBLE);
                     listItemEdit_Btn.setVisibility(View.VISIBLE);
                     listItemDelete_Btn.setVisibility(View.VISIBLE);
@@ -125,7 +121,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                 }
 
                 // Set tag of list view item to be database ID
-                listItem.setTag(current_Shot.getShotID_Int());
+                listItem.setTag(current_Match.getMatchID_Int());
 
                 if (second_Str.length() > 40) {
                     second_Str = second_Str.substring(0, 36) + "...";
@@ -138,7 +134,8 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                 listItemEdit_Btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        current_Shot.editShotDialog(parentContext, TrapMasterListArrayAdapter.this);
+                        // TODO: make editing rounds work
+                        // current_Shot.editShotDialog(parentContext, TrapMasterListArrayAdapter.this);
                     }
                 });
 
@@ -146,7 +143,8 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                 listItemDelete_Btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        current_Shot.removeShotItemDialog(parentContext, TrapMasterListArrayAdapter.this);
+                        // TODO: make removing rounds work
+                        // current_Shot.removeShotItemDialog(parentContext, TrapMasterListArrayAdapter.this);
                     }
                 });
 
@@ -280,7 +278,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
                     @Override
                     public void onClick(View view) {
                         current_Load.editLoadDialog(parentContext, TrapMasterListArrayAdapter.this);
-                        refreshLoadArrayAdapter(db.getAllLoadFromDB(current_Load.getLoadEmail_Str()));
+                        refreshLoadArrayAdapter(db.getAllLoadFromDB(current_Load.getLoadProfileID_Int()));
                     }
                 });
 
@@ -300,32 +298,33 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
         return listItem;
     }
 
-    public void refreshShotArrayAdapter(ArrayList<ShotClass> shot_List){
+    public void refreshMatchArrayAdapter(ArrayList<MatchClass> match_List){
         /*******************************************************************************************
-         * Function: refreshShotArrayAdapter
+         * Function: refreshMatchArrayAdapter
          *
          * Purpose: Function refreshes the list view parent with current data
          *
-         * Parameters: shot_List (IN) - list of data to refresh the adapter with
+         * Parameters: match_List (IN) - list of data to refresh the adapter with
          *
          * Returns: None
          *
          ******************************************************************************************/
 
         // Check if list is empty
-        if (shot_List.isEmpty()) {
-            ShotClass temp_Shot = new ShotClass();
-            temp_Shot.setShotShooterName_Str(getContext().getString(R.string.no_shot_main_text));
-            temp_Shot.setShotEventName_Str(getContext().getString(R.string.no_shot_second_text));
+        if (match_List.isEmpty()) {
+            MatchClass temp_Match = new MatchClass();
+            // TODO: fix empty list for Match adpater
+            //temp_Match.setMatchShooterName_Str(getContext().getString(R.string.no_Match_main_text));
+            //temp_Match.setMatchEventName_Str(getContext().getString(R.string.no_Match_second_text));
 
-            shot_List.add(temp_Shot);
+            match_List.add(temp_Match);
         }
 
         // Update the class list
-        shotClass_List = shot_List;
+        matchClass_List = match_List;
 
         this.clear();
-        this.addAll(shotClass_List);
+        this.addAll(matchClass_List);
         this.notifyDataSetChanged();
     }
 
@@ -364,7 +363,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
          *
          * Purpose: Function refreshes the list view parent with current data
          *
-         * Parameters: shot_List (IN) - list of data to refresh the adapter with
+         * Parameters: Match_List (IN) - list of data to refresh the adapter with
          *
          * Returns: None
          *
@@ -416,7 +415,7 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
         this.notifyDataSetChanged();
     }
 
-    private boolean isDefaultItem(ShotClass s) {
+    private boolean isDefaultItem(MatchClass s) {
         /*******************************************************************************************
          * Function: isDefaultItem
          *
@@ -431,7 +430,9 @@ public class TrapMasterListArrayAdapter extends ArrayAdapter<Object>{
         String mainText_Str = getContext().getString(R.string.no_shot_main_text);
         String secondText_Str = getContext().getString(R.string.no_shot_second_text);
 
-        return (mainText_Str.equals(s.getShotShooterName_Str()) && secondText_Str.equals(s.getShotEventName_Str()));
+        // TODO: fix default item for Match
+        //return (mainText_Str.equals(s.getMatchShooterName_Str()) && secondText_Str.equals(s.getMatchEventName_Str()));
+        return false;
     }
 
     private boolean isDefaultItem(EventClass e) {

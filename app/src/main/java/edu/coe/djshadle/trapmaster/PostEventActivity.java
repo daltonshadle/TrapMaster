@@ -15,39 +15,27 @@
 package edu.coe.djshadle.trapmaster;
 
 //******************************************** Imports *********************************************
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,45 +44,33 @@ public class PostEventActivity extends AppCompatActivity {
     // General Constants
     private final String TAG = "JRW";
     private String ACTIVITY_TITLE;
-    private String NO_GUN_STRING;
-    private String NO_LOAD_STRING;
-    private String NO_EVENT_STRING;
-    private final int TOTAL_NUM_SHOTS = 25;
-    private final int EVENT_LIST_TAG = 2;
     private final int MAX_NUM_SHOOTERS = 5;
 
     // Key Constants
     private String CURRENT_USER_KEY;
-    private String SHOOTER_LIST_KEY;
-    private String SHOOTER_SCORE_LIST_KEY;
     private String NUM_ROUNDS_KEY;
-    private final int ROUND_SCORE_KEY = TOTAL_NUM_SHOTS;
+    private String SHOOTER_LIST_KEY;
+    private String ROUND_LIST_KEY;
 
     //***************************************** Variables ******************************************
     // General Variables
-    DBHandler db;
+    private int mCurrentProfileID_Int = -1;
     private boolean isPortrait = true;
-    private String mCurrentUserEmail_Str = "*********";
+    private DBHandler db;
+    private EventClass mEvent;
 
     // Round Variables
     private int currentRound_Int = 1;
     private int numRounds_Int = 1;
     // 2D array of score objects, takes the form [round #][shooter #} = shot object
-    private Map<Integer, ArrayList<ShotClass>> shotRounds_Array;
+    private Map<Integer, ArrayList<RoundClass>> round_Array;
 
     // Shooter Variables
     private int numShooters_Int = 1;
     private ArrayList<String> shooterName_List;
-    // 3D array of shooter scores by round, takes the form [round #][shooter #}{score index] = hit/miss
-    private Map<Integer, Map<Integer, ArrayList<Integer>>> shooterScores_Array;
-
-    // Event Variables
-    private TrapMasterListArrayAdapter mCustomEventList_Adapt;
-    private String mEventName_Str = "";
 
     // UI References
     private ConstraintLayout mParent_Lay;
-    private ListView mEventList_View;
     private ArrayList<PostEventItemClass> mShooterPostEventItems_List;
     private LinearLayout mPostEventItems_Lay;
     private ScrollView mPostEvent_Scroll;
@@ -133,9 +109,9 @@ public class PostEventActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
 
         } else {
-            mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
+            mCurrentProfileID_Int = getIntent().getIntExtra(CURRENT_USER_KEY, -1);
             shooterName_List = getIntent().getStringArrayListExtra(SHOOTER_LIST_KEY);
-            shooterScores_Array = (HashMap) getIntent().getSerializableExtra(SHOOTER_SCORE_LIST_KEY);
+            round_Array = (HashMap) getIntent().getSerializableExtra(ROUND_LIST_KEY);
             numRounds_Int = getIntent().getIntExtra(NUM_ROUNDS_KEY, 1);
             numShooters_Int = shooterName_List.size();
         }
@@ -188,11 +164,8 @@ public class PostEventActivity extends AppCompatActivity {
         ACTIVITY_TITLE = getString(R.string.post_event_activity_title);
         CURRENT_USER_KEY = getString(R.string.current_user_key);
         SHOOTER_LIST_KEY = getString(R.string.shooter_list_key);
-        SHOOTER_SCORE_LIST_KEY = getString(R.string.shooter_score_list_key);
+        ROUND_LIST_KEY = getString(R.string.round_list_key);
         NUM_ROUNDS_KEY = getString(R.string.num_rounds_key);
-        NO_GUN_STRING = "No gun";
-        NO_LOAD_STRING = "No load";
-        NO_EVENT_STRING = "No event";
     }
 
     private void initializeViews() {
@@ -210,6 +183,10 @@ public class PostEventActivity extends AppCompatActivity {
         // Initializing database variable
         db = new DBHandler(getApplicationContext());
 
+        // Initialize event variable
+        mEvent = new EventClass();
+        mEvent.setEventName_Str("Add Event");
+
         // Set action bar title
         try {
             setTitle(ACTIVITY_TITLE);
@@ -223,25 +200,12 @@ public class PostEventActivity extends AppCompatActivity {
 
         // Initializing Post Event Items List
         initializeShooterPostEventItems();
-        initializeShotRoundsArray();
         setRoundInfo(currentRound_Int);
 
         // Initializing buttons
-        FloatingActionButton mAddEvent_Btn = findViewById(R.id.postEventAddEvent_Btn);
         Button mLeft_Btn = findViewById(R.id.postEventLeft_Btn);
         Button mRight_Btn = findViewById(R.id.postEventRight_Btn);
-
-        // Adding button onClickListeners
-        mAddEvent_Btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Add event action
-                EventClass temp_Event = new EventClass();
-                temp_Event.setEventID_Int(-1);
-                temp_Event.setEventEmail_Str(mCurrentUserEmail_Str);
-                temp_Event.editEventDialog(PostEventActivity.this, mCustomEventList_Adapt);
-            }
-        });
+        final Button mAddEvent_Btn = findViewById(R.id.postEventAddEvent_Btn);
 
         mLeft_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -259,51 +223,22 @@ public class PostEventActivity extends AppCompatActivity {
             }
         });
 
-        // Initializing List view
-        mEventName_Str = NO_EVENT_STRING;
-        mEventList_View = findViewById(R.id.postEvent_List);
-        mEventList_View.setTag(EVENT_LIST_TAG);
-        setListViewLayoutParams();
-        initializeEventListView();
-    }
-
-    private void setListViewLayoutParams() {
-        /*******************************************************************************************
-         * Function: setListViewLayoutParams
-         *
-         * Purpose: Function sets the layout parameters for the list view so that it fits nicely
-         *          with everything (with room for buttons and titles)
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        // Initialize function variables
-        double screenHeight_Dbl = getResources().getDisplayMetrics().heightPixels;
-        double scaleFactorScroll_Dbl, scaleFactorEvent_Dbl;
-
-        ConstraintLayout.LayoutParams params;
-
-        // Find current orientation and set variables accordingly
-        if (isPortrait) {
-            scaleFactorScroll_Dbl = 2.5;
-            scaleFactorEvent_Dbl = 3.5;
-
-        } else {
-            scaleFactorScroll_Dbl = 2.5;
-            scaleFactorEvent_Dbl = 3.5;
-        }
-
-        // Set layout params for both list views
-        params = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int)(screenHeight_Dbl / scaleFactorEvent_Dbl));
-        params.topToBottom = mPostEvent_Scroll.getId();
-        mEventList_View.setLayoutParams(params);
-
-        params = new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int)(screenHeight_Dbl / scaleFactorScroll_Dbl));
-        params.topToTop = mParent_Lay.getId();
-        mPostEvent_Scroll.setLayoutParams(params);
+        mAddEvent_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Add event button
+                AlertDialog event_Dialog = mEvent.chooseEventDialog(PostEventActivity.this, mCurrentProfileID_Int);
+                event_Dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        if (mEvent.getEventName_Str().isEmpty()) {
+                            mEvent.setEventName_Str("Add Event");
+                        }
+                        mAddEvent_Btn.setText(mEvent.getEventName_Str());
+                    }
+                });
+            }
+        });
 
     }
 
@@ -331,10 +266,8 @@ public class PostEventActivity extends AppCompatActivity {
         mShooterPostEventItems_List.add((PostEventItemClass) findViewById(R.id.postEventItem_4));
         mShooterPostEventItems_List.add((PostEventItemClass) findViewById(R.id.postEventItem_5));
 
-        // Add info to views that are going to be used
         for (int i = 0; i < numShooters_Int; i++) {
-            mShooterPostEventItems_List.get(i).shooterGun_Spin.setAdapter(initializeGunSpinnerAdapt());
-            mShooterPostEventItems_List.get(i).shooterLoad_Spin.setAdapter(initializeLoadSpinnerAdapt());
+            mShooterPostEventItems_List.get(i).setProfileID_Int(mCurrentProfileID_Int);
         }
 
         // Remove unused views
@@ -343,82 +276,6 @@ public class PostEventActivity extends AppCompatActivity {
             mShooterPostEventItems_List.remove(i);
         }
 
-    }
-
-    private ArrayAdapter<String> initializeGunSpinnerAdapt() {
-        /*******************************************************************************************
-         * Function: initializeGunSpinnerAdapt
-         *
-         * Purpose: Function initializes gun spinner
-         *
-         * Parameters: None
-         *
-         * Returns: temp_Adapt - adapter for gun spinner
-         *
-         ******************************************************************************************/
-
-        // Initialize function variables
-        ArrayAdapter<String> temp_Adapt;
-        ArrayList<GunClass> tempGun_List;
-        ArrayList<String> tempStr_List = new ArrayList<>();
-
-        // Collect latest version of the database
-        GlobalApplicationContext currentContext = new GlobalApplicationContext();
-        final DBHandler db = new DBHandler(currentContext.getContext());
-
-        // Collect all guns from db
-        tempGun_List = db.getAllGunFromDB(mCurrentUserEmail_Str);
-
-        // For each item in the db list, add the name to current list
-        for (int i = 0; i < tempGun_List.size(); i++) {
-            tempStr_List.add(tempGun_List.get(i).getGunNickname_Str());
-        }
-
-        // Add string for no gun option
-        tempStr_List.add(NO_GUN_STRING);
-
-        // Initialize array adapter
-        temp_Adapt = new ArrayAdapter<>(currentContext.getContext(), android.R.layout.simple_list_item_1, tempStr_List);
-
-        return temp_Adapt;
-    }
-
-    private ArrayAdapter<String> initializeLoadSpinnerAdapt() {
-        /*******************************************************************************************
-         * Function: initializeLoadSpinnerAdapt
-         *
-         * Purpose: Function initializes load spinner
-         *
-         * Parameters: None
-         *
-         * Returns: temp_Adapt - adapter for load spinner
-         *
-         ******************************************************************************************/
-
-        // Initialize function variables
-        ArrayAdapter<String> temp_Adapt;
-        ArrayList<LoadClass> tempLoad_List;
-        ArrayList<String> tempStr_List = new ArrayList<>();
-
-        // Collect latest version of the database
-        GlobalApplicationContext currentContext = new GlobalApplicationContext();
-        final DBHandler db = new DBHandler(currentContext.getContext());
-
-        // Collect all loads from db
-        tempLoad_List = db.getAllLoadFromDB(mCurrentUserEmail_Str);
-
-        // For each item in the db list, add the name to current list
-        for (int i = 0; i < tempLoad_List.size(); i++) {
-            tempStr_List.add(tempLoad_List.get(i).getLoadNickname_Str());
-        }
-
-        // Add string for no load option
-        tempStr_List.add(NO_LOAD_STRING);
-
-        // Initialize array adapter
-        temp_Adapt = new ArrayAdapter<>(currentContext.getContext(), android.R.layout.simple_list_item_1, tempStr_List);
-
-        return temp_Adapt;
     }
 
     //********************************* Post Event Item Functions **********************************
@@ -436,13 +293,13 @@ public class PostEventActivity extends AppCompatActivity {
 
         if (currentRound_Int == 1) {
             // Prompt user about exiting post event or save to database
-            saveScoreToDB(NO_EVENT_STRING);
+            saveScoreToDB();
 
             Toast.makeText(PostEventActivity.this, "Shoot saved!", Toast.LENGTH_LONG).show();
 
             // Return to home
             Intent homeActivity_Intent = new Intent(PostEventActivity.this, homeActivity.class);
-            homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+            homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentProfileID_Int);
             startActivity(homeActivity_Intent);
 
             PostEventActivity.this.finish();
@@ -477,13 +334,13 @@ public class PostEventActivity extends AppCompatActivity {
 
         if (currentRound_Int == numRounds_Int) {
             // Save everything to database
-            saveScoreToDB(mEventName_Str);
+            saveScoreToDB();
 
             Toast.makeText(PostEventActivity.this, "Shoot saved!", Toast.LENGTH_LONG).show();
 
             // Return to home
             Intent homeActivity_Intent = new Intent(PostEventActivity.this, homeActivity.class);
-            homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentUserEmail_Str);
+            homeActivity_Intent.putExtra(CURRENT_USER_KEY, mCurrentProfileID_Int);
             startActivity(homeActivity_Intent);
 
             PostEventActivity.this.finish();
@@ -510,16 +367,19 @@ public class PostEventActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
-        // Iterate over all post event items and collect information, save to shotRounds_Array
+        // Iterate over all post event items and collect information, save to rounds_Array
         for (int i = 0; i < numShooters_Int; i++) {
-            ShotClass temp_shot = shotRounds_Array.get(roundNum_Int).get(i);
-            PostEventItemClass temp_post = mShooterPostEventItems_List.get(i);
+            // Initialize temp_Round with round variable in rounds_Array
+            RoundClass temp_Round = round_Array.get(roundNum_Int).get(i);
+            PostEventItemClass temp_Post = mShooterPostEventItems_List.get(i);
 
-            temp_shot.setShotGun_Str(temp_post.shooterGun_Spin.getSelectedItem().toString());
-            temp_shot.setShotLoad_Str(temp_post.shooterLoad_Spin.getSelectedItem().toString());
-            temp_shot.setShotNotes_Str(temp_post.shooterNotes_Edt.getText().toString());
+            // Set fields for temp round to save them
+            temp_Round.setRoundGunID_Int(temp_Post.getShooter_Gun().getGunID_Int());
+            temp_Round.setRoundLoadID_Int(temp_Post.getShooter_Load().getLoadID_Int());
+            temp_Round.setRoundNotes_Str(temp_Post.getShooterNotes_Str());
 
-            shotRounds_Array.get(roundNum_Int).add(i, temp_shot);
+            // Add temp round to rounds array at same location
+            round_Array.get(roundNum_Int).add(i, temp_Round);
         }
 
     }
@@ -541,122 +401,21 @@ public class PostEventActivity extends AppCompatActivity {
 
         // Add info to views that are going to be used
         for (int i = 0; i < numShooters_Int; i++) {
-            ShotClass temp_shot = shotRounds_Array.get(roundNum_Int).get(i);
-            mShooterPostEventItems_List.get(i).setShooterName(temp_shot.getShotShooterName_Str());
-            mShooterPostEventItems_List.get(i).setShooterCoach(mCurrentUserEmail_Str);
-            mShooterPostEventItems_List.get(i).setShooterScore(Integer.parseInt(temp_shot.getShotHitNum_Str()));
-            mShooterPostEventItems_List.get(i).shooterGun_Spin.setSelection(initializeGunSpinnerAdapt().getPosition(temp_shot.getShotGun_Str()));
-            mShooterPostEventItems_List.get(i).shooterLoad_Spin.setSelection(initializeLoadSpinnerAdapt().getPosition(temp_shot.getShotLoad_Str()));
+            RoundClass temp_Round = round_Array.get(roundNum_Int).get(i);
+
+            mShooterPostEventItems_List.get(i).setShooterName(shooterName_List.get(i));
+            mShooterPostEventItems_List.get(i).setShooterScore(temp_Round.getRoundScore_Int());
         }
-    }
-
-    private void initializeShotRoundsArray() {
-        /*******************************************************************************************
-         * Function: initializeShotRoundsArray
-         *
-         * Purpose: Function initialize the shotRounds_Array with shooter information
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        // Initialize array type
-        shotRounds_Array = new HashMap<>();
-
-        // Iterate over all rounds and shooters and initialize the information in the array
-        for (int i = 0; i < numRounds_Int; i++) {
-            // Initializing round_num for current round since the round numbers are 1-based
-            int round_num = i + 1;
-            ArrayList<ShotClass> currentRound_array = new ArrayList<>();
-
-            for (int j = 0; j < numShooters_Int; j++) {
-                ShotClass temp_shot = new ShotClass();
-
-                temp_shot.setShotShooterName_Str(shooterName_List.get(j));
-                temp_shot.setShotHitNum_Str(Integer.toString(shooterScores_Array.get(round_num).get(j).get(ROUND_SCORE_KEY)));
-                temp_shot.setShotTotalNum_Str(Integer.toString(TOTAL_NUM_SHOTS));
-                temp_shot.setShotGun_Str(NO_GUN_STRING);
-                temp_shot.setShotLoad_Str(NO_LOAD_STRING);
-
-                currentRound_array.add(temp_shot);
-            }
-
-            // Add the round of shots to the whole array
-            shotRounds_Array.put(round_num, currentRound_array);
-        }
-    }
-
-    //************************************** Event Functions ***************************************
-    private ArrayList<EventClass> refreshEventList() {
-        /*******************************************************************************************
-         * Function: refreshEventList
-         *
-         * Purpose: Function returns the current list of events for the current user
-         *
-         * Parameters: None
-         *
-         * Returns: currentEventStr_List - a string list of events for current user
-         *
-         ******************************************************************************************/
-
-        // Initialize db handler and shooter and event array
-        db = new DBHandler(this);
-        ArrayList<EventClass> userEvent_List = db.getAllEventFromDB(mCurrentUserEmail_Str);
-
-        return userEvent_List;
-    }
-
-    private void initializeEventListView() {
-        /*******************************************************************************************
-         * Function: initializeEventListView
-         *
-         * Purpose: Function initializes the event list view
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        // Try to initialize list view with list view adapter
-        try {
-            mCustomEventList_Adapt = new TrapMasterListArrayAdapter(this,
-                    (ArrayList<Object>)(ArrayList<?>)(refreshEventList()));
-
-            mCustomEventList_Adapt.refreshEventArrayAdapter(refreshEventList());
-
-            mEventList_View.setAdapter(mCustomEventList_Adapt);
-
-        } catch (Exception e){
-            Log.d(TAG, "no events in db for this user: " + e.toString());
-        }
-
-        // Set the on click listener for items in the list
-        mEventList_View.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                view.setSelected(true);
-                DBHandler db = new DBHandler(getApplicationContext());
-                EventClass temp_Event = db.getEventInDB((int) view.getTag());
-                mEventName_Str = temp_Event.getEventName_Str();
-                if (mEventName_Str.equals("")) {
-                    mEventName_Str = NO_EVENT_STRING;
-                }
-                Log.d(TAG, "Event List Item Click: " + Integer.toString(i) + " " + mEventName_Str);
-            }
-        });
     }
 
     //************************************ Database Functions **************************************
-    private void saveScoreToDB(String eventName_Str) {
+    private void saveScoreToDB() {
         /*******************************************************************************************
          * Function: saveScoreToDB
          *
          * Purpose: Function saves all scores and info to database
          *
-         * Parameters: eventName_Str (IN) - name of the event
+         * Parameters: None
          *
          * Returns: None
          *
@@ -664,17 +423,40 @@ public class PostEventActivity extends AppCompatActivity {
 
         DBHandler db = new DBHandler(GlobalApplicationContext.getContext());
 
-        // Iterate over all rounds and shooters and add to database
-        for (int i = 0; i < numRounds_Int; i++) {
-            // Initializing round_num for current round since the round numbers are 1-based
-            int round_num = i + 1;
+        // Iterate over all shooters and collect round and match info to save to db
+        for (int i = 0; i < numShooters_Int; i++) {
+            // Initialize match variable for this shooter, TODO: fix match team functionality
+            MatchClass temp_Match = new MatchClass();
+            temp_Match.setMatchEventID_Int(mEvent.getEventID_Int());
+            temp_Match.setMatchTeamID_Int(-1);
 
-            for (int j = 0; j < numShooters_Int; j++) {
-                ShotClass temp_shot = shotRounds_Array.get(round_num).get(i);
-                eventName_Str = eventName_Str + " - Round " + Integer.toString(round_num);
-                temp_shot.setShotEventName_Str(eventName_Str);
-                db.insertShotInDB(temp_shot);
+            // Initialize score variable
+            int tempMatchScore_Int = 0;
+
+            // Initialize Round ID array
+            ArrayList<Integer> tempRoundID_List = new ArrayList<>();
+
+            // Iterate over all rounds for shooter and save them
+            for (int j = 0; j < numRounds_Int; j++) {
+                // Initializing round_num for current round since the round numbers are 1-based
+                int tempRoundNum_Int = j + 1;
+
+                // Initialize round variable for shooter round
+                RoundClass temp_Round = round_Array.get(tempRoundNum_Int).get(i);
+                tempMatchScore_Int = tempMatchScore_Int + temp_Round.getRoundScore_Int();
+                temp_Match.setMatchShooterID_Int(temp_Round.getRoundShooterID_Int());
+
+                // Save round to db
+                int tempRoundID_Int = (int) db.insertRoundInDB(temp_Round);
+                tempRoundID_List.add(tempRoundID_Int);
             }
+
+            // Set remaining info for match
+            temp_Match.setMatchRoundIDS_Array(tempRoundID_List);
+            temp_Match.setMatchScore_Int(tempMatchScore_Int);
+
+            // Save match to db
+            db.insertMatchInDB(temp_Match);
         }
 
     }

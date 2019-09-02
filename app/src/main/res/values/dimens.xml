@@ -12,6 +12,7 @@
     <!-- Armory Dimensions -->
 
     <!-- New Event Dimensions -->
+    <dimen name="NextPrevButton">40dp</dimen>
 
     <!-- Event History Dimensions -->
 
@@ -22,16 +23,16 @@
     <!-- Login Dimensions -->
 
     <!-- List Item Dimensions -->
-    <dimen name="ListItemImage">60dp</dimen>
-    <dimen name="ListItemButton">40dp</dimen>
+    <dimen name="ListItemImage">55dp</dimen>
+    <dimen name="ListItemButton">20dp</dimen>
     <dimen name="ListItemMainTextSize">20sp</dimen>
     <dimen name="ListItemSecondTextSize">13sp</dimen>
     <dimen name="ListItemMargin">5dp</dimen>
-    <dimen name="ListItemScoreTextSize">45sp</dimen>
+    <dimen name="ListItemScoreTextSize">25sp</dimen>
 
     <!-- Trap Ternary Button Dimensions -->
     <dimen name="CircleTrapButton">25dp</dimen>
-    <dimen name="SmallCircleTrapButton">8dp</dimen>
+    <dimen name="SmallCircleTrapButton">12dp</dimen>
     <dimen name="MarginCircleTrapButton">2dp</dimen>
     <dimen name="TextSizeTrapButton">20sp</dimen>
     <dimen name="TrapScoreHitMissClear">40dp</dimen>

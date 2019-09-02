@@ -14,58 +14,42 @@
 package edu.coe.djshadle.trapmaster;
 
 //******************************************** Imports *********************************************
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ScrollView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ArmoryActivity extends AppCompatActivity {
     //***************************************** Constants ******************************************
     // General Constants
     private String TAG = "JRW";
     private String ACTIVITY_TITLE;
+    private final int GUN_POS = 0;
+    private final int LOAD_POS = 1;
 
     // Key Constants
     private String CURRENT_USER_KEY;
 
-    // Tag Constants
-    private final int GUN_LIST_TAG = 3;
-    private final int LOAD_LIST_TAG = 4;
-
     //***************************************** Variables ******************************************
     // General Variables
-    private String mCurrentUserEmail_Str = "********";
+    private int mCurrentProfileID_Int = -1;
+    private int mCurrentTabPos_Int = GUN_POS;
     private DBHandler db;
     private boolean isPortrait = true;
 
-    // Gun
-    private TrapMasterListArrayAdapter mCustomGunList_Adapt;
-
-    // Load
-    private TrapMasterListArrayAdapter mCustomLoadList_Adapt;
-
     // UI References
-    private ListView mGunList_View, mLoadList_View;
+    private ScrollView mGun_Scroll, mLoad_Scroll;
+    private LinearLayout mGun_Lay, mLoad_Lay;
+    private TabLayout armory_TabLay;
 
     //************************************* Activity Functions *************************************
     @Override
@@ -98,9 +82,9 @@ public class ArmoryActivity extends AppCompatActivity {
 
         // Pull extra information from intent
         if (savedInstanceState != null) {
-
+            mCurrentProfileID_Int = savedInstanceState.getInt(CURRENT_USER_KEY);
         } else {
-            mCurrentUserEmail_Str = getIntent().getStringExtra(CURRENT_USER_KEY);
+            mCurrentProfileID_Int = getIntent().getIntExtra(CURRENT_USER_KEY, -1);
         }
 
         // Initialize views
@@ -149,6 +133,7 @@ public class ArmoryActivity extends AppCompatActivity {
 
         ACTIVITY_TITLE = getString(R.string.armory_activity_title);
         CURRENT_USER_KEY = getString(R.string.current_user_key);
+        db = new DBHandler(ArmoryActivity.this);
     }
 
     private void initializeViews() {
@@ -166,47 +151,88 @@ public class ArmoryActivity extends AppCompatActivity {
         // Initializing database variable
         db = new DBHandler(getApplicationContext());
 
-        // Initializing buttons
-        FloatingActionButton mAddGun = findViewById(R.id.armoryAddGun_Btn);
-        FloatingActionButton mAddLoad = findViewById(R.id.armoryAddLoad_Btn);
+        // Initialize views
+        armory_TabLay = findViewById(R.id.eventHistory_TabLay);
+        mGun_Lay = findViewById(R.id.armoryGun_Lay);
+        mLoad_Lay = findViewById(R.id.armoryLoad_Lay);
+        mGun_Scroll = findViewById(R.id.armoryGun_Scroll);
+        mLoad_Scroll = findViewById(R.id.armoryLoad_Scroll);
 
-        mAddGun.setOnClickListener(new View.OnClickListener() {
+        armory_TabLay.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onClick(View view) {
-                // Display add gun dialog box for user input, ID = -1 and email = current email for
-                // adding a new gun
-                GunClass temp_Gun = new GunClass();
-                temp_Gun.setGunID_Int(-1);
-                temp_Gun.setGunEmail_Str(mCurrentUserEmail_Str);
-                temp_Gun.editGunDialog(ArmoryActivity.this, mCustomGunList_Adapt);
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case GUN_POS:
+                        // set visibilities of scroll views, GUN
+                        mGun_Scroll.setVisibility(View.VISIBLE);
+                        mLoad_Scroll.setVisibility(View.GONE);
+
+                        Log.d(TAG, "Guns Tab");
+
+                        mCurrentTabPos_Int = GUN_POS;
+                        break;
+                    case LOAD_POS:
+                        // set visibilities of scroll views, LOAD
+                        mGun_Scroll.setVisibility(View.GONE);
+                        mLoad_Scroll.setVisibility(View.VISIBLE);
+
+                        Log.d(TAG, "Loads Tab");
+
+                        mCurrentTabPos_Int = LOAD_POS;
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
 
-        mAddLoad.setOnClickListener(new View.OnClickListener() {
+        // Set the lists
+        setGunListLay();
+        setLoadListLay();
+
+        // Set Button
+        FloatingActionButton add_Btn = findViewById(R.id.armoryAdd_Btn);
+        add_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Display add load dialog box for user input, ID = -1 and email = current email for
-                // adding a new load
-                LoadClass temp_Load = new LoadClass();
-                temp_Load.setLoadID_Int(-1);
-                temp_Load.setLoadEmail_Str(mCurrentUserEmail_Str);
-                temp_Load.editLoadDialog(ArmoryActivity.this, mCustomLoadList_Adapt);
+                switch (mCurrentTabPos_Int) {
+                    case GUN_POS:
+                        // Display add gun dialog box for user input, ID = -1 adding a new gun
+                        GunClass temp_Gun = new GunClass();
+                        temp_Gun.setGunID_Int(-1);
+                        temp_Gun.setGunProfileID_Int(mCurrentProfileID_Int);
+                        temp_Gun.editGunDialog(ArmoryActivity.this).setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                // Reset the gun list to changes in the database
+                                setGunListLay();
+                            }
+                        });
+                        break;
+                    case LOAD_POS:
+                        // Display add load dialog box for user input, ID = -1 adding a new load
+                        LoadClass temp_Load = new LoadClass();
+                        temp_Load.setLoadID_Int(-1);
+                        temp_Load.setLoadProfileID_Int(mCurrentProfileID_Int);
+                        temp_Load.editLoadDialog(ArmoryActivity.this).setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                // Reset the load list to changes in the database
+                                setLoadListLay();
+                            }
+                        });
+                        break;
+                }
             }
         });
-
-
-        // Initializing list views
-        mGunList_View = findViewById(R.id.armoryGun_List);
-        mLoadList_View = findViewById(R.id.armoryLoad_List);
-
-        // Setting tags for list views
-        mGunList_View.setTag(GUN_LIST_TAG);
-        mLoadList_View.setTag(LOAD_LIST_TAG);
-
-        setListViewLayoutParams();
-
-        initializeGunListView();
-        initializeLoadListView();
 
         // Setting title of activity
         setTitle(ACTIVITY_TITLE);
@@ -228,16 +254,16 @@ public class ArmoryActivity extends AppCompatActivity {
 
         // Initialize db handler and shooter and event array
         db = new DBHandler(this);
-        ArrayList<GunClass> userGun_List = db.getAllGunFromDB(mCurrentUserEmail_Str);
+        ArrayList<GunClass> userGun_List = db.getAllGunFromDB(mCurrentProfileID_Int);
 
         return userGun_List;
     }
 
-    private void initializeGunListView() {
+    private void setGunListLay() {
         /*******************************************************************************************
-         * Function: initializeGunListView
+         * Function: setGunListLay
          *
-         * Purpose: Function initializes the gun list view
+         * Purpose: Function initializes the gun list layout
          *
          * Parameters: None
          *
@@ -245,18 +271,18 @@ public class ArmoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
-        try {
-            mCustomGunList_Adapt = new TrapMasterListArrayAdapter(this,
-                    (ArrayList<Object>)(ArrayList<?>)(refreshGunList()));
+        // Initialize gun list from db, remove all views from lay
+        ArrayList<GunClass> dbGuns_List = refreshGunList();
+        mGun_Lay.removeAllViews();
 
-            mCustomGunList_Adapt.refreshGunArrayAdapter(refreshGunList());
+        // Iterate over all guns in list and add to layout
+        for (int i = 0; i < dbGuns_List.size(); i++) {
+            GunClass temp_Gun = dbGuns_List.get(i);
+            CustomListItemClass temp_Item = new CustomListItemClass(ArmoryActivity.this, temp_Gun.getGunProfileID_Int(), -1, temp_Gun);
+            temp_Item.setPadding(0, 6, 0, 0);
 
-            mGunList_View.setAdapter(mCustomGunList_Adapt);
-
-        } catch (Exception e){
-            Log.d("JRW", "no guns in db for this user");
+            mGun_Lay.addView(temp_Item);
         }
-
     }
 
     // Load List
@@ -274,16 +300,16 @@ public class ArmoryActivity extends AppCompatActivity {
 
         // Initialize db handler and shooter and event array
         db = new DBHandler(this);
-        ArrayList<LoadClass> userLoad_List = db.getAllLoadFromDB(mCurrentUserEmail_Str);
+        ArrayList<LoadClass> userLoad_List = db.getAllLoadFromDB(mCurrentProfileID_Int);
 
         return userLoad_List;
     }
 
-    private void initializeLoadListView() {
+    private void setLoadListLay() {
         /*******************************************************************************************
-         * Function: initializeLoadListView
+         * Function: setLoadListLay
          *
-         * Purpose: Function initializes the load list view
+         * Purpose: Function initializes the load list layout
          *
          * Parameters: None
          *
@@ -291,51 +317,18 @@ public class ArmoryActivity extends AppCompatActivity {
          *
          ******************************************************************************************/
 
-        try {
-            mCustomLoadList_Adapt = new TrapMasterListArrayAdapter(this,
-                    (ArrayList<Object>)(ArrayList<?>)(refreshLoadList()));
+        // Initialize load list from db, remove all views from lay
+        ArrayList<LoadClass> dbLoad_List = refreshLoadList();
+        mLoad_Lay.removeAllViews();
 
-            mCustomLoadList_Adapt.refreshLoadArrayAdapter(refreshLoadList());
+        // Iterate over all loads in list and add to layout
+        for (int i = 0; i < dbLoad_List.size(); i++) {
+            LoadClass temp_Load = dbLoad_List.get(i);
+            CustomListItemClass temp_Item = new CustomListItemClass(ArmoryActivity.this, temp_Load.getLoadProfileID_Int(), -1, temp_Load);
+            temp_Item.setPadding(0, 6, 0, 0);
 
-            mLoadList_View.setAdapter(mCustomLoadList_Adapt);
-
-        } catch (Exception e){
-            Log.d("JRW", "no loads in db for this user");
+            mLoad_Lay.addView(temp_Item);
         }
-    }
-
-    // Both List
-    private void setListViewLayoutParams() {
-        /*******************************************************************************************
-         * Function: setListViewLayoutParams
-         *
-         * Purpose: Function sets the layout parameters for the gun and load list view so that both
-         *          use roughly half of the display (with room for buttons and titles)
-         *
-         * Parameters: None
-         *
-         * Returns: None
-         *
-         ******************************************************************************************/
-
-        // Initialize variables for function
-        double screenHeight_Dbl = getResources().getDisplayMetrics().heightPixels;
-        double scaleFactor_Dbl = 1;
-
-        LinearLayout.LayoutParams params;
-
-        // Define scale factor based on orientation
-        if (isPortrait) {
-            scaleFactor_Dbl = 3.5;
-        } else {
-            scaleFactor_Dbl = 2.0;
-        }
-
-        // Set layout parameters
-        params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int)(screenHeight_Dbl / scaleFactor_Dbl));
-
-        mGunList_View.setLayoutParams(params);
-        mLoadList_View.setLayoutParams(params);
     }
 
 }

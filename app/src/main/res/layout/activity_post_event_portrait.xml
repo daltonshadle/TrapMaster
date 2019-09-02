@@ -5,12 +5,13 @@
     android:id="@+id/postEventParent_Lay"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/steelGray"
     tools:context=".PostEventActivity">
 
     <ScrollView
         android:id="@+id/postEventItems_Scroll"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -83,43 +84,40 @@
         </LinearLayout>
     </ScrollView>
 
-    <ListView
-        android:id="@+id/postEvent_List"
-        android:layout_width="match_parent"
-        android:layout_height="173dp"
-        android:choiceMode="singleChoice"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/postEventItems_Scroll" />
-
     <Button
         android:id="@+id/postEventRight_Btn"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_width="@dimen/NextPrevButton"
+        android:layout_height="@dimen/NextPrevButton"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="NEXT"
+        android:background="@drawable/right_caret_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/postEventLeft_Btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/NextPrevButton"
+        android:layout_height="@dimen/NextPrevButton"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
-        android:text="PREVIOUS"
+        android:background="@drawable/left_caret_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <android.support.design.widget.FloatingActionButton
+    <Button
         android:id="@+id/postEventAddEvent_Btn"
-        android:layout_width="@dimen/CirclePlusAddButtonDim"
-        android:layout_height="@dimen/CirclePlusAddButtonDim"
-        android:layout_margin="5dp"
-        android:clickable="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/postEvent_List"
-        app:srcCompat="@drawable/black_plus_icon" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/white_rounded_rectangle"
+        android:backgroundTint="@color/colorAccent"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:text="Add Event"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/postEventRight_Btn"
+        app:layout_constraintStart_toEndOf="@+id/postEventLeft_Btn" />
 
 </android.support.constraint.ConstraintLayout>

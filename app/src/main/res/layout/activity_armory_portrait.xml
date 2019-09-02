@@ -1,61 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/armory_LnrLay"
+    android:id="@+id/armory_Lay"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@color/steelGray"
     tools:context="edu.coe.djshadle.trapmaster.ArmoryActivity">
 
-
-    <LinearLayout
-        android:id="@+id/armoryGun_LnrLay"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/eventHistory_TabLay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1">
+        android:layout_margin="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ListView
-            android:id="@+id/armoryGun_List"
+        <android.support.design.widget.TabItem
+            android:id="@+id/armoryGuns_Tab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="GUN"
+            android:text="Guns" />
+
+        <android.support.design.widget.TabItem
+            android:id="@+id/armoryLoads_Tab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="LOAD"
+            android:text="Loads" />
+    </android.support.design.widget.TabLayout>
+
+    <ScrollView
+        android:id="@+id/armoryGun_Scroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/eventHistory_TabLay">
+
+        <LinearLayout
+            android:id="@+id/armoryGun_Lay"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:scrollbars="vertical" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/armoryAddGun_Btn"
-            android:layout_width="@dimen/CirclePlusAddButtonDim"
-            android:layout_height="@dimen/CirclePlusAddButtonDim"
-            android:layout_gravity="end"
-            android:clickable="true"
-            app:srcCompat="@drawable/black_plus_icon"
-            android:layout_margin="5dp"/>
+    <ScrollView
+        android:id="@+id/armoryLoad_Scroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="4dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/eventHistory_TabLay">
 
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/armoryLoad_Lay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
 
-
-    <LinearLayout
-        android:id="@+id/armoryLoad_LnrLay"
-        android:layout_width="match_parent"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/armoryAdd_Btn"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1">
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/black_plus_icon" />
 
-        <ListView
-            android:id="@+id/armoryLoad_List"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:scrollbars="vertical" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/armoryAddLoad_Btn"
-            android:layout_width="@dimen/CirclePlusAddButtonDim"
-            android:layout_height="@dimen/CirclePlusAddButtonDim"
-            android:layout_gravity="end"
-            android:clickable="true"
-            app:srcCompat="@drawable/black_plus_icon"
-            android:layout_margin="5dp"/>
-
-     </LinearLayout>
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

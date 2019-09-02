@@ -73,7 +73,7 @@ public class FirebaseInterfaceSQL {
 
         Map<String, Object> gun = new HashMap<>();
         gun.put(FIRE_GUNS_NICKNAME, g.getGunNickname_Str());
-        gun.put(FIRE_GUNS_EMAIL, g.getGunEmail_Str());
+        gun.put(FIRE_GUNS_EMAIL, g.getGunProfileID_Int());
         gun.put(FIRE_GUNS_GAUGE, g.getGunGauge_Str());
         gun.put(FIRE_GUNS_MODEL, g.getGunModel_Str());
         gun.put(FIRE_GUNS_NOTES, g.getGunNotes_Str());
