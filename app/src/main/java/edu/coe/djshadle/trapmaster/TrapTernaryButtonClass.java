@@ -18,11 +18,14 @@ package edu.coe.djshadle.trapmaster;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -37,7 +40,7 @@ public class TrapTernaryButtonClass extends RelativeLayout implements View.OnCli
 
     // UI References
     private OnStageChangeListener stageChangeListener;
-    private Button mTrapTernary_Btn;
+    private ImageButton mTrapTernary_Btn;
 
     //************************************* Public Functions ***************************************
     // Constructors
@@ -211,7 +214,10 @@ public class TrapTernaryButtonClass extends RelativeLayout implements View.OnCli
                 break;
         }
 
-        mTrapTernary_Btn.setBackground(btnBackground_Draw);
+        // Scale drawable appropriately
+        btnBackground_Draw = new ScaleDrawable(btnBackground_Draw, 0, mTrapTernary_Btn.getWidth(), mTrapTernary_Btn.getHeight()).getDrawable();
+        btnBackground_Draw.setBounds(0, 0, mTrapTernary_Btn.getWidth(), mTrapTernary_Btn.getHeight());
+        mTrapTernary_Btn.setImageDrawable(btnBackground_Draw);
     }
 
     public int getStage(){

@@ -157,9 +157,6 @@ public class ShootingEventClass {
             tempShooterStr_Array.add(shooter_Array.get(i).getShooterName_Str());
         }
 
-        // Sort array alphabetically
-        Collections.sort(tempShooterStr_Array, String.CASE_INSENSITIVE_ORDER);
-
         // Set array adapter
         tempShooter_Adapt = new CheckboxListArrayAdapter(currentContext.getContext(), tempShooterStr_Array);
 

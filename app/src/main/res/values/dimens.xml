@@ -32,7 +32,7 @@
 
     <!-- Trap Ternary Button Dimensions -->
     <dimen name="CircleTrapButton">25dp</dimen>
-    <dimen name="SmallCircleTrapButton">8dp</dimen>
+    <dimen name="SmallCircleTrapButton">12dp</dimen>
     <dimen name="MarginCircleTrapButton">2dp</dimen>
     <dimen name="TextSizeTrapButton">20sp</dimen>
     <dimen name="TrapScoreHitMissClear">40dp</dimen>
