@@ -39,6 +39,7 @@ import android.widget.Toast;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class ShootingEventClass {
     //**************************************** Constants *******************************************
@@ -156,6 +157,9 @@ public class ShootingEventClass {
             tempShooterStr_Array.add(shooter_Array.get(i).getShooterName_Str());
         }
 
+        // Sort array alphabetically
+        Collections.sort(tempShooterStr_Array, String.CASE_INSENSITIVE_ORDER);
+
         // Set array adapter
         tempShooter_Adapt = new CheckboxListArrayAdapter(currentContext.getContext(), tempShooterStr_Array);
 
@@ -216,7 +220,7 @@ public class ShootingEventClass {
 
         // Shooter name listview
         final ListView shooter_ListView = new ListView(context);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 250);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 350);
         shooter_ListView.setLayoutParams(params);
 
         // Add linear layout to alert dialog

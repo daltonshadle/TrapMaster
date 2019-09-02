@@ -971,7 +971,7 @@ public class EventClass {
 
         // Set views
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT, 250);
+                RelativeLayout.LayoutParams.MATCH_PARENT, 350);
 
         final ListView event_List = new ListView(context);
         final CheckboxListArrayAdapter event_Adapt = initializeEventArrayAdapt(dbEvent_List);

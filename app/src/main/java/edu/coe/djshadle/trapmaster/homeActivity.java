@@ -51,21 +51,13 @@ public class homeActivity extends AppCompatActivity{
 
     // Key Constants
     private String CURRENT_USER_KEY;
+    private String ACTIVITY_TITLE;
 
     //**************************************** Variables *******************************************
     // General Variables
     private String mCurrentProfileEmail_Str = "********";
     private int mCurrentProfileID_Int = -1;
     private DBHandler db;
-
-    // New Event Dialog Variables
-    private ArrayList<String> shootNameCurr_List;
-    private ArrayList<String> shootNameDB_List;
-    private ArrayList<String> DIALOG_MSG_TXT;
-    private ArrayList<String> POS_BTN_TXT;
-    private ArrayList<String> NEU_BTN_TXT;
-    private ArrayList<String> NEG_BTN_TXT;
-    private int NEW_EVENT_DIALOG_STATE = 0;
 
     // UI References
 
@@ -233,6 +225,8 @@ public class homeActivity extends AppCompatActivity{
          ******************************************************************************************/
 
         CURRENT_USER_KEY = getString(R.string.current_user_key);
+        ACTIVITY_TITLE = getString(R.string.home_activity_title);
+        //ACTIVITY_TITLE = mCurrentProfileEmail_Str;
         db = new DBHandler(homeActivity.this);
     }
 
@@ -298,7 +292,7 @@ public class homeActivity extends AppCompatActivity{
 
         // Set action bar title
         try {
-            setTitle(mCurrentProfileEmail_Str);
+            setTitle(ACTIVITY_TITLE);
         } catch (Exception e) {
             // Didn't work.
         }

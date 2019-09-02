@@ -193,9 +193,11 @@ public class LoginActivity extends AppCompatActivity {
         mQuickEventButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent newEventActivity_Intent = new Intent(LoginActivity.this, NewShootingEventActivity.class);
-                newEventActivity_Intent.putExtra(getString(R.string.quick_event_flag_key), true);
-                startActivity(newEventActivity_Intent);
+                // TODO: Reimplement quick event function
+                Toast.makeText(LoginActivity.this, getString(R.string.feature_will_be_implemented_toast), Toast.LENGTH_LONG).show();
+                //Intent newEventActivity_Intent = new Intent(LoginActivity.this, NewShootingEventActivity.class);
+                //newEventActivity_Intent.putExtra(getString(R.string.quick_event_flag_key), true);
+                //startActivity(newEventActivity_Intent);
             }
         });
 

@@ -191,6 +191,14 @@ public class MatchClass implements Comparable <MatchClass> {
         this.matchNotes_Str = matchNotes_Str;
     }
 
+    public int getMatchNumRounds() {
+        return getMatchRoundIDS_Array().size();
+    }
+
+    public int getMatchTotalShots() {
+        return getMatchNumRounds() * 25;
+    }
+
     public String toString(){
         /*******************************************************************************************
          * Function: toString
@@ -209,7 +217,8 @@ public class MatchClass implements Comparable <MatchClass> {
 
         String item_Str = "Shooter: " + db.getShooterInDB(getMatchShooterID_Int()).getShooterName_Str() + "\n"
                 + "Event: " + db.getEventInDB(getMatchEventID_Int()).getEventName_Str() + "\n"
-                + "Score: " + Integer.toString(getMatchScore_Int()) + "\n"
+                + "Rounds: " + getMatchNumRounds() + "\n"
+                + "Score: " + getMatchScore_Int() + "/" + getMatchTotalShots() + "\n"
                 + "Notes: " + getMatchNotes_Str();
 
 

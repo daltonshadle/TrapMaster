@@ -20,7 +20,7 @@
             android:layout_width="@dimen/HomeButtonWidth"
             android:layout_height="@dimen/HomeButtonHeight"
             android:drawableTop="@drawable/event_icon"
-            android:text="New Event"
+            android:text="New Shoot"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

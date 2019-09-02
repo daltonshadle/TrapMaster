@@ -34,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class CustomListItemClass extends ConstraintLayout {
     //********************************** Variables and Constants ***********************************
@@ -272,6 +273,13 @@ public class CustomListItemClass extends ConstraintLayout {
             }
         });
 
+        listItem_Image.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(context, context.getString(R.string.feature_will_be_implemented_toast), Toast.LENGTH_LONG).show();
+            }
+        });
+
         // Set the item based on type
         switch (typeTag_Int) {
             case MATCH_LIST_TAG:
@@ -323,7 +331,9 @@ public class CustomListItemClass extends ConstraintLayout {
         // Set textviews
         listItemMain_Txt.setText(db.getShooterInDB(mMatch.getMatchShooterID_Int()).getShooterName_Str());
         listItemSec_Txt.setText(db.getEventInDB(mMatch.getMatchEventID_Int()).getEventName_Str());
-        listItemScore_Txt.setText(Integer.toString(mMatch.getMatchScore_Int()));
+        String score_Str = mMatch.getMatchScore_Int() + "/" + mMatch.getMatchTotalShots();
+        listItemScore_Txt.setText(score_Str);
+        listItemScore_Txt.setTextSize(15);
 
         // Set visibilities
         listItem_Image.setVisibility(INVISIBLE);

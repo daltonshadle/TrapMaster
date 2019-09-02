@@ -857,7 +857,7 @@ public class GunClass {
 
         // Set views
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT, 250);
+                RelativeLayout.LayoutParams.MATCH_PARENT, 350);
 
         final ListView gun_List = new ListView(context);
         final CheckboxListArrayAdapter gun_Adapt = initializeGunArrayAdapt(dbGun_List);

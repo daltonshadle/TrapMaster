@@ -946,7 +946,7 @@ public class LoadClass {
 
         // Set views
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT, 250);
+                RelativeLayout.LayoutParams.MATCH_PARENT, 350);
 
         final ListView load_List = new ListView(context);
         final CheckboxListArrayAdapter load_Adapt = initializeLoadArrayAdapt(dbLoad_List);
