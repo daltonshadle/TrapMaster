@@ -103,32 +103,32 @@
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn1"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn2"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn3"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn4"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn5"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
         </LinearLayout>
 
@@ -144,32 +144,32 @@
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn6"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn7"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn8"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn9"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn10"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
         </LinearLayout>
 
@@ -185,32 +185,32 @@
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn11"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn12"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn13"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn14"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn15"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
         </LinearLayout>
 
@@ -226,32 +226,32 @@
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn16"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn17"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn18"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn19"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn20"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
         </LinearLayout>
 
@@ -267,32 +267,32 @@
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn21"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn22"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn23"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn24"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
 
             <edu.coe.djshadle.trapmaster.TrapTernaryButtonClass
                 android:id="@+id/trapBtn25"
-                android:layout_width="@dimen/SmallCircleTrapButton"
-                android:layout_height="@dimen/SmallCircleTrapButton"
+                android:layout_width="@dimen/SmallTrapButton"
+                android:layout_height="@dimen/SmallTrapButton"
                 android:layout_margin="@dimen/MarginCircleTrapButton" />
         </LinearLayout>
 

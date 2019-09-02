@@ -217,8 +217,6 @@ public class ShootingEventClass {
 
         // Shooter name listview
         final ListView shooter_ListView = new ListView(context);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 350);
-        shooter_ListView.setLayoutParams(params);
 
         // Add linear layout to alert dialog
         alertDialog.setView(subView_LnrLay);
@@ -266,6 +264,15 @@ public class ShootingEventClass {
                         subView_LnrLay.addView(shooter_ListView);
                         shooterArray_Adapt = initializeShooterArrayAdapt();
                         shooter_ListView.setAdapter(shooterArray_Adapt);
+
+                        // Set the height based on number of shooters
+                        int tempHeight_Int = 500;
+                        if (shooterArray_Adapt.getCount() < 5) {
+                            tempHeight_Int = shooterArray_Adapt.getCount() * 100;
+                        }
+
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, tempHeight_Int);
+                        shooter_ListView.setLayoutParams(params);
 
                         NEW_EVENT_DIALOG_STATE = (NEW_EVENT_DIALOG_STATE + 1);
                         break;
@@ -348,6 +355,15 @@ public class ShootingEventClass {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
                         shooter_ListView.setAdapter(initializeShooterArrayAdapt());
+
+                        // Set the height based on number of shooters
+                        int tempHeight_Int = 500;
+                        if (shooterArray_Adapt.getCount() < 5) {
+                            tempHeight_Int = shooterArray_Adapt.getCount() * 100;
+                        }
+
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, tempHeight_Int);
+                        shooter_ListView.setLayoutParams(params);
                     }
                 });
             }

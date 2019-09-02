@@ -30,12 +30,23 @@
     <dimen name="ListItemMargin">5dp</dimen>
     <dimen name="ListItemScoreTextSize">25sp</dimen>
 
+    <!-- Trap Button Drawable Dimensions -->
+    <dimen name="CircleTrapButton">50dp</dimen>
+    <dimen name="CircleTrapButtonIcon">40dp</dimen>
+
     <!-- Trap Ternary Button Dimensions -->
-    <dimen name="CircleTrapButton">25dp</dimen>
-    <dimen name="SmallCircleTrapButton">12dp</dimen>
+    <dimen name="LargeTrapButton">30dp</dimen>
+    <dimen name="SmallTrapButton">12dp</dimen>
     <dimen name="MarginCircleTrapButton">2dp</dimen>
     <dimen name="TextSizeTrapButton">20sp</dimen>
     <dimen name="TrapScoreHitMissClear">40dp</dimen>
+
+    <!-- Trap Station Button Dimensions -->
+    <dimen name="TrapStationButton">40dp</dimen>
+    <dimen name="TrapStationMargin">15dp</dimen>
+    <dimen name="TrapStationScoreText">20sp</dimen>
+    <dimen name="TrapStationSecondaryText">16sp</dimen>
+
 
     <!-- General Dimensions -->
     <dimen name="CirclePlusAddButtonDim">55dp</dimen>

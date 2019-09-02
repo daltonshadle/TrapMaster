@@ -21,6 +21,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ScaleDrawable;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -33,6 +34,7 @@ public class TrapTernaryButtonClass extends RelativeLayout implements View.OnCli
     //********************************** Variables and Constants ***********************************
     // General Constants
     private final static int HIT = 0, MISS = 1, NEUTRAL = 2;
+    private String TAG = "JRW";
 
     // General Variables
     private int btnStage_Int;
@@ -214,9 +216,12 @@ public class TrapTernaryButtonClass extends RelativeLayout implements View.OnCli
                 break;
         }
 
+        mTrapTernary_Btn.measure(0, 0);
+
+        Log.d(TAG, Float.toString((float)mTrapTernary_Btn.getMeasuredWidth()/btnBackground_Draw.getIntrinsicWidth()));
+        Log.d(TAG, Float.toString((float)mTrapTernary_Btn.getMeasuredHeight()/btnBackground_Draw.getIntrinsicHeight()));
         // Scale drawable appropriately
-        btnBackground_Draw = new ScaleDrawable(btnBackground_Draw, 0, mTrapTernary_Btn.getWidth(), mTrapTernary_Btn.getHeight()).getDrawable();
-        btnBackground_Draw.setBounds(0, 0, mTrapTernary_Btn.getWidth(), mTrapTernary_Btn.getHeight());
+        mTrapTernary_Btn.setScaleType(ImageView.ScaleType.FIT_CENTER);
         mTrapTernary_Btn.setImageDrawable(btnBackground_Draw);
     }
 
@@ -330,5 +335,6 @@ public class TrapTernaryButtonClass extends RelativeLayout implements View.OnCli
 
         LayoutParams params = new LayoutParams(size_Int, size_Int);
         mTrapTernary_Btn.setLayoutParams(params);
+        setButtonColor(getStage());
     }
 }

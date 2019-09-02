@@ -6,8 +6,7 @@
 
     <ImageButton
         android:id="@+id/trapTernary_Btn"
-        android:layout_width="@dimen/CircleTrapButton"
-        android:layout_height="@dimen/CircleTrapButton"
-        android:background="@drawable/neutral_trap_ternary_button_shape"
-        android:scaleType="fitCenter"/>
+        android:layout_width="@dimen/TrapStationButton"
+        android:layout_height="@dimen/TrapStationButton"
+        android:background="@drawable/neutral_trap_ternary_button_shape" />
 </RelativeLayout>

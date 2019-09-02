@@ -160,7 +160,7 @@ public class CheckboxListArrayAdapter extends ArrayAdapter<String> {
                     parent,false);
 
         // Initialize all views in list view
-        CheckBox listItem_Checkbox = listItem.findViewById(R.id.list_view_item_checkbox);
+        final CheckBox listItem_Checkbox = listItem.findViewById(R.id.list_view_item_checkbox);
         TextView listItem_Text = listItem.findViewById(R.id.list_view_item_text);
 
         // Set TextView string
@@ -177,10 +177,15 @@ public class CheckboxListArrayAdapter extends ArrayAdapter<String> {
         listItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checked_Array.set(item_Int, !checked_Array.get(item_Int));
+                listItem_Checkbox.setChecked(!checked_Array.get(item_Int));
             }
         });
-        listItem_Text.setClickable(false);
+        listItem_Text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listItem_Checkbox.setChecked(!checked_Array.get(item_Int));
+            }
+        });
 
         return listItem;
     }

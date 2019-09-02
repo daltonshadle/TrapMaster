@@ -4,14 +4,14 @@
         android:id="@+id/miss_trap_ternary_button">
         <shape android:shape="rectangle">
             <solid android:color="@color/miss"/>
-            <stroke android:color="@color/dark" android:width="1dp"/>
+            <stroke android:color="@color/dark" android:width="2dp"/>
             <size android:width="@dimen/CircleTrapButton" android:height="@dimen/CircleTrapButton"/>
             <corners android:radius="4dp" />
         </shape>
     </item>
     <item
-        android:width="20dp"
-        android:height="20dp"
+        android:width="@dimen/CircleTrapButtonIcon"
+        android:height="@dimen/CircleTrapButtonIcon"
         android:gravity="center">
         <bitmap
             android:gravity="fill_horizontal|fill_vertical"
