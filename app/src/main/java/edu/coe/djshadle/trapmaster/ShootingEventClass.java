@@ -18,8 +18,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.XmlResourceParser;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Xml;
@@ -58,6 +63,7 @@ public class ShootingEventClass {
 
     // Dialog Variables
     private CheckboxListArrayAdapter shooterArray_Adapt;
+    private SimpleRecyclerViewAdapter stationArray_Adapt;
     private ArrayList<String> DIALOG_MSG_TXT;
     private ArrayList<String> POS_BTN_TXT;
     private ArrayList<String> NEU_BTN_TXT;
@@ -118,17 +124,21 @@ public class ShootingEventClass {
          ******************************************************************************************/
 
         DIALOG_MSG_TXT = new ArrayList<String>(Arrays.asList(
-                "How many rounds for this event?",
-                "Select shooters for this event. Click the + to add more!"));
+                "Select the number of rounds for this event.",
+                "Select shooters for this event. Click the + to add more!",
+                "Drag and drop shooters in station order."));
         POS_BTN_TXT = new ArrayList<String>(Arrays.asList(
+                "NEXT",
                 "NEXT",
                 "CONTINUE"));
         NEU_BTN_TXT = new ArrayList<String>(Arrays.asList(
                 "CANCEL",
+                "BACK",
                 "BACK"));
         NEG_BTN_TXT = new ArrayList<String>(Arrays.asList(
                 " ",
-                "+"));
+                "+",
+                " "));
     }
 
     private CheckboxListArrayAdapter initializeShooterArrayAdapt() {
@@ -161,6 +171,55 @@ public class ShootingEventClass {
         tempShooter_Adapt = new CheckboxListArrayAdapter(currentContext.getContext(), tempShooterStr_Array);
 
         return tempShooter_Adapt;
+    }
+
+    private SimpleRecyclerViewAdapter initializeStationArrayAdapt(ArrayList<String> shooters) {
+        /*******************************************************************************************
+         * Function: initializeStationArrayAdapt
+         *
+         * Purpose: Function initializes station recycler view adapt for starting new event
+         *
+         * Parameters: none
+         *
+         * Returns: tempStation_Adapt - Array adapter initialized
+         *
+         ******************************************************************************************/
+
+        // Initialize function variables
+        SimpleRecyclerViewAdapter tempStation_Adapt;
+        GlobalApplicationContext currentContext = new GlobalApplicationContext();
+
+        // Set array adapter
+        tempStation_Adapt = new SimpleRecyclerViewAdapter(currentContext.getContext(), shooters);
+
+        return tempStation_Adapt;
+    }
+
+    private ItemTouchHelper.Callback createItemTouchHelper() {
+        /*******************************************************************************************
+         * Function: createItemTouchHelper
+         *
+         * Purpose: Function creates and on touch helper for recycler view
+         *
+         * Parameters: none
+         *
+         * Returns: simpleCallback (OUT) - ItemTouchHelper.Callback customized for recycler view
+         *
+         ******************************************************************************************/
+
+        ItemTouchHelper.Callback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                stationArray_Adapt.moveItem(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                return true;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+            }
+        };
+        return simpleCallback;
     }
 
     public void newEventDialog(final Context context){
@@ -218,6 +277,16 @@ public class ShootingEventClass {
         // Shooter name listview
         final ListView shooter_ListView = new ListView(context);
 
+        // Station order for shooter names recycler view
+        final RecyclerView station_RecycleView = new RecyclerView(context);
+        station_RecycleView.setHasFixedSize(true);
+        LinearLayoutManager station_Lay = new LinearLayoutManager(context);
+        station_Lay.setOrientation(LinearLayoutManager.VERTICAL);
+        station_RecycleView.setLayoutManager(station_Lay);
+        station_RecycleView.addItemDecoration(new DividerItemDecoration(context, station_Lay.getOrientation()));
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(createItemTouchHelper());
+        itemTouchHelper.attachToRecyclerView(station_RecycleView);
+
         // Add linear layout to alert dialog
         alertDialog.setView(subView_LnrLay);
 
@@ -256,6 +325,7 @@ public class ShootingEventClass {
             public void onClick(View view) {
                 // Perform Action on Positive button
                 int numRound_Int = round_NumPick.getValue();
+                ArrayList<String> shooterNames_Array = new ArrayList<>();
 
                 switch (NEW_EVENT_DIALOG_STATE) {
                     case 0:
@@ -277,37 +347,41 @@ public class ShootingEventClass {
                         NEW_EVENT_DIALOG_STATE = (NEW_EVENT_DIALOG_STATE + 1);
                         break;
                     case 1:
-                        // Picking shooters to starting new event
-                        ArrayList<Integer> checkedShooters_Array = shooterArray_Adapt.getCheckedItems();
+                        // Picking shooters to setting station order
+                        shooterNames_Array = shooterArray_Adapt.getCheckedItemsString();
 
-                        if (checkedShooters_Array.isEmpty()) {
+                        if (shooterNames_Array.isEmpty()) {
                             // Throw error that at least one needs to be checked
                             Toast.makeText(context, "Too few shooters selected. Select at least 1 shooter.", Toast.LENGTH_LONG).show();
-                        } else if (checkedShooters_Array.size() > 5) {
+                        } else if (shooterNames_Array.size() > 5) {
                             // Throw error that there can only be 5 shooters
                             Toast.makeText(context, "Too many shooters selected. Select up to 5 shooters.", Toast.LENGTH_LONG).show();
                         } else {
-                            // Get names of checked shooters
-                            ArrayList<String> shooterNames_Array = new ArrayList<>();
+                            // Set all the views for the next round
+                            subView_LnrLay.removeView(shooter_ListView);
+                            subView_LnrLay.addView(station_RecycleView);
+                            stationArray_Adapt = initializeStationArrayAdapt(shooterNames_Array);
+                            station_RecycleView.setAdapter(stationArray_Adapt);
 
-                            for (Integer item : checkedShooters_Array) {
-                                shooterNames_Array.add(shooter_Array.get(item).getShooterName_Str());
-                            }
-
-                            // Put all extras into new intent and start new event
-                            Intent newShoot_Intent = new Intent(context, NewShootingEventActivity.class);
-                            newShoot_Intent.putStringArrayListExtra(SHOOTER_LIST_KEY, shooterNames_Array);
-                            newShoot_Intent.putExtra(NUM_ROUNDS_KEY, numRound_Int);
-                            newShoot_Intent.putExtra(NUM_SHOOTER_KEY, shooterNames_Array.size());
-                            newShoot_Intent.putExtra(CURRENT_USER_KEY, shootingEventProfileID_Int);
-                            context.startActivity(newShoot_Intent);
-
-                            // Dismiss dialog
-                            alertDialog.dismiss();
-
-                            // Reset state
-                            NEW_EVENT_DIALOG_STATE = 0;
+                            NEW_EVENT_DIALOG_STATE = (NEW_EVENT_DIALOG_STATE + 1);
                         }
+
+                        break;
+                    case 2:
+                        // Setting station order to starting new event
+                        shooterNames_Array = stationArray_Adapt.getAllItems();
+
+                        // Put all extras into new intent and start new event
+                        Intent newShoot_Intent = new Intent(context, NewShootingEventActivity.class);
+                        newShoot_Intent.putStringArrayListExtra(SHOOTER_LIST_KEY, shooterNames_Array);
+                        newShoot_Intent.putExtra(NUM_ROUNDS_KEY, numRound_Int);
+                        newShoot_Intent.putExtra(NUM_SHOOTER_KEY, shooterNames_Array.size());
+                        newShoot_Intent.putExtra(CURRENT_USER_KEY, shootingEventProfileID_Int);
+                        context.startActivity(newShoot_Intent);
+
+                        // Dismiss dialog
+                        alertDialog.dismiss();
+
                         break;
                 }
 
@@ -329,9 +403,16 @@ public class ShootingEventClass {
                         alertDialog.dismiss();
                         break;
                     case 1:
-                        // Shooter number picker to add shooters listview
+                        // add shooters list view to round num picker
                         subView_LnrLay.removeView(shooter_ListView);
                         subView_LnrLay.addView(round_NumPick);
+
+                        NEW_EVENT_DIALOG_STATE = (NEW_EVENT_DIALOG_STATE - 1);
+                        break;
+                    case 2:
+                        // Station picker to add shooters list view
+                        subView_LnrLay.removeView(station_RecycleView);
+                        subView_LnrLay.addView(shooter_ListView);
 
                         NEW_EVENT_DIALOG_STATE = (NEW_EVENT_DIALOG_STATE - 1);
                         break;

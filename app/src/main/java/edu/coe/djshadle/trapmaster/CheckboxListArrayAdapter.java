@@ -103,9 +103,32 @@ public class CheckboxListArrayAdapter extends ArrayAdapter<String> {
 
         ArrayList<Integer> ret = new ArrayList<>();
 
-        for (int i = 0; i < string_Array.size(); i++) {
+        for (int i = 0; i < checked_Array.size(); i++) {
             if (checked_Array.get(i)) {
                 ret.add(i);
+            }
+        }
+
+        return ret;
+    }
+
+    public ArrayList<String> getCheckedItemsString() {
+        /*******************************************************************************************
+         * Function: getCheckedItemsString
+         *
+         * Purpose: Gets all strings of all checked items
+         *
+         * Parameters: None
+         *
+         * Returns: ret (OUT) - array of checked indices
+         *
+         ******************************************************************************************/
+
+        ArrayList<String> ret = new ArrayList<>();
+
+        for (int i = 0; i < string_Array.size(); i++) {
+            if (checked_Array.get(i)) {
+                ret.add(string_Array.get(i));
             }
         }
 
